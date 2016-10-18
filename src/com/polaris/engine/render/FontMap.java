@@ -107,6 +107,11 @@ public class FontMap implements ITexture
 	{
 		drawChars(whatchars, x, y, z, pointFont);
 	}
+	
+	public void drawUpString(CharSequence whatchars, double x, double y, double z, double pointFont)
+	{
+	    drawChars(whatchars, x, y - pointFont, z, pointFont);
+	}
 
 	/**
 	 * Draw an aligned string

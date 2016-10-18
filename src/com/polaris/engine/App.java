@@ -229,11 +229,6 @@ public abstract class App
 	 */
 	public void keyboardClick(int key, int action, int mods) 
 	{
-		boolean shiftFlag = (mods & 1) == 1;
-		if(key >= 65 && key <= 90)
-			key = key + 32 * (Window.getKey(GLFW.GLFW_KEY_CAPS_LOCK) > 0 || shiftFlag ? 0 : 1);
-		else
-			key = shiftFlag ? Window.getShiftKey(key) : key;
 		switch(action)
 		{
 		case 1:
