@@ -114,7 +114,7 @@ public class Window
 
 	public static boolean create()
 	{
-		return glfwInit() == 0;
+		return !glfwInit();
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class Window
 
 	public static boolean shouldClose()
 	{
-		return glfwWindowShouldClose(windowInstance) == 0 && isRunning;
+		return !glfwWindowShouldClose(windowInstance) && isRunning;
 	}
 
 	public static void pollEvents()
@@ -374,9 +374,9 @@ public class Window
 
 	private static GLFWCursorEnterCallback cursorBounds = new GLFWCursorEnterCallback () {
 
-		public void invoke(long window, int entered) 
+		public void invoke(long window, boolean entered) 
 		{
-			Window.window.cursorMoveBounds(entered == GL_TRUE);
+			Window.window.cursorMoveBounds(entered);
 		}
 	};
 	private static GLFWCursorPosCallback cursorPos = new GLFWCursorPosCallback () {
@@ -416,16 +416,16 @@ public class Window
 	};
 	private static GLFWWindowFocusCallback windowFocus = new GLFWWindowFocusCallback () {
 
-		public void invoke(long window, int focused)
+		public void invoke(long window, boolean focused)
 		{
-			Window.window.windowFocus(focused == GL_TRUE);
+			Window.window.windowFocus(focused);
 		}
 	};
 	private static GLFWWindowIconifyCallback windowIconify = new GLFWWindowIconifyCallback () {
 
-		public void invoke(long window, int iconified) 
+		public void invoke(long window, boolean iconified) 
 		{
-			Window.window.windowIconify(iconified == GL_TRUE);
+			Window.window.windowIconify(iconified);
 		}
 	};
 	private static GLFWWindowPosCallback windowPos = new GLFWWindowPosCallback () {

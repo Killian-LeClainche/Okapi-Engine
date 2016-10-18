@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,13 +74,13 @@ public class Texture
 		for(String texture : textures.keySet())
 		{
 			ByteBuffer data;
-			ByteBuffer width = BufferUtils.createByteBuffer(4);
-			ByteBuffer height = BufferUtils.createByteBuffer(4);
+			IntBuffer width = BufferUtils.createIntBuffer(1);
+			IntBuffer height = BufferUtils.createIntBuffer(1);
 			ITexture tex = textures.get(texture);
 			glBindTexture(tex.getTextureID());
 			glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, width);
 			glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, height);
-			data = BufferUtils.createByteBuffer(width.getInt(0) * height.getInt(0) * 4);
+			data = BufferUtils.createByteBuffer(width.get() * height.get() * 4);
 			glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 			textureData.put(texture, data);
 			glBindTexture(0);
@@ -92,8 +93,8 @@ public class Texture
 	{
 		for(String texture : textures.keySet())
 		{
-			ByteBuffer width = BufferUtils.createByteBuffer(4);
-			ByteBuffer height = BufferUtils.createByteBuffer(4);
+		    IntBuffer width = BufferUtils.createIntBuffer(1);
+			IntBuffer height = BufferUtils.createIntBuffer(1);
 			ITexture tex = textures.get(texture);
 			glBindTexture(tex.getTextureID());
 			glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, width);
@@ -102,8 +103,8 @@ public class Texture
 			glBindTexture(tex.getTextureID());
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width.getInt(0), height.getInt(0), 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData.get(texture));
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width.getInt(0), height.getInt(0), GL_RGBA, GL_UNSIGNED_BYTE, textureData.get(texture));
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width.get(), height.get(), 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData.get(texture));
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width.get(), height.get(), GL_RGBA, GL_UNSIGNED_BYTE, textureData.get(texture));
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		}

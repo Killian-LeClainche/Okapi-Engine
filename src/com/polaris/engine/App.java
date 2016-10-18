@@ -35,7 +35,6 @@ import com.polaris.engine.gui.Gui;
 import com.polaris.engine.options.Settings;
 import com.polaris.engine.render.OpenGL;
 import com.polaris.engine.render.Window;
-import com.polaris.engine.sound.OpenAL;
 
 public abstract class App 
 {
@@ -270,7 +269,7 @@ public abstract class App
 	 */
 	public void windowClose() 
 	{
-		OpenAL.closeAL();
+		//OpenAL.closeAL();
 	}
 
 	/**
