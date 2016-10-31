@@ -2,6 +2,8 @@ package com.polaris.engine.options;
 
 import java.io.File;
 
+import org.lwjgl.opengl.GLCapabilities;
+
 public class Settings
 {
 	
@@ -40,6 +42,24 @@ public class Settings
 	public static void setNextWindow(int fullscreen)
 	{
 		Settings.fullscreen = fullscreen;
+	}
+	
+	public boolean initCapabilities()
+	{
+		return false;
+	}
+	
+	public GLCapabilities getCapabilities()
+	{
+		return null;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getGLVersion()
+	{
+		return null;
 	}
 
 }

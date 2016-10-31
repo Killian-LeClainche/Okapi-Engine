@@ -4,7 +4,6 @@ import static com.polaris.engine.options.Settings.getNextWindow;
 import static com.polaris.engine.render.OpenGL.glClearBuffers;
 import static com.polaris.engine.render.Texture.getTextureData;
 import static com.polaris.engine.render.Texture.loadTextureData;
-import static com.polaris.engine.render.Texture.loadTextures;
 import static com.polaris.engine.render.Window.addModKey;
 import static com.polaris.engine.render.Window.close;
 import static com.polaris.engine.render.Window.create;
@@ -21,14 +20,14 @@ import static com.polaris.engine.render.Window.setupWindow;
 import static com.polaris.engine.render.Window.shouldClose;
 import static com.polaris.engine.render.Window.swapBuffers;
 import static com.polaris.engine.render.Window.updateSize;
+import static org.lwjgl.glfw.GLFW.*;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joml.Vector2d;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
 
 import com.polaris.engine.gui.Gui;
@@ -39,69 +38,108 @@ import com.polaris.engine.render.Window;
 public abstract class App 
 {
 	
+	public static final Log log = LogFactory.getLog(App.class);
+	
+	private int windowInstance;
+	private final OpenAL soundEngine;
+	
 	/**
-	 * Instance version of the application's mouse position
+	 * Instance of application's mouse.
 	 */
-	protected static double mouseX;
+	private final Mouse mouse;
+	
 	/**
-	 * Instance version of the application's mouse position
+	 * Instance of application's keyboard.
 	 */
-	protected static double mouseY;
-
-	protected static double mouseDeltaX;
-	protected static double mouseDeltaY;
-
-	private Map<Integer, Vector2d> keyboardPress = new HashMap<Integer, Vector2d>();
-	protected Gui currentGui;
+	private final Keyboard keyboard;
+	
+	/**
+	 * The settings of the game, allows for inheritance.
+	 */
+	private Settings gameSettings;
+	
+	/**
+	 * Instance of current screen being displayed.
+	 */
+	private Gui currentGui;
 
 	private GLCapabilities glCapabilities;
 
+	public App()
+	{
+		mouse = new Mouse(this);
+		keyboard = new Keyboard(this); 
+		soundEngine = new OpenAL(this);
+	}
+	
 	/**
 	 * Initializes a window application
 	 */
 	public void run()
 	{
-		Settings.load(getResourceLocation());
-		if(create() || setupWindow(this) == -1)
+		gameSettings = loadSettings();
+		
+		if(create())
+		{
+			log.error("Failed to initialize application!");
+			log.debug("create() method caused crash.");
 			return;
-
-		glCapabilities = GL.createCapabilities();
-		if(glCapabilities == null || !checkOpenGL())
-			throw new RuntimeException("OpenGL Creation Failed, an updated OpenGL version is required.");
-
-		try
-		{
-			loadTextures();
 		}
-		catch(Exception e)
+		
+		if(!setup())
 		{
-			e.printStackTrace();
+			log.error("Failed to initialize application!");
+			log.debug("setup() method caused crash.");
+			return;
+		}
+		
+		if(!gameSettings.initCapabilities())
+		{
+			log.error("OpenGL Creation Failed");
+			if(gameSettings.getCapabilities() != null)
+			{
+				log.debug("The GL version is not to the needs of this application.");
+				log.debug("Requires " + gameSettings.getGLVersion());
+			}
+			else
+			{
+				log.debug("There is no GL Capabilities being created.");
+			}
 			return;
 		}
 
 		init();
-		//OpenAL.initAL();
+		soundEngine.init();
+		
 		OpenGL.glDefaults();
-		setTime(0);
+		
+		glfwSetTime(0);
 		while(shouldClose())
 		{
-			double delta = getTimeAndReset();
+			double delta = glfwGetTime();
+			glfwSetTime(0);
 
 			if(checkUpdateWindow())
 				break;
 			
-			pollEvents();
+			glfwPollEvents();
 			
+			keyboard.update(delta);
 			handleKeyInput(delta);
 			
 			glClearBuffers();
 			update(delta);
 			render(delta);
-			mouseDeltaX = mouseDeltaY = 0;
-			swapBuffers();
+			mouse.setDelta(0, 0);
+			glfwSwapBuffers(windowInstance);
 		}
 
 		destroy();
+	}
+	
+	protected Settings loadSettings()
+	{
+		return new Settings();
 	}
 	
 	private boolean checkUpdateWindow()
