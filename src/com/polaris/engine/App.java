@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joml.Vector2d;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GLCapabilities;
 
 import com.polaris.engine.gui.Gui;
@@ -40,8 +41,15 @@ public abstract class App
 	
 	public static final Log log = LogFactory.getLog(App.class);
 	
-	private int windowInstance;
-	private final OpenAL soundEngine;
+	/**
+	 * long instance of the window this application takes on.
+	 */
+	private long windowInstance;
+	
+	/**
+	 * Instance of application's sound system.
+	 */
+	private final OpenAL soundSystem;
 	
 	/**
 	 * Instance of application's mouse.
@@ -69,7 +77,7 @@ public abstract class App
 	{
 		mouse = new Mouse(this);
 		keyboard = new Keyboard(this); 
-		soundEngine = new OpenAL(this);
+		soundSystem = new OpenAL(this);
 	}
 	
 	/**
@@ -79,14 +87,14 @@ public abstract class App
 	{
 		gameSettings = loadSettings();
 		
-		if(create())
+		if(!glfwInit())
 		{
 			log.error("Failed to initialize application!");
 			log.debug("create() method caused crash.");
 			return;
 		}
 		
-		if(!setup())
+		if(!create())
 		{
 			log.error("Failed to initialize application!");
 			log.debug("setup() method caused crash.");
@@ -109,7 +117,7 @@ public abstract class App
 		}
 
 		init();
-		soundEngine.init();
+		soundSystem.init();
 		
 		OpenGL.glDefaults();
 		
@@ -124,7 +132,6 @@ public abstract class App
 			
 			glfwPollEvents();
 			
-			keyboard.update(delta);
 			handleKeyInput(delta);
 			
 			glClearBuffers();
@@ -140,6 +147,47 @@ public abstract class App
 	protected Settings loadSettings()
 	{
 		return new Settings();
+	}
+	
+	/**
+	 * sets up the environment for a window to be created.
+	 * @return true for success, false otherwise
+	 */
+	public boolean create()
+	{
+		long instance;
+		if(getNextWindow() == 0)
+		{
+			instance = createWindow();
+		}
+		else if(getNextWindow() == 1)
+		{
+			GLFWVidMode mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+			glfwWindowHint(GLFW_RED_BITS, mode.redBits());
+			glfwWindowHint(GLFW_GREEN_BITS, mode.greenBits());
+			glfwWindowHint(GLFW_BLUE_BITS, mode.blueBits());
+			glfwWindowHint(GLFW_REFRESH_RATE, mode.refreshRate());
+			instance = glfwCreateWindow(mode.width(), mode.height(), "", glfwGetPrimaryMonitor(), windowInstance);
+		}
+		else
+		{
+			instance = glfwCreateWindow(1920, 1280, "", glfwGetPrimaryMonitor(), windowInstance);
+		}
+		currentFullscreen = getNextWindow();
+		if(instance == 0)
+		{
+			glfwTerminate();
+			return false;
+		}
+		if(windowInstance != -1)
+			glfwDestroyWindow(windowInstance);
+		windowInstance = instance;
+		setWindowEvents();
+		glfwMakeContextCurrent(windowInstance);
+		glfwSwapInterval(1);
+		updateSize();
+		glfwShowWindow(windowInstance);
+		return true;
 	}
 	
 	private boolean checkUpdateWindow()
