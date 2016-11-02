@@ -4,16 +4,9 @@ import static com.polaris.engine.options.Settings.getNextWindow;
 import static com.polaris.engine.render.OpenGL.glClearBuffers;
 import static com.polaris.engine.render.Texture.getTextureData;
 import static com.polaris.engine.render.Texture.loadTextureData;
-import static com.polaris.engine.render.Window.addModKey;
-import static com.polaris.engine.render.Window.close;
 import static com.polaris.engine.render.Window.destroy;
 import static com.polaris.engine.render.Window.getCurrentWindow;
-import static com.polaris.engine.render.Window.getKey;
-import static com.polaris.engine.render.Window.getModKeys;
-import static com.polaris.engine.render.Window.notModKey;
-import static com.polaris.engine.render.Window.removeModKey;
 import static com.polaris.engine.render.Window.setupWindow;
-import static com.polaris.engine.render.Window.shouldClose;
 import static com.polaris.engine.render.Window.updateSize;
 import static org.lwjgl.glfw.GLFW.GLFW_BLUE_BITS;
 import static org.lwjgl.glfw.GLFW.GLFW_GREEN_BITS;
@@ -32,21 +25,26 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.joml.Vector2d;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GLCapabilities;
 
 import com.polaris.engine.gui.Gui;
+import com.polaris.engine.logic.LogicGui;
 import com.polaris.engine.options.Settings;
 import com.polaris.engine.render.OpenGL;
-import com.polaris.engine.render.Window;
+import com.polaris.engine.sound.OpenAL;
+import com.polaris.engine.thread.AppPacket;
+import com.polaris.engine.thread.LogicApp;
+import com.polaris.engine.thread.PacketComparator;
 
 public abstract class App 
 {
@@ -58,7 +56,7 @@ public abstract class App
 	 */
 	private long windowInstance;
 	
-	private final ThreadCommunicator logicCommunicator;
+	private final Set<AppPacket> incomingPackets;
 	
 	private final LogicApp logicThread;
 	
@@ -77,6 +75,8 @@ public abstract class App
 	 */
 	private Settings gameSettings;
 	
+	private boolean isRunning;
+	
 	/**
 	 * Instance of current screen being displayed.
 	 */
@@ -86,14 +86,15 @@ public abstract class App
 
 	public App()
 	{
-		input = new Input(this);
 		soundSystem = new OpenAL(this);
+		input = new Input(this);
+		gameSettings = loadSettings();
 		
-		logicCommunicator = new ThreadCommunicator();
-		logicCommunicator.addSide("render");
-		logicCommunicator.addSide("logic");
+		isRunning = true;
 		
-		logicThread = new LogicApp(logicCommunicator, getMaxUPS());
+		incomingPackets = new ConcurrentSkipListSet<AppPacket>(new PacketComparator());
+		
+		logicThread = new LogicApp(this, getMaxUPS());
 	}
 	
 	/**
@@ -101,8 +102,6 @@ public abstract class App
 	 */
 	public void run()
 	{
-		gameSettings = loadSettings();
-		
 		if(!glfwInit())
 		{
 			log.error("Failed to initialize application!");
@@ -117,7 +116,7 @@ public abstract class App
 			return;
 		}
 		
-		if(!gameSettings.initCapabilities())
+		if(!gameSettings.createCapabilities())
 		{
 			log.error("OpenGL Creation Failed");
 			if(gameSettings.getCapabilities() != null)
@@ -135,10 +134,13 @@ public abstract class App
 		init();
 		soundSystem.init();
 		
+		logicThread.setLogicHandler(getStartGui());
+		logicThread.run();
+		
 		OpenGL.glDefaults();
 		
 		glfwSetTime(0);
-		while(shouldClose())
+		while(!glfwWindowShouldClose(windowInstance) && isRunning)
 		{
 			double delta = glfwGetTime();
 			glfwSetTime(0);
@@ -149,8 +151,7 @@ public abstract class App
 			input.update();
 			
 			glClearBuffers();
-			update(delta);
-			render(delta);
+			currentGui.render(delta);
 			glfwSwapBuffers(windowInstance);
 		}
 
@@ -220,17 +221,17 @@ public abstract class App
 		}
 		return false;
 	}
-
+	
 	/**
-	 * @param newGui : the new gui the screen will adopt, if set to null then the application will close.
+	 * @param packet
 	 */
-	public void setGui(Gui newGui)
+	public void sendPacket(AppPacket packet)
 	{
-		if(newGui == null)
-		{
-			close();
-			return;
-		}
+		incomingPackets.add(packet);
+	}
+	
+	public final void initGui(Gui newGui)
+	{
 		if(currentGui != null)
 		{
 			currentGui.close();
@@ -238,17 +239,17 @@ public abstract class App
 		newGui.init();
 		currentGui = newGui;
 	}
-
-	protected boolean checkOpenGL()
+	
+	public final void reinitGui(Gui newGui)
 	{
-		return glCapabilities.OpenGL11;
+		currentGui.close();
+		newGui.reinit();
+		currentGui = newGui;
 	}
 
-	/**
-	 * when the window closes
-	 */
-	public void windowClose() 
+	public void close()
 	{
+		isRunning = false;
 		//OpenAL.closeAL();
 	}
 
@@ -287,34 +288,12 @@ public abstract class App
 			updateSize();
 	}
 
-	/**
-	 * Update method called every n times / second 
-	 * <br><b>DON'T CALL super.update(delta) UNLESS YOU IMPLEMENT GUI CLASS STRUCTURE</b>
-	 * @param mouseX : current Mouse Position, updates before method call
-	 * @param mouseY : current Mouse Position, updates before method call
-	 * @param delta : change in time, measured in actual seconds
-	 */
-	public void update(double delta) 
-	{
-		currentGui.update(delta);
-	}
-
-	/**
-	 * Render method capped at n times / second
-	 * <br><b>DON'T CALL super.render(delta) UNLESS YOU IMPLEMENT GUI CLASS STRUCTURE</b>
-	 * @param mouseX : current Mouse Position, updates before method call
-	 * @param mouseY : current Mouse Position, updates before method call
-	 * @param delta : change in time, measured in actual seconds
-	 */
-	public void render(double delta) 
-	{
-		currentGui.render(delta);
-	}
-
+	protected abstract LogicGui getStartGui();
+	
 	/**
 	 * initialize window
 	 */
-	protected abstract void init();
+	protected void init() {}
 
 	/**
 	 * create the window

@@ -44,7 +44,7 @@ public class Settings
 		Settings.fullscreen = fullscreen;
 	}
 	
-	public boolean initCapabilities()
+	public boolean createCapabilities()
 	{
 		return false;
 	}

@@ -1,8 +1,9 @@
 /**
  * 
  */
-package com.polaris.engine;
+package com.polaris.engine.sound;
 
+import com.polaris.engine.App;
 
 /**
  * @author lec50

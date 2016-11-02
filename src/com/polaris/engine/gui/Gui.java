@@ -29,7 +29,7 @@ public abstract class Gui
 		gl2d();
 	}
 
-	protected void reinit() {}
+	public void reinit() {}
 	public void reload() {}
 
 	public void close() {}

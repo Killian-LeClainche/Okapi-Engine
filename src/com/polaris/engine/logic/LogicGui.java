@@ -3,14 +3,14 @@
  */
 package com.polaris.engine.logic;
 
-import com.polaris.engine.App;
-import com.polaris.engine.LogicApp;
+import com.polaris.engine.gui.Gui;
+import com.polaris.engine.thread.LogicApp;
 
 /**
  * @author Killian Le Clainche
  *
  */
-public class LogicGui
+public abstract class LogicGui
 {
 	
 	protected final LogicApp logic;
@@ -30,6 +30,8 @@ public class LogicGui
 		ticksExisted = 0;
 		parent = p;
 	}
+	
+	public abstract Gui getGui();
 	
 	public void init() {}
 	
