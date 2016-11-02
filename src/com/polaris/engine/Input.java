@@ -18,6 +18,8 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 
+import com.polaris.engine.options.Key;
+
 /**
  * @author Killian Le Clainche
  *

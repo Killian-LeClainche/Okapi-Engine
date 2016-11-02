@@ -56,6 +56,7 @@ public class LogicApp extends Thread
 			while(polledPackets.hasNext())
 			{
 				packet = polledPackets.next();
+				polledPackets.remove();
 				packet.handle();
 			}
 			

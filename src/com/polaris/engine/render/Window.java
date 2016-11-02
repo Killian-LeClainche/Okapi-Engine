@@ -82,36 +82,6 @@ public class Window
 	public static final int scaleWidth = 1920;
 	public static final int scaleHeight = 1080;
 
-	private static final List<Integer> modKeys = Arrays.asList(GLFW.GLFW_KEY_LEFT_SHIFT, GLFW.GLFW_KEY_RIGHT_SHIFT, GLFW.GLFW_KEY_LEFT_CONTROL, GLFW.GLFW_KEY_RIGHT_CONTROL, GLFW.GLFW_KEY_LEFT_ALT, GLFW.GLFW_KEY_RIGHT_ALT,
-			GLFW.GLFW_KEY_LEFT_SUPER, GLFW.GLFW_KEY_RIGHT_SUPER);
-	private static final Map<Integer, Integer> shiftKeys = new HashMap<Integer, Integer>();
-	private static int currentModKeys = 0;
-	
-	static
-	{
-		shiftKeys.put((int)'0', (int)')');
-		shiftKeys.put((int)'1', (int)'!');
-		shiftKeys.put((int)'2', (int)'@');
-		shiftKeys.put((int)'3', (int)'#');
-		shiftKeys.put((int)'4', (int)'$');
-		shiftKeys.put((int)'5', (int)'%');
-		shiftKeys.put((int)'6', (int)'^');
-		shiftKeys.put((int)'7', (int)'&');
-		shiftKeys.put((int)'8', (int)'*');
-		shiftKeys.put((int)'9', (int)'(');
-		shiftKeys.put((int)'`', (int)'~');
-		shiftKeys.put((int)'-', (int)'_');
-		shiftKeys.put((int)'=', (int)'+');
-		shiftKeys.put((int)'[', (int)'{');
-		shiftKeys.put((int)']', (int)'}');
-		shiftKeys.put((int)';', (int)':');
-		shiftKeys.put((int)'\'', (int)'"');
-		shiftKeys.put((int)',', (int)'<');
-		shiftKeys.put((int)'.', (int)'>');
-		shiftKeys.put((int)'/', (int)'?');
-		shiftKeys.put((int)'\\', (int)'|');
-	}
-
 	public static boolean create()
 	{
 		return !glfwInit();
@@ -175,21 +145,6 @@ public class Window
 		glfwSetWindowPosCallback(windowInstance, windowPos);
 		glfwSetWindowRefreshCallback(windowInstance, windowRefresh);
 		glfwSetWindowSizeCallback(windowInstance, windowSize);
-	}
-
-	public static boolean shouldClose()
-	{
-		return !glfwWindowShouldClose(windowInstance) && isRunning;
-	}
-
-	public static void pollEvents()
-	{
-		glfwPollEvents();
-	}
-
-	public static void swapBuffers()
-	{
-		glfwSwapBuffers(windowInstance);
 	}
 
 	/**

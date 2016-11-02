@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.polaris.engine;
+package com.polaris.engine.options;
 
 /**
  * @author lec50

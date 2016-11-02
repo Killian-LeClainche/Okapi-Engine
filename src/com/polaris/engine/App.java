@@ -1,12 +1,9 @@
 package com.polaris.engine;
 
-import static com.polaris.engine.options.Settings.getNextWindow;
 import static com.polaris.engine.render.OpenGL.glClearBuffers;
 import static com.polaris.engine.render.Texture.getTextureData;
 import static com.polaris.engine.render.Texture.loadTextureData;
 import static com.polaris.engine.render.Window.destroy;
-import static com.polaris.engine.render.Window.getCurrentWindow;
-import static com.polaris.engine.render.Window.setupWindow;
 import static com.polaris.engine.render.Window.updateSize;
 import static org.lwjgl.glfw.GLFW.GLFW_BLUE_BITS;
 import static org.lwjgl.glfw.GLFW.GLFW_GREEN_BITS;
@@ -14,12 +11,12 @@ import static org.lwjgl.glfw.GLFW.GLFW_RED_BITS;
 import static org.lwjgl.glfw.GLFW.GLFW_REFRESH_RATE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
-import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetTime;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
@@ -28,6 +25,7 @@ import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -36,9 +34,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.system.Configuration;
 
 import com.polaris.engine.gui.Gui;
 import com.polaris.engine.logic.LogicGui;
+import com.polaris.engine.options.Monitor;
 import com.polaris.engine.options.Settings;
 import com.polaris.engine.render.OpenGL;
 import com.polaris.engine.sound.OpenAL;
@@ -84,8 +84,11 @@ public abstract class App
 
 	private GLCapabilities glCapabilities;
 
-	public App()
+	public App(boolean debug)
 	{
+		Configuration.DISABLE_CHECKS.set(!debug);
+		Configuration.DEBUG.set(debug);
+		Configuration.GLFW_CHECK_THREAD0.set(!debug);
 		soundSystem = new OpenAL(this);
 		input = new Input(this);
 		gameSettings = loadSettings();
@@ -107,6 +110,20 @@ public abstract class App
 			log.error("Failed to initialize application!");
 			log.debug("create() method caused crash.");
 			return;
+		}
+		
+		Settings.staticInit();
+		
+		while(!Settings.hasMonitors())
+		{
+			try
+			{
+				Thread.sleep(10);
+			}
+			catch (InterruptedException e)
+			{
+				log.error("CRASH?");
+			}
 		}
 		
 		if(!create())
@@ -134,19 +151,33 @@ public abstract class App
 		init();
 		soundSystem.init();
 		
+		gameSettings.init();
+		
 		logicThread.setLogicHandler(getStartGui());
 		logicThread.run();
 		
 		OpenGL.glDefaults();
 		
-		glfwSetTime(0);
+		double delta;
+		Iterator<AppPacket> polledPackets;
+		AppPacket packet;
 		while(!glfwWindowShouldClose(windowInstance) && isRunning)
 		{
-			double delta = glfwGetTime();
+			glfwMakeContextCurrent(windowInstance);
+			
+			delta = glfwGetTime();
 			glfwSetTime(0);
 
-			if(checkUpdateWindow())
+			if(updateWindow())
 				break;
+			
+			polledPackets = incomingPackets.iterator();
+			while(polledPackets.hasNext())
+			{
+				packet = polledPackets.next();
+				polledPackets.remove();
+				packet.handle();
+			}
 			
 			input.update();
 			
@@ -160,7 +191,7 @@ public abstract class App
 	
 	protected Settings loadSettings()
 	{
-		return new Settings();
+		return new Settings(this);
 	}
 	
 	/**
@@ -170,37 +201,48 @@ public abstract class App
 	public boolean create()
 	{
 		long instance;
-		if(getNextWindow() == 0)
+		
+		String gameTitle = gameSettings.getTitle();
+		
+		Monitor monitor = gameSettings.getMonitor();
+		long monitorInstance = monitor.getInstance();
+		GLFWVidMode videoMode = monitor.getVideoMode();
+		
+		switch(gameSettings.getWindowMode())
 		{
-			instance = createWindow();
+			case WINDOWED:
+				instance = createWindow();
+				break;
+			case FULLSCREEN:
+				glfwWindowHint(GLFW_RED_BITS, videoMode.redBits());
+				glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits());
+				glfwWindowHint(GLFW_BLUE_BITS, videoMode.blueBits());
+				glfwWindowHint(GLFW_REFRESH_RATE, videoMode.refreshRate());
+				instance = glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
+				break;
+			default:
+				instance = glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
 		}
-		else if(getNextWindow() == 1)
-		{
-			GLFWVidMode mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-			glfwWindowHint(GLFW_RED_BITS, mode.redBits());
-			glfwWindowHint(GLFW_GREEN_BITS, mode.greenBits());
-			glfwWindowHint(GLFW_BLUE_BITS, mode.blueBits());
-			glfwWindowHint(GLFW_REFRESH_RATE, mode.refreshRate());
-			instance = glfwCreateWindow(mode.width(), mode.height(), "", glfwGetPrimaryMonitor(), windowInstance);
-		}
-		else
-		{
-			instance = glfwCreateWindow(1920, 1280, "", glfwGetPrimaryMonitor(), windowInstance);
-		}
-		currentFullscreen = getNextWindow();
+		
 		if(instance == 0)
 		{
 			glfwTerminate();
 			return false;
 		}
+		
 		if(windowInstance != -1)
 			glfwDestroyWindow(windowInstance);
+		
 		windowInstance = instance;
-		input.init();
+		
 		glfwMakeContextCurrent(windowInstance);
+		
+		input.init();
+		
 		glfwSwapInterval(1);
 		updateSize();
 		glfwShowWindow(windowInstance);
+		
 		return true;
 	}
 	
@@ -209,12 +251,12 @@ public abstract class App
 		return 60;
 	}
 	
-	private boolean checkUpdateWindow()
+	private boolean updateWindow()
 	{
-		if(getNextWindow() != getCurrentWindow())
+		if(gameSettings.shouldWindowUpdate())
 		{
 			Map<String, ByteBuffer> textureData = getTextureData();
-			if(setupWindow(this) == -1)
+			if(!create())
 				return true;
 			loadTextureData(textureData);
 			currentGui.reload();
@@ -253,41 +295,6 @@ public abstract class App
 		//OpenAL.closeAL();
 	}
 
-	/**
-	 * when the window focus changes
-	 * @param focused : if the window focuses
-	 */
-	public void windowFocus(boolean focused) {}
-
-	/**
-	 * when the window iconify changes
-	 * @param iconified : if the window iconifies
-	 */
-	public void windowIconify(boolean iconified) {}
-
-	/**
-	 * when the windows position changes
-	 * @param xPos : new pos x of window
-	 * @param yPos : new pos y of window
-	 */
-	public void windowPos(int xPos, int yPos) {}
-
-	/**
-	 * when the window is refreshed
-	 */
-	public void windowRefresh() {}
-
-	/**
-	 * when the windows size changes
-	 * @param width : new width
-	 * @param height : new height
-	 */
-	public void windowSize(int width, int height) 
-	{
-		if(width + height != 0)
-			updateSize();
-	}
-
 	protected abstract LogicGui getStartGui();
 	
 	/**
@@ -300,14 +307,22 @@ public abstract class App
 	 */
 	public abstract long createWindow();
 	
+	public long createWindow(int width, int height, String title)
+	{
+		return createWindow(width, height, title, 0);
+	}
+	
+	public long createWindow(int width, int height, String title, long parentInstance)
+	{
+		long instance = glfwCreateWindow(width, height, gameSettings.getTitle(), gameSettings.getMonitorInstance(), parentInstance);
+		GLFWVidMode videoMode = glfwGetVideoMode(gameSettings.getMonitorInstance());
+		glfwSetWindowPos(instance, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
+		return instance;
+	}
+	
 	public final long getWindow()
 	{
 		return windowInstance;
-	}
-
-	protected String getResourceLocation()
-	{
-		return "resources";
 	}
 	
 	public final Gui getCurrentScreen()
