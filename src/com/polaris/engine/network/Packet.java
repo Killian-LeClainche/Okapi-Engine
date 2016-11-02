@@ -81,4 +81,12 @@ public abstract class Packet
 		return packetHeader;
 	}
 
+	/**
+	 * @return
+	 */
+	public long getCreationTime()
+	{
+		return 0;
+	}
+
 }

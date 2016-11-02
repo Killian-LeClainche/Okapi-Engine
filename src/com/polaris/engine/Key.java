@@ -16,9 +16,10 @@ public class Key
 	private int keyCode;
 	
 	private boolean isPressed;
-	private boolean wasQuickReleased;
+	private boolean releaseFlag;
+	private boolean wasQuickPressed;
 	
-	private long timer;
+	private long pressTimer;
 	private boolean isDoublePressed;
 	
 	public Key(String name, int code)
@@ -26,8 +27,9 @@ public class Key
 		keyName = name;
 		keyCode = code;
 		isPressed = false;
-		wasQuickReleased = false;
-		timer = 0;
+		releaseFlag = false;
+		wasQuickPressed = false;
+		pressTimer = 0;
 		isDoublePressed = false;
 	}
 	
@@ -39,26 +41,30 @@ public class Key
 	public final void press()
 	{
 		isPressed = true;
-		wasQuickReleased = false;
+		wasQuickPressed = false;
+		releaseFlag = false;
 		
 		long time = System.nanoTime();
 		
-		if(time - timer < KEY_DOUBLE_PRESS)
+		if(time - pressTimer < KEY_DOUBLE_PRESS)
 			isDoublePressed = true;
 		
-		timer = time;
+		pressTimer = time;
 	}
 	
 	public final void release()
 	{
 		isPressed = false;
 		isDoublePressed = false;
+		
+		if(System.nanoTime() - pressTimer < KEY_DOUBLE_PRESS / (3 / 2))
+			releaseFlag = true;
 	}
 	
 	public final void update()
 	{
-		if(!isPressed && getPressedTime() >= KEY_DOUBLE_PRESS)
-			wasQuickReleased = true;
+		if(releaseFlag && getPressedTime() >= KEY_DOUBLE_PRESS)
+			wasQuickPressed = true;
 	}
 	
 	public final String getName()
@@ -76,14 +82,14 @@ public class Key
 		return isPressed;
 	}
 	
-	public final boolean wasQuickReleased()
+	public final boolean wasQuickPressed()
 	{
-		return wasQuickReleased;
+		return wasQuickPressed;
 	}
 	
 	public final long getPressedTime()
 	{
-		return System.nanoTime() - timer;
+		return System.nanoTime() - pressTimer;
 	}
 	
 	public final boolean isDoublePressed()

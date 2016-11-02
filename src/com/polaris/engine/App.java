@@ -6,21 +6,32 @@ import static com.polaris.engine.render.Texture.getTextureData;
 import static com.polaris.engine.render.Texture.loadTextureData;
 import static com.polaris.engine.render.Window.addModKey;
 import static com.polaris.engine.render.Window.close;
-import static com.polaris.engine.render.Window.create;
 import static com.polaris.engine.render.Window.destroy;
 import static com.polaris.engine.render.Window.getCurrentWindow;
 import static com.polaris.engine.render.Window.getKey;
 import static com.polaris.engine.render.Window.getModKeys;
-import static com.polaris.engine.render.Window.getTimeAndReset;
 import static com.polaris.engine.render.Window.notModKey;
-import static com.polaris.engine.render.Window.pollEvents;
 import static com.polaris.engine.render.Window.removeModKey;
-import static com.polaris.engine.render.Window.setTime;
 import static com.polaris.engine.render.Window.setupWindow;
 import static com.polaris.engine.render.Window.shouldClose;
-import static com.polaris.engine.render.Window.swapBuffers;
 import static com.polaris.engine.render.Window.updateSize;
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_BLUE_BITS;
+import static org.lwjgl.glfw.GLFW.GLFW_GREEN_BITS;
+import static org.lwjgl.glfw.GLFW.GLFW_RED_BITS;
+import static org.lwjgl.glfw.GLFW.GLFW_REFRESH_RATE;
+import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwSetTime;
+import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -28,6 +39,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joml.Vector2d;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GLCapabilities;
 
@@ -46,6 +58,10 @@ public abstract class App
 	 */
 	private long windowInstance;
 	
+	private final ThreadCommunicator logicCommunicator;
+	
+	private final LogicApp logicThread;
+	
 	/**
 	 * Instance of application's sound system.
 	 */
@@ -54,12 +70,7 @@ public abstract class App
 	/**
 	 * Instance of application's mouse.
 	 */
-	private final Mouse mouse;
-	
-	/**
-	 * Instance of application's keyboard.
-	 */
-	private final Keyboard keyboard;
+	private final Input input;
 	
 	/**
 	 * The settings of the game, allows for inheritance.
@@ -75,9 +86,14 @@ public abstract class App
 
 	public App()
 	{
-		mouse = new Mouse(this);
-		keyboard = new Keyboard(this); 
+		input = new Input(this);
 		soundSystem = new OpenAL(this);
+		
+		logicCommunicator = new ThreadCommunicator();
+		logicCommunicator.addSide("render");
+		logicCommunicator.addSide("logic");
+		
+		logicThread = new LogicApp(logicCommunicator, getMaxUPS());
 	}
 	
 	/**
@@ -115,7 +131,7 @@ public abstract class App
 			}
 			return;
 		}
-
+		
 		init();
 		soundSystem.init();
 		
@@ -130,14 +146,11 @@ public abstract class App
 			if(checkUpdateWindow())
 				break;
 			
-			glfwPollEvents();
-			
-			handleKeyInput(delta);
+			input.update();
 			
 			glClearBuffers();
 			update(delta);
 			render(delta);
-			mouse.setDelta(0, 0);
 			glfwSwapBuffers(windowInstance);
 		}
 
@@ -182,12 +195,17 @@ public abstract class App
 		if(windowInstance != -1)
 			glfwDestroyWindow(windowInstance);
 		windowInstance = instance;
-		setWindowEvents();
+		input.init();
 		glfwMakeContextCurrent(windowInstance);
 		glfwSwapInterval(1);
 		updateSize();
 		glfwShowWindow(windowInstance);
 		return true;
+	}
+	
+	public int getMaxUPS()
+	{
+		return 60;
 	}
 	
 	private boolean checkUpdateWindow()
@@ -201,35 +219,6 @@ public abstract class App
 			currentGui.reload();
 		}
 		return false;
-	}
-	
-	private void handleKeyInput(double delta)
-	{
-		for(Integer key : keyboardPress.keySet().toArray(new Integer[keyboardPress.size()]))
-		{
-			Vector2d vector = keyboardPress.get(key);
-			
-			if(getKey(key) == 1)
-			{
-				if((vector.x -= delta) <= .015)
-				{
-					vector.x = currentGui.keyHeld(key, (int)vector.y, getModKeys()) / 60d;
-					vector.y++;
-					if(vector.x <= 0)
-					{
-						if(notModKey(key))
-							keyboardPress.remove(key);
-					}
-				}
-			}
-			else
-			{
-				if(!notModKey(key))
-					removeModKey(key);
-				currentGui.keyRelease(key, getModKeys());
-				keyboardPress.remove(key);
-			}
-		}
 	}
 
 	/**
@@ -253,96 +242,6 @@ public abstract class App
 	protected boolean checkOpenGL()
 	{
 		return glCapabilities.OpenGL11;
-	}
-
-	/**
-	 * when the mouse leaves the window, or enters
-	 * @param entered : true if mouse enters window
-	 */
-	public void cursorMoveBounds(boolean entered) {}
-
-	/**
-	 * when the mouse moves in the window
-	 * @param mouseX : new mouse x
-	 * @param mouseY : new mouse y
-	 */
-	public void cursorMove(double mX, double mY) 
-	{
-		mouseDeltaX = (mX - mouseX) * Window.scaleWidth / Window.getWindowWidth();
-		mouseDeltaY = (mY - mouseY) * Window.scaleHeight / Window.getWindowHeight();
-		mouseX = mX * Window.scaleWidth / Window.getWindowWidth();
-		mouseY = mY* Window.scaleHeight / Window.getWindowHeight();
-	}
-
-	/**
-	 * when the mouse clicks
-	 * <br><b>DON'T CALL super.cursorClick(button, action) UNLESS YOU IMPLEMENT GUI CLASS STRUCTURE</b>
-	 * @param button : the mouse button
-	 * @param action : type of click, GLFW_PRESS, GLFW_RELEASE, GLFW_REPEAT
-	 */
-	public void cursorClick(int button, int action) 
-	{
-		switch(action)
-		{
-		case 1:
-			currentGui.mouseClick(button);
-			break;
-		case 2:
-			currentGui.mouseHeld(button);
-			break;
-		case 0:
-			currentGui.mouseRelease(button);
-		}
-	}
-
-	/**
-	 * when the mouse wheel scrolls
-	 * <br><b>DON'T CALL super.cursorScroll(xOffset, yOffset) UNLESS YOU IMPLEMENT GUI CLASS STRUCTURE</b>
-	 * @param xOffset : mouse wheel offset x
-	 * @param yOffset : mouse wheel offset y
-	 */
-	public void cursorScroll(double xOffset, double yOffset) 
-	{
-		currentGui.mouseScroll(xOffset, yOffset);
-	}
-
-	/**
-	 * when the keyboard clicks
-	 * <br><b>DON'T CALL super.keyboardClick(key, action) UNLESS YOU IMPLEMENT GUI CLASS STRUCTURE</b>
-	 * @param key : the key id
-	 * @param action : type of click, GLFW_PRESS, GLFW_RELEASE, GLFW_REPEAT
-	 * @param mods 
-	 */
-	public void keyboardClick(int key, int action, int mods) 
-	{
-		switch(action)
-		{
-		case 1:
-			double timer = currentGui.keyPressed(key, mods) / 60d;
-			if(notModKey(key))
-			{
-				if(timer > 0)
-				{
-					keyboardPress.put(key, new Vector2d(timer, 0));
-				}
-			}
-			else
-			{
-				addModKey(key);
-				keyboardPress.put(key, new Vector2d(Math.max(0, timer), 0));
-			}
-			break;
-		case 0:
-
-			if(!keyboardPress.containsKey(key))
-			{
-				if(!notModKey(key))
-				{
-					removeModKey(key);
-				}
-				currentGui.keyRelease(key, mods);
-			}
-		}
 	}
 
 	/**
@@ -421,13 +320,18 @@ public abstract class App
 	 * create the window
 	 */
 	public abstract long createWindow();
+	
+	public final long getWindow()
+	{
+		return windowInstance;
+	}
 
 	protected String getResourceLocation()
 	{
 		return "resources";
 	}
 	
-	public Gui getCurrentScreen()
+	public final Gui getCurrentScreen()
 	{
 		return currentGui;
 	}
@@ -435,27 +339,37 @@ public abstract class App
 	/**
 	 * @return mouse position
 	 */
-	public static double getMouseX()
+	public final double getMouseX()
 	{
-		return mouseX;
+		return input.getPos().x;
 	}
 
 	/**
 	 * @return mouse position
 	 */
-	public static double getMouseY()
+	public final double getMouseY()
 	{
-		return mouseY;
+		return input.getPos().y;
 	}
 
-	public static double getMouseDeltaX()
+	public final double getMouseDeltaX()
 	{
-		return mouseDeltaX;
+		return input.getDelta().x;
 	}
 
-	public static double getMouseDeltaY()
+	public final double getMouseDeltaY()
 	{
-		return mouseDeltaY;
+		return input.getDelta().y;
+	}
+	
+	public final double getScrollDeltaX()
+	{
+		return input.getScrollDelta().x;
+	}
+	
+	public final double getScrollDeltaY()
+	{
+		return input.getScrollDelta().y;
 	}
 
 }
