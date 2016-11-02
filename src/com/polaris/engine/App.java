@@ -82,13 +82,12 @@ public abstract class App
 	 */
 	private Gui currentGui;
 
-	private GLCapabilities glCapabilities;
-
 	public App(boolean debug)
 	{
 		Configuration.DISABLE_CHECKS.set(!debug);
 		Configuration.DEBUG.set(debug);
 		Configuration.GLFW_CHECK_THREAD0.set(!debug);
+		
 		soundSystem = new OpenAL(this);
 		input = new Input(this);
 		gameSettings = loadSettings();
@@ -149,6 +148,7 @@ public abstract class App
 		}
 		
 		init();
+		
 		soundSystem.init();
 		
 		gameSettings.init();
