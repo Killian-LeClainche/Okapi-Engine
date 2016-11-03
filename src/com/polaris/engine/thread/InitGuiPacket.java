@@ -4,8 +4,8 @@
 package com.polaris.engine.thread;
 
 import com.polaris.engine.App;
-import com.polaris.engine.gui.Gui;
-import com.polaris.engine.logic.LogicGui;
+import com.polaris.engine.Gui;
+import com.polaris.engine.LogicGui;
 
 /**
  * @author lec50

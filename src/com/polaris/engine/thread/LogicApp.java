@@ -11,7 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.polaris.engine.App;
-import com.polaris.engine.logic.LogicGui;
+import com.polaris.engine.LogicGui;
 
 /**
  * @author Killian Le Clainche

@@ -1,8 +1,6 @@
-package com.polaris.engine.gui;
+package com.polaris.engine;
 
 import static com.polaris.engine.render.Window.gl2d;
-
-import com.polaris.engine.App;
 
 public abstract class Gui
 {

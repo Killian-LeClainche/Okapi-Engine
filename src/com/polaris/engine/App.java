@@ -36,8 +36,6 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.system.Configuration;
 
-import com.polaris.engine.gui.Gui;
-import com.polaris.engine.logic.LogicGui;
 import com.polaris.engine.options.Monitor;
 import com.polaris.engine.options.Settings;
 import com.polaris.engine.render.OpenGL;
@@ -307,15 +305,16 @@ public abstract class App
 	 */
 	public abstract long createWindow();
 	
-	public long createWindow(int width, int height, String title)
+	public long createWindow(int width, int height)
 	{
-		return createWindow(width, height, title, 0);
+		return createWindow(width, height, gameSettings.getTitle(), 0);
 	}
 	
 	public long createWindow(int width, int height, String title, long parentInstance)
 	{
-		long instance = glfwCreateWindow(width, height, gameSettings.getTitle(), gameSettings.getMonitorInstance(), parentInstance);
-		GLFWVidMode videoMode = glfwGetVideoMode(gameSettings.getMonitorInstance());
+		long monitor = gameSettings.getMonitorInstance();
+		long instance = glfwCreateWindow(width, height, title, monitor, parentInstance);
+		GLFWVidMode videoMode = glfwGetVideoMode(monitor);
 		glfwSetWindowPos(instance, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
 		return instance;
 	}

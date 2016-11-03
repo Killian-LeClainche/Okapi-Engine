@@ -1,9 +1,8 @@
 /**
  * 
  */
-package com.polaris.engine.logic;
+package com.polaris.engine;
 
-import com.polaris.engine.gui.Gui;
 import com.polaris.engine.thread.LogicApp;
 
 /**
