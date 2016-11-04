@@ -3,10 +3,19 @@
  */
 package com.polaris.engine.util;
 
+import static com.polaris.engine.util.VertexAttribute.COLOR;
+import static com.polaris.engine.util.VertexAttribute.POSITION;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
+
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
-import static org.lwjgl.opengl.GL15.*;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
 /**
  * @author Killian Le Clainche
@@ -15,73 +24,91 @@ import static org.lwjgl.opengl.GL15.*;
 public class VBO
 {
 	
-	public static VBO createStaticVBO(FloatBuffer vertexBuffer, FloatBuffer colorBuffer)
+	public static final VertexAttribute[] POS = {POSITION}; 
+	public static final VertexAttribute[] POS_COLOR = {POSITION, COLOR};
+	
+	public static VBO createStaticVBO(FloatBuffer vboBuffer, VertexAttribute[] attributes, int[] offsets)
 	{
-		int[] vboId = new int[2];
-		FloatBuffer[] vboData = {vertexBuffer, colorBuffer};
+		int[] vboId = new int[1];
 		
 		glGenBuffers(vboId);
 		
 		glBindBuffer(GL_ARRAY_BUFFER, vboId[0]);
-		glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vboBuffer, GL_STATIC_DRAW);
 		
-		return new VBO(vboId, vboData, GL_STATIC_DRAW);
+		return new VBO(vboId[0], vboBuffer, attributes, offsets);
 	}
 	
-	/*public static VBO createStaticVBO(int verticeSize, int colorSize)
+	public static VBO createStaticVBO(FloatBuffer vertexBuffer, FloatBuffer colorBuffer)
 	{
-		int[] vboId = new int[2];
-		FloatBuffer[] vboData = new FloatBuffer[2];
+		int vertexSize = vertexBuffer.capacity();
+		int colorSize = colorBuffer.capacity();
+		FloatBuffer vboBuffer = BufferUtils.createFloatBuffer(vertexSize + colorSize);
 		
-		GL15.glGenBuffers(vboId);
+		vboBuffer.put(vertexBuffer);
+		vboBuffer.put(colorBuffer);
 		
-		vboData[0] = BufferUtils.createFloatBuffer(verticeSize);
-		vboData[1] = BufferUtils.createFloatBuffer(colorSize);
-		
-		return new VBO(vboId, vboData, GL_STATIC_DRAW);
-	}*/
+		return createStaticVBO(vboBuffer, POS_COLOR, new int[] {0, vertexSize});
+	}
 	
-	private final int[] vboId;
-	private final int[] states;
-	private final FloatBuffer[] vboData;
-	private final int drawType;
+	private final int vboId;
+	private final FloatBuffer vboBuffer;
+	private final VertexAttribute[] vboAttribs;
+	private final int[] vboAttribOffsets;
 	
-	private VBO(int[] vbo, FloatBuffer[] data, int draw)
+	private VBO(int id, FloatBuffer buffer, VertexAttribute[] attributes, int[] attributeOffsets)
 	{
-		vboId = vbo;
-		states = null;
-		vboData = data;
-		drawType = draw;
+		vboId = id;
+		vboBuffer = buffer;
+		vboAttribs = attributes;
+		vboAttribOffsets = attributeOffsets;
+	}
+	
+	public void bind()
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, vboId);
+	}
+	
+	public void enable()
+	{
+		for(VertexAttribute attrib : vboAttribs)
+		{
+			GL20.glEnableVertexAttribArray(attrib.getAttribId());
+		}
 	}
 	
 	public void draw()
 	{
-		
+		for(int i = 0; i < vboAttribs.length; i++)
+		{
+			VertexAttribute attrib = vboAttribs[i];
+			
+			GL20.glVertexAttribPointer(attrib.getAttribId(), attrib.getVertexSize(), GL11.GL_FLOAT, false, attrib.getVertexStride(), vboAttribOffsets[i]);
+		}
 	}
 	
-	public int getVertexBufferId()
+	public void drawEnable()
 	{
-		return vboId[0];
+		for(int i = 0; i < vboAttribs.length; i++)
+		{
+			VertexAttribute attrib = vboAttribs[i];
+			
+			GL20.glEnableVertexAttribArray(attrib.getAttribId());
+			GL20.glVertexAttribPointer(attrib.getAttribId(), attrib.getVertexSize(), GL11.GL_FLOAT, false, attrib.getVertexStride(), vboAttribOffsets[i]);
+		}
 	}
 	
-	public int getColorBufferId()
+	public void disable()
 	{
-		return vboId[1];
+		for(VertexAttribute attrib : vboAttribs)
+		{
+			GL20.glDisableVertexAttribArray(attrib.getAttribId());
+		}
 	}
 	
-	public FloatBuffer getVertexBuffer()
+	public void destroy()
 	{
-		return vboData[0];
-	}
-	
-	public FloatBuffer getColorBuffer()
-	{
-		return vboData[1];
-	}
-	
-	public int getDrawType()
-	{
-		return drawType;
+		glDeleteBuffers(vboId);
 	}
 	
 }
