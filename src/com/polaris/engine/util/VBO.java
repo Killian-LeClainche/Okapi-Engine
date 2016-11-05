@@ -161,30 +161,41 @@ public class VBO
 	
 	public void enable()
 	{
-		for(VertexAttribute attrib : vboAttribs)
+		int i = 0;
+		
+		while(i < vboAttribs.length)
 		{
-			glEnableVertexAttribArray(attrib.getId());
+			glEnableVertexAttribArray(vboAttribs[i].getId());
+			i++;
 		}
 	}
 	
 	public void setupDraw()
 	{
-		for(int i = 0; i < vboAttribs.length; i++)
+		int i = 0;
+		VertexAttribute attrib;
+		
+		while(i < vboAttribs.length)
 		{
-			VertexAttribute attrib = vboAttribs[i];
+			attrib = vboAttribs[i];
 			
 			glVertexAttribPointer(attrib.getId(), attrib.getSize(), GL_FLOAT, false, vboStrideLength, vboAttribOffsets[i]);
+			i++;
 		}
 	}
 	
 	public void setupDrawEnable()
 	{
-		for(int i = 0; i < vboAttribs.length; i++)
+		int i = 0;
+		VertexAttribute attrib;
+		
+		while(i < vboAttribs.length)
 		{
-			VertexAttribute attrib = vboAttribs[i];
+			attrib = vboAttribs[i];
 			
 			glEnableVertexAttribArray(attrib.getId());
 			glVertexAttribPointer(attrib.getId(), attrib.getSize(), GL_FLOAT, false, vboStrideLength, vboAttribOffsets[i]);
+			i++;
 		}
 	}
 	
@@ -195,9 +206,12 @@ public class VBO
 	
 	public void disable()
 	{
-		for(VertexAttribute attrib : vboAttribs)
+		int i = 0;
+		
+		while(i < vboAttribs.length)
 		{
-			glDisableVertexAttribArray(attrib.getId());
+			glDisableVertexAttribArray(vboAttribs[i].getId());
+			i++;
 		}
 	}
 	
