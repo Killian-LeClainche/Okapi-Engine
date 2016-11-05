@@ -17,7 +17,7 @@ import java.nio.IntBuffer;
  * @author Killian Le Clainche
  *
  */
-public class IBO
+public class IBO implements IRenderObject
 {
 	private static int iboIdWrapper = 0;
 	
@@ -42,6 +42,12 @@ public class IBO
 		vbo = vertices;
 	}
 	
+	public void bind()
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
+		vbo.bind();
+	}
+	
 	public void enable()
 	{
 		vbo.enable();
@@ -60,12 +66,6 @@ public class IBO
 	public void draw()
 	{
 		glDrawElements(vbo.getDrawMode(), vbo.getVerticeCount(), GL_FLOAT, 0);
-	}
-	
-	public void drawDisable()
-	{
-		draw();
-		vbo.disable();
 	}
 	
 	public void disable()

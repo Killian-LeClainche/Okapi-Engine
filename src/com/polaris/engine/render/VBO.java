@@ -27,7 +27,7 @@ import org.lwjgl.BufferUtils;
  * @author Killian Le Clainche
  *
  */
-public class VBO
+public class VBO implements IRenderObject
 {
 	
 	private static int vboIdWrapper = 0;
@@ -100,6 +100,8 @@ public class VBO
 		
 		glBindBuffer(GL_ARRAY_BUFFER, vboIdWrapper);
 		glBufferData(GL_ARRAY_BUFFER, vboBuffer, glDraw);
+		
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		
 		return new VBO(vboIdWrapper, vboBuffer, attributes, strideLength, offsets, drawStyle, verticeSize);
 	}

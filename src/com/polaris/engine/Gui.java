@@ -1,7 +1,5 @@
 package com.polaris.engine;
 
-import static com.polaris.engine.render.Window.gl2d;
-
 public abstract class Gui
 {
 	
@@ -24,7 +22,7 @@ public abstract class Gui
 
 	public void render(double delta)
 	{
-		gl2d();
+		application.gl2d();
 	}
 
 	public void reinit() {}

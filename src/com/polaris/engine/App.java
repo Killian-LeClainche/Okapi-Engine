@@ -3,18 +3,18 @@ package com.polaris.engine;
 import static com.polaris.engine.render.OpenGL.glClearBuffers;
 import static com.polaris.engine.render.Texture.getTextureData;
 import static com.polaris.engine.render.Texture.loadTextureData;
-import static com.polaris.engine.render.Window.destroy;
-import static com.polaris.engine.render.Window.updateSize;
 import static org.lwjgl.glfw.GLFW.GLFW_BLUE_BITS;
 import static org.lwjgl.glfw.GLFW.GLFW_GREEN_BITS;
 import static org.lwjgl.glfw.GLFW.GLFW_RED_BITS;
 import static org.lwjgl.glfw.GLFW.GLFW_REFRESH_RATE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetTime;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
@@ -23,8 +23,16 @@ import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.glFrustum;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -32,8 +40,10 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.system.Configuration;
 
 import com.polaris.engine.options.Monitor;
@@ -48,6 +58,9 @@ public abstract class App
 {
 	
 	public static final Log log = LogFactory.getLog(App.class);
+	
+	public static int scaleToWidth = 1920;
+	public static int scaleToHeight = 1080;
 	
 	/**
 	 * long instance of the window this application takes on.
@@ -72,6 +85,9 @@ public abstract class App
 	 * The settings of the game, allows for inheritance.
 	 */
 	private Settings gameSettings;
+	
+	private int windowWidth = 0;
+	private int windowHeight = 0;
 	
 	private boolean isRunning;
 	
@@ -184,7 +200,9 @@ public abstract class App
 			glfwSwapBuffers(windowInstance);
 		}
 
-		destroy();
+		glfwDestroyWindow(windowInstance);
+		GL.destroy();
+		glfwTerminate();
 	}
 	
 	protected Settings loadSettings()
@@ -238,11 +256,35 @@ public abstract class App
 		input.init();
 		
 		glfwSwapInterval(1);
-		updateSize();
+		
+		IntBuffer width = BufferUtils.createIntBuffer(1);
+		IntBuffer height = BufferUtils.createIntBuffer(1);
+		
+		glfwGetFramebufferSize(windowInstance, width, height);
+		
+		windowWidth = width.get();
+		windowHeight = height.get();
+		
 		glfwShowWindow(windowInstance);
 		
 		return true;
 	}
+	
+	/**
+	 * initialize window
+	 */
+	protected void init() 
+	{
+		glfwSetFramebufferSizeCallback(windowInstance, GLFWFramebufferSizeCallback.create((window, width, height) -> {
+			windowWidth = width;
+			windowHeight = height;
+		}));
+	}
+
+	/**
+	 * create the window
+	 */
+	public abstract long createWindow();
 	
 	public int getMaxUPS()
 	{
@@ -295,16 +337,6 @@ public abstract class App
 
 	protected abstract LogicGui getStartGui();
 	
-	/**
-	 * initialize window
-	 */
-	protected void init() {}
-
-	/**
-	 * create the window
-	 */
-	public abstract long createWindow();
-	
 	public long createWindow(int width, int height)
 	{
 		return createWindow(width, height, gameSettings.getTitle(), 0);
@@ -317,6 +349,36 @@ public abstract class App
 		GLFWVidMode videoMode = glfwGetVideoMode(monitor);
 		glfwSetWindowPos(instance, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
 		return instance;
+	}
+	
+	/**
+	 * Call before performing 2d rendering
+	 */
+	public void gl2d()
+	{
+		glViewport(0, 0, windowWidth, windowHeight);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0, scaleToWidth, scaleToHeight, 0, -100, 100);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+	}
+
+	/**
+	 * Call before performing 3d rendering
+	 */
+	public void gl3d(final float fovy, final float zNear, final float zFar)
+	{
+		glViewport(0, 0, windowWidth, windowHeight);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		double ymax = zNear * Math.tan( fovy * Math.PI / 360.0 );
+		double ymin = -ymax;
+		double xmin = ymin * windowWidth / windowHeight;
+		double xmax = ymax * windowWidth / windowHeight;
+		glFrustum( xmin, xmax, ymin, ymax, zNear, zFar );
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 	}
 	
 	public final long getWindow()
