@@ -1,12 +1,12 @@
 /**
  * 
  */
-package com.polaris.engine.util;
+package com.polaris.engine.render;
 
-import static com.polaris.engine.util.VertexAttribute.COLOR;
-import static com.polaris.engine.util.VertexAttribute.NORMAL;
-import static com.polaris.engine.util.VertexAttribute.POSITION;
-import static com.polaris.engine.util.VertexAttribute.TEXTURE;
+import static com.polaris.engine.render.VertexAttribute.COLOR;
+import static com.polaris.engine.render.VertexAttribute.NORMAL;
+import static com.polaris.engine.render.VertexAttribute.POSITION;
+import static com.polaris.engine.render.VertexAttribute.TEXTURE;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
@@ -30,7 +30,7 @@ import org.lwjgl.BufferUtils;
 public class VBO
 {
 	
-	private static final int[] vboIdWrapper = new int[1];
+	private static int vboIdWrapper = 0;
 	
 	public static final VertexAttribute[] POS = {POSITION}; 
 	public static final int POS_STRIDE = POSITION.getStride();
@@ -94,22 +94,17 @@ public class VBO
 		return finalBuffer;
 	}
 	
-	public static VBO createStaticVBO(FloatBuffer vboBuffer, VertexAttribute[] attributes, int strideLength, int[] offsets, int drawStyle, int verticeSize)
-	{		
-		glGenBuffers(vboIdWrapper);
-		
-		glBindBuffer(GL_ARRAY_BUFFER, vboIdWrapper[0]);
-		glBufferData(GL_ARRAY_BUFFER, vboBuffer, GL_STATIC_DRAW);
-		
-		return new VBO(vboIdWrapper[0], vboBuffer, attributes, strideLength, offsets, drawStyle, verticeSize);
-	}
-	
-	public static VBO createStaticVBO(FloatBuffer vboBuffer, VertexAttribute[] attributes, int strideLength, int[] offsets, int drawStyle)
+	private static VBO createVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, int[] offsets, int verticeSize, int glDraw, FloatBuffer vboBuffer)
 	{
-		return createStaticVBO(vboBuffer, attributes, strideLength, offsets, drawStyle, (vboBuffer.capacity() * 4) / strideLength);
+		vboIdWrapper = glGenBuffers();
+		
+		glBindBuffer(GL_ARRAY_BUFFER, vboIdWrapper);
+		glBufferData(GL_ARRAY_BUFFER, vboBuffer, glDraw);
+		
+		return new VBO(vboIdWrapper, vboBuffer, attributes, strideLength, offsets, drawStyle, verticeSize);
 	}
 	
-	public static VBO createStaticVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, FloatBuffer ... buffers)
+	private static VBO createVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, FloatBuffer ... buffers)
 	{
 		int[] strides = new int[attributes.length];
 		int i = 0;
@@ -130,7 +125,22 @@ public class VBO
 			i--;
 		}
 		
-		return createStaticVBO(vboBuffer, attributes, strideLength, strides, drawStyle, (vboBuffer.capacity() * 4) / POS_COLOR_STRIDE);
+		return createVBO(drawStyle, attributes, strideLength, strides, (vboBuffer.capacity() * 4) / POS_COLOR_STRIDE, GL_STATIC_DRAW, vboBuffer);
+	}
+	
+	public static VBO createStaticVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, int[] offsets, int verticeSize, FloatBuffer vboBuffer)
+	{		
+		return createVBO(drawStyle, attributes, strideLength, offsets, verticeSize, GL_STATIC_DRAW, vboBuffer);
+	}
+	
+	public static VBO createStaticVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, int[] offsets, FloatBuffer vboBuffer)
+	{
+		return createVBO(drawStyle, attributes, strideLength, offsets, (vboBuffer.capacity() * 4) / strideLength, GL_STATIC_DRAW, vboBuffer);
+	}
+	
+	public static VBO createStaticVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, FloatBuffer ... buffers)
+	{
+		return createVBO(drawStyle, attributes, strideLength, buffers);
 	}
 	
 	private final int vboId;
@@ -220,8 +230,39 @@ public class VBO
 		glDeleteBuffers(vboId);
 	}
 	
+	public int getId()
+	{
+		return vboId;
+	}
+	
 	public FloatBuffer getBuffer()
 	{
 		return vboBuffer;
 	}
+	
+	public VertexAttribute[] getAttributes()
+	{
+		return vboAttribs;
+	}
+	
+	public int getStrideLength()
+	{
+		return vboStrideLength;
+	}
+	
+	public int[] getAttributeOffsets()
+	{
+		return vboAttribOffsets;
+	}
+	
+	public int getDrawMode()
+	{
+		return glDraw;
+	}
+	
+	public int getVerticeCount()
+	{
+		return verticeSize;
+	}
+	
 }
