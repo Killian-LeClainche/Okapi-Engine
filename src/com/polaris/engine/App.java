@@ -32,7 +32,6 @@ import static org.lwjgl.opengl.GL11.glOrtho;
 import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +39,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -255,15 +253,15 @@ public abstract class App
 		
 		input.init();
 		
-		glfwSwapInterval(1);
+		glfwSwapInterval(gameSettings.vsyncMode());
 		
-		IntBuffer width = BufferUtils.createIntBuffer(1);
-		IntBuffer height = BufferUtils.createIntBuffer(1);
+		int[] width = new int[1];
+		int[] height = new int[1];
 		
 		glfwGetFramebufferSize(windowInstance, width, height);
 		
-		windowWidth = width.get();
-		windowHeight = height.get();
+		windowWidth = width[0];
+		windowHeight = height[1];
 		
 		glfwShowWindow(windowInstance);
 		

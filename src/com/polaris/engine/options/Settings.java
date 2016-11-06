@@ -142,4 +142,12 @@ public class Settings
 		return title;
 	}
 
+	/**
+	 * @return
+	 */
+	public int vsyncMode()
+	{
+		return 1;
+	}
+
 }

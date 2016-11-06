@@ -21,21 +21,21 @@ public class IBO implements IRenderObject
 {
 	private static int iboIdWrapper = 0;
 	
-	public static IBO createIBO(VBO vbo, IntBuffer buffer)
+	public static IBO createIBO(VBO vbo, IBOBuffer iboBuffer)
 	{
 		iboIdWrapper = glGenBuffers();
 		
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboIdWrapper);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, vbo.getDrawMode());
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, iboBuffer.getBuffer(), vbo.getDrawMode());
 		
-		return new IBO(iboIdWrapper, buffer, vbo);
+		return new IBO(iboIdWrapper, iboBuffer, vbo);
 	}
 	
 	private final int iboId;
-	private final IntBuffer iboBuffer;
+	private final IBOBuffer iboBuffer;
 	private final VBO vbo;
 	
-	private IBO(int id, IntBuffer buffer, VBO vertices)
+	private IBO(int id, IBOBuffer buffer, VBO vertices)
 	{
 		iboId = id;
 		iboBuffer = buffer;
@@ -84,7 +84,7 @@ public class IBO implements IRenderObject
 		return iboId;
 	}
 	
-	public IntBuffer getBuffer()
+	public IBOBuffer getBuffer()
 	{
 		return iboBuffer;
 	}

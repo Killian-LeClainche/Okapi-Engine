@@ -29,6 +29,12 @@ public class VBOBuffer
 		bufferSize = size;
 	}
 	
+	public VBOBuffer(FloatBuffer buffer)
+	{
+		vboBuffer = buffer;
+		bufferSize = buffer.capacity();
+	}
+
 	public void addVertex(float x, float y, float z)
 	{
 		vboBuffer.put(x);
