@@ -17,7 +17,7 @@ import java.io.IOException;
 
 import org.lwjgl.opengl.GL11;
 
-import com.polaris.engine.gamelogic.ModelBounds;
+import com.polaris.engine.logic.collision.ModelBounds;
 import com.polaris.engine.render.ITexture;
 import com.polaris.engine.render.Texture;
 

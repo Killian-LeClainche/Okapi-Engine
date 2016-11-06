@@ -21,10 +21,12 @@ public class VBOBuffer
 	
 	
 	private FloatBuffer vboBuffer;
+	private int bufferSize;
 	
-	public VBOBuffer(int bufferSize)
+	public VBOBuffer(int size)
 	{
-		vboBuffer = BufferUtils.createFloatBuffer(bufferSize);
+		vboBuffer = BufferUtils.createFloatBuffer(size);
+		bufferSize = size;
 	}
 	
 	public void addVertex(float x, float y, float z)
@@ -286,6 +288,11 @@ public class VBOBuffer
 	public FloatBuffer getBuffer()
 	{
 		return vboBuffer;
+	}
+	
+	public int getBufferSize()
+	{
+		return bufferSize;
 	}
 	
 }

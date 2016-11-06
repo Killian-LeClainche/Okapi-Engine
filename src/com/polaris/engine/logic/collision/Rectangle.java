@@ -1,4 +1,4 @@
-package com.polaris.engine.gamelogic;
+package com.polaris.engine.logic.collision;
 
 import static com.polaris.engine.util.GeometryHelper.distanceFromToX;
 import static com.polaris.engine.util.GeometryHelper.distanceFromToY;

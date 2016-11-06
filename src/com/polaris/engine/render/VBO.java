@@ -60,7 +60,7 @@ public class VBO implements IRenderObject
 		
 		while(i < buffers.length)
 		{
-			bufferSize += buffers[i].getBuffer().capacity();
+			bufferSize += buffers[i].getBufferSize();
 			i++;
 		}
 		
@@ -120,7 +120,7 @@ public class VBO implements IRenderObject
 	
 	public static VBO createStaticVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, int[] offsets, VBOBuffer vboBuffer)
 	{
-		return createVBO(drawStyle, attributes, strideLength, offsets, (vboBuffer.getBuffer().capacity() * 4) / strideLength, GL_STATIC_DRAW, vboBuffer.getBuffer());
+		return createVBO(drawStyle, attributes, strideLength, offsets, (vboBuffer.getBufferSize() * 4) / strideLength, GL_STATIC_DRAW, vboBuffer.getBuffer());
 	}
 	
 	public static VBO createStaticVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, VBOBuffer ... buffers)

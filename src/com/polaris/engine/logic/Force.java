@@ -1,4 +1,4 @@
-package com.polaris.engine.gamelogic;
+package com.polaris.engine.logic;
 
 public class Force 
 {

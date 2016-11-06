@@ -1,10 +1,10 @@
-package com.polaris.engine.gamelogic;
+package com.polaris.engine.logic.collision;
 
-public class Cube extends Shape3D
+public class Ellipse extends Shape2D
 {
 
 	@Override
-	public Axis[] getAxes()
+	public Axis[] getAxes() 
 	{
 		return null;
 	}

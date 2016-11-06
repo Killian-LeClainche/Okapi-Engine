@@ -1,6 +1,6 @@
-package com.polaris.engine.gamelogic;
+package com.polaris.engine.logic.collision;
 
-public class ComplexPolygon extends Shape2D
+public class Ellipsoid extends Shape3D
 {
 
 	@Override
