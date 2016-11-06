@@ -1,4 +1,4 @@
-package com.polaris.engine.render;
+package com.polaris.engine.render.model;
 
 import static com.polaris.engine.render.OpenGL.glBegin;
 import static com.polaris.engine.render.OpenGL.glVertex;
@@ -18,6 +18,8 @@ import java.io.IOException;
 import org.lwjgl.opengl.GL11;
 
 import com.polaris.engine.gamelogic.ModelBounds;
+import com.polaris.engine.render.ITexture;
+import com.polaris.engine.render.Texture;
 
 public abstract class Model implements ITexture
 {

@@ -1,36 +1,28 @@
 package com.polaris.engine.render;
 
+import static com.polaris.engine.render.OpenGL.getAlpha;
+import static com.polaris.engine.render.OpenGL.getBlue;
+import static com.polaris.engine.render.OpenGL.getColor;
+import static com.polaris.engine.render.OpenGL.getGreen;
+import static com.polaris.engine.render.OpenGL.getRed;
+import static com.polaris.engine.render.OpenGL.glColor;
+import static com.polaris.engine.render.OpenGL.glVertex;
+import static com.polaris.engine.render.Texture.getTexture;
 import static com.polaris.engine.util.Helper.TWOPI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLE_FAN;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex3d;
-import static com.polaris.engine.render.OpenGL.*;
-import static com.polaris.engine.render.Texture.*;
+
+import java.nio.FloatBuffer;
+
 import org.lwjgl.opengl.GL11;
 
 import com.polaris.engine.util.Color4d;
 
 public class Draw
 {
-
-	/**
-	 * draws a rectangle, must have glBegin(GL_QUADS) enabled!
-	 * @param x
-	 * @param y
-	 * @param x1
-	 * @param y1
-	 * @param z
-	 * @param thickness
-	 */
-	public static void rect(double x, double y, double x1, double y1, double z, double thickness)
-	{
-		rect(x, y1 - thickness, x1, y1, z);
-		rect(x1 - thickness, y, x1, y1 - thickness, z);
-		rect(x, y, x1 - thickness, y + thickness, z);
-		rect(x, y + thickness, x + thickness, y1 - thickness, z);
-	}
 
 	/**
 	 * draws a rectangle, must have glBegin(GL_QUADS) enabled!
@@ -65,22 +57,6 @@ public class Draw
 		glVertex3d(x + thickness, y + thickness, z);
 		glVertex(x, y, z, outerColor);
 		glVertex3d(x, y1, z);
-	}
-
-	/**
-	 * draws a rectangle, must have glBegin(GL_QUADS) enabled!
-	 * @param x
-	 * @param y
-	 * @param x1
-	 * @param y1
-	 * @param z
-	 */
-	public static void rect(double x, double y, double x1, double y1, double z)
-	{
-		glVertex3d(x, y1, z);
-		glVertex3d(x1, y1, z);
-		glVertex3d(x1, y, z);
-		glVertex3d(x, y, z);
 	}
 
 	/**

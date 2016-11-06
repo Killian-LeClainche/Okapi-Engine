@@ -1,4 +1,4 @@
-package com.polaris.engine.render;
+package com.polaris.engine.render.model;
 
 import java.io.BufferedReader;
 import java.io.File;

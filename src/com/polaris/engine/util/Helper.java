@@ -37,8 +37,8 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.BufferUtils;
 
-import com.polaris.engine.render.Model;
-import com.polaris.engine.render.ObjModel;
+import com.polaris.engine.render.model.Model;
+import com.polaris.engine.render.model.ObjModel;
 
 public class Helper 
 {
@@ -51,13 +51,13 @@ public class Helper
 	/**
 	 * Pi * 2
 	 */
-	public static final double TWOPI = Math.PI * 2;
+	public static final float TWOPI = (float) (Math.PI * 2);
 	/**
 	 * PI / 2
 	 */
-	public static final double HALFPI = Math.PI / 2;
+	public static final float HALFPI = (float) (Math.PI / 2);
 	
-	public static final double QUARTERPI = Math.PI / 4;
+	public static final float QUARTERPI = (float) (Math.PI / 4);
 	
 	public static final ClassLoader classLoader = Helper.class.getClassLoader();
 	

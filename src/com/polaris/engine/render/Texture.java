@@ -41,6 +41,7 @@ import org.lwjgl.opengl.ARBFramebufferObject;
 import org.lwjgl.opengl.ARBTextureStorage;
 import org.lwjgl.opengl.GL11;
 
+import com.polaris.engine.render.model.Model;
 import com.polaris.engine.util.Helper;
 import com.polaris.engine.util.ResourceHelper;
 

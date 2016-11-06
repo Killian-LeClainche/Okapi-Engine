@@ -1,35 +1,22 @@
 package com.polaris.engine.render;
 
-import static com.polaris.engine.render.Draw.rectUV;
 import static com.polaris.engine.render.OpenGL.glClearBuffers;
 import static com.polaris.engine.render.OpenGL.glColor;
 import static com.polaris.engine.render.OpenGL.glDefaults;
-import static com.polaris.engine.render.Window.getWindowHeight;
-import static com.polaris.engine.render.Window.getWindowWidth;
-import static com.polaris.engine.render.Window.gl2d;
-import static com.polaris.engine.render.Window.scaleHeight;
-import static com.polaris.engine.render.Window.scaleWidth;
 import static org.lwjgl.opengl.EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT;
 import static org.lwjgl.opengl.EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glDrawBuffer;
 import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
@@ -69,10 +56,6 @@ public class FrameBuffer
 	private int frameBufferRenderID = 0;
 	private int currentColorBuffer = 0;
 
-	public static FrameBuffer glGenFramebuffer(String title)
-	{
-		return glGenFramebuffer(title, getWindowWidth(), getWindowHeight(), 1);
-	}
 
 	public static FrameBuffer glGenFramebuffer(String title, int width, int height)
 	{
@@ -83,11 +66,6 @@ public class FrameBuffer
 	{
 		FrameBuffer buffer = new FrameBuffer(width, height, numColorAttachments);
 		return buffer;
-	}
-	
-	private FrameBuffer()
-	{
-		this(scaleWidth, scaleHeight, 1);
 	}
 
 	private FrameBuffer(int width, int height, int numColorAttachments)
@@ -189,40 +167,6 @@ public class FrameBuffer
 	public void reload()
 	{
 		
-	}
-	
-	private void startDrawing()
-	{
-		glClearBuffers();
-		glDefaults();
-		gl2d();
-		glEnable(GL_TEXTURE_2D);
-	}
-
-	public void draw(double x, double y, double x1, double y1, double z)
-	{
-		startDrawing();
-		for(int i = 0; i < frameBufferColorIDs.length; i++)
-		{
-			nDraw(x, y, x1, y1, z, i);
-		}
-	}
-	
-	public void draw(double x, double y, double x1, double y1, double z, int colorBuffer)
-	{
-		startDrawing();
-		nDraw(x, y, x1, y1, z, colorBuffer);
-	}
-	
-	private void nDraw(double x, double y, double x1, double y1, double z, int colorBuffer)
-	{
-		glBindTexture(GL_TEXTURE_2D, frameBufferColorIDs[colorBuffer]);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor(1, 1, 1, 1);
-		glBegin(GL_QUADS);
-		rectUV(x, y, x1, y1, z, 0, 1, 1, 0);
-		glEnd();
 	}
 
 	public int[] getTextureIDs()

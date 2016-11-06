@@ -53,14 +53,14 @@ public class VBO implements IRenderObject
 	public static final VertexAttribute[] POS_COLOR_NORMAL_TEXTURE = {POSITION, COLOR, NORMAL, TEXTURE};
 	public static final int POS_COLOR_NORMAL_TEXTURE_STRIDE = POS_COLOR_NORMAL_STRIDE + TEXTURE.getStride();
 	
-	private static FloatBuffer mixBuffers(FloatBuffer[] buffers, int[] strides)
+	private static FloatBuffer mixBuffers(VBOBuffer[] buffers)
 	{
 		int bufferSize = 0;
-		int i = 0, j = 0, k = 0;
+		int i = 0;
 		
 		while(i < buffers.length)
 		{
-			bufferSize += buffers[i].capacity();
+			bufferSize += buffers[i].getBuffer().capacity();
 			i++;
 		}
 		
@@ -68,26 +68,9 @@ public class VBO implements IRenderObject
 		
 		i = 0;
 		
-		while(i < bufferSize)
-		{
-			while(j < buffers.length)
-			{
-				while(k < strides[j])
-				{
-					finalBuffer.put(buffers[j].get());
-					k++;
-				}
-				k = 0;
-				j++;
-			}
-			j = 0;
-			i++;
-		}
-		
-		i = 0;
 		while(i < buffers.length)
 		{
-			buffers[i].reset();
+			finalBuffer.put(buffers[i].getBuffer());
 			i++;
 		}
 		
@@ -106,7 +89,7 @@ public class VBO implements IRenderObject
 		return new VBO(vboIdWrapper, vboBuffer, attributes, strideLength, offsets, drawStyle, verticeSize);
 	}
 	
-	private static VBO createVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, FloatBuffer ... buffers)
+	private static VBO createVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, VBOBuffer ... buffers)
 	{
 		int[] strides = new int[attributes.length];
 		int i = 0;
@@ -117,7 +100,7 @@ public class VBO implements IRenderObject
 			i++;
 		}
 		
-		FloatBuffer vboBuffer = mixBuffers(buffers, strides);
+		FloatBuffer vboBuffer = mixBuffers(buffers);
 		
 		i = attributes.length - 1;
 		
@@ -130,17 +113,17 @@ public class VBO implements IRenderObject
 		return createVBO(drawStyle, attributes, strideLength, strides, (vboBuffer.capacity() * 4) / POS_COLOR_STRIDE, GL_STATIC_DRAW, vboBuffer);
 	}
 	
-	public static VBO createStaticVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, int[] offsets, int verticeSize, FloatBuffer vboBuffer)
+	public static VBO createStaticVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, int[] offsets, int verticeSize, VBOBuffer vboBuffer)
 	{		
-		return createVBO(drawStyle, attributes, strideLength, offsets, verticeSize, GL_STATIC_DRAW, vboBuffer);
+		return createVBO(drawStyle, attributes, strideLength, offsets, verticeSize, GL_STATIC_DRAW, vboBuffer.getBuffer());
 	}
 	
-	public static VBO createStaticVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, int[] offsets, FloatBuffer vboBuffer)
+	public static VBO createStaticVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, int[] offsets, VBOBuffer vboBuffer)
 	{
-		return createVBO(drawStyle, attributes, strideLength, offsets, (vboBuffer.capacity() * 4) / strideLength, GL_STATIC_DRAW, vboBuffer);
+		return createVBO(drawStyle, attributes, strideLength, offsets, (vboBuffer.getBuffer().capacity() * 4) / strideLength, GL_STATIC_DRAW, vboBuffer.getBuffer());
 	}
 	
-	public static VBO createStaticVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, FloatBuffer ... buffers)
+	public static VBO createStaticVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, VBOBuffer ... buffers)
 	{
 		return createVBO(drawStyle, attributes, strideLength, buffers);
 	}
