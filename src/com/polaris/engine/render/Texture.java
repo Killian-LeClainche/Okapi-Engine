@@ -52,23 +52,6 @@ public class Texture
 	private static Map<String, Model> modelMap = new HashMap<String, Model>();
 	private static ITexture currentTexture = null;
 
-	/**
-	 * Called once by Application.java to create the texture, model, and font handling. NEVER CALL!
-	 * @param location
-	 * @throws IOException
-	 */
-	public static void loadTextures() throws IOException
-	{
-		new File(getTextureDirectory(), "stitched").mkdir();
-		for(File file : getTextureDirectory().listFiles())
-		{
-			if(file.isDirectory() && !ResourceHelper.fileStartsWith(file, "stitched", "models"))
-			{
-				loadTextures(file, !file.getName().startsWith("$"));
-			}
-		}
-	}
-
 	public static Map<String, ByteBuffer> getTextureData()
 	{
 		Map<String, ByteBuffer> textureData = new HashMap<String, ByteBuffer>();
@@ -108,55 +91,6 @@ public class Texture
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width.get(), height.get(), GL_RGBA, GL_UNSIGNED_BYTE, textureData.get(texture));
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		}
-	}
-
-	private static void loadTextures(File stitchDirectory, boolean load) throws IOException
-	{
-		for(File subDirectory : stitchDirectory.listFiles())
-		{
-			if(subDirectory.isDirectory())
-			{
-				loadTextures(subDirectory, !subDirectory.getName().startsWith("$"));
-			}
-		}
-		List<File> stitchTextures = new ArrayList<File>();
-		for(File stitchTexture : stitchDirectory.listFiles())
-		{
-			if(stitchTexture.isFile() && stitchTexture.getName().endsWith(".png"))
-			{
-				stitchTextures.add(stitchTexture);
-			}
-		}
-
-		if(stitchTextures.size() == 0)
-			return;
-
-		ITexture texture = null;
-		String title = stitchDirectory.getPath().replace("$", "").substring(getTextureDirectory().getPath().length() + 1).replace("\\", ":");
-		if(title.startsWith("font:"))
-		{
-			if(load)
-			{
-				texture = new FontMap();
-				textures.put(title, texture);
-				((FontMap) texture).setTextureID(createTextureId(((FontMap) texture).genTextureMap(stitchDirectory), false));
-			}
-		}
-		else
-		{
-			texture = new StitchedMap();
-			BufferedImage savedImage = ((StitchedMap)texture).genTextureMap(stitchTextures, new File(stitchDirectory, "animation.ani"));
-
-			if(load)
-			{
-				texture.setTextureID(createTextureId(savedImage, false));
-				textures.put(title, texture);
-			}
-			new File(getTextureDirectory(), "stitched/" + title + ".png").createNewFile();
-			new File(getTextureDirectory(), "stitched/" + title + ".info").createNewFile();
-			ImageIO.write(savedImage, "PNG", new File(getTextureDirectory(), "stitched/" + title + ".png"));
-			((StitchedMap)texture).genInfo(new File(getTextureDirectory(), "stitched/" + title + ".info"));
 		}
 	}
 
@@ -452,6 +386,16 @@ public class Texture
 		minV = v;
 		maxU = u1;
 		maxV = v1;
+	}
+
+	/**
+	 * @param textureName
+	 * @param width
+	 * @param height
+	 * @param imageData
+	 */
+	public Texture(String textureName, int width, int height, byte[] imageData)
+	{
 	}
 
 	public void reduce(int width, int height)

@@ -1,6 +1,5 @@
 package com.polaris.engine;
 
-import static com.polaris.engine.render.OpenGL.glClearBuffers;
 import static com.polaris.engine.render.Texture.getTextureData;
 import static com.polaris.engine.render.Texture.loadTextureData;
 import static org.lwjgl.glfw.GLFW.GLFW_BLUE_BITS;
@@ -23,12 +22,39 @@ import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.GL_ACCUM_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_ALPHA_TEST;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_DITHER;
+import static org.lwjgl.opengl.GL11.GL_GREATER;
+import static org.lwjgl.opengl.GL11.GL_LEQUAL;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_NICEST;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_PERSPECTIVE_CORRECTION_HINT;
 import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_SMOOTH;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_UNPACK_ALIGNMENT;
+import static org.lwjgl.opengl.GL11.glAlphaFunc;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glClearDepth;
+import static org.lwjgl.opengl.GL11.glClearStencil;
+import static org.lwjgl.opengl.GL11.glDepthFunc;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glFrustum;
+import static org.lwjgl.opengl.GL11.glHint;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.glPixelStorei;
+import static org.lwjgl.opengl.GL11.glShadeModel;
 import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.nio.ByteBuffer;
@@ -46,7 +72,6 @@ import org.lwjgl.system.Configuration;
 
 import com.polaris.engine.options.Monitor;
 import com.polaris.engine.options.Settings;
-import com.polaris.engine.render.OpenGL;
 import com.polaris.engine.sound.OpenAL;
 import com.polaris.engine.thread.AppPacket;
 import com.polaris.engine.thread.LogicApp;
@@ -168,7 +193,20 @@ public abstract class App
 		logicThread.setLogicHandler(getStartGui());
 		logicThread.run();
 		
-		OpenGL.glDefaults();
+		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+		glShadeModel(GL_SMOOTH);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearDepth(1.0f);
+		glClearStencil(0);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, .05f);
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		glDisable(GL_DITHER);
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		
 		double delta;
 		Iterator<AppPacket> polledPackets;
@@ -193,7 +231,7 @@ public abstract class App
 			
 			input.update();
 			
-			glClearBuffers();
+			glClear(GL_ACCUM_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 			currentGui.render(delta);
 			glfwSwapBuffers(windowInstance);
 		}
