@@ -1,6 +1,6 @@
 package com.polaris.engine.render;
 
-import static com.polaris.engine.util.ImageHelper.injectBufferedImage;
+/*import static com.polaris.engine.util.ImageHelper.injectBufferedImage;
 import static com.polaris.engine.util.ImageHelper.resize;
 import static com.polaris.engine.util.MathHelper.log;
 
@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map;*/
 
 public class PackedImage 
 {
 
-	private int defaultWidth = 2;
+	/*private int defaultWidth = 2;
 	private int defaultHeight = 2;
 	private boolean switchGrowth = false;
 
@@ -235,6 +235,6 @@ public class PackedImage
 			this.height = height;
 			this.cells.addAll(Arrays.asList(cells));
 		}
-	}
+	}*/
 
 }

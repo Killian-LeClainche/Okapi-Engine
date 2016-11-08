@@ -1,7 +1,5 @@
 package com.polaris.engine;
 
-import static com.polaris.engine.render.Texture.getTextureData;
-import static com.polaris.engine.render.Texture.loadTextureData;
 import static org.lwjgl.glfw.GLFW.GLFW_BLUE_BITS;
 import static org.lwjgl.glfw.GLFW.GLFW_GREEN_BITS;
 import static org.lwjgl.glfw.GLFW.GLFW_RED_BITS;
@@ -57,9 +55,8 @@ import static org.lwjgl.opengl.GL11.glPixelStorei;
 import static org.lwjgl.opengl.GL11.glShadeModel;
 import static org.lwjgl.opengl.GL11.glViewport;
 
-import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -72,6 +69,8 @@ import org.lwjgl.system.Configuration;
 
 import com.polaris.engine.options.Monitor;
 import com.polaris.engine.options.Settings;
+import com.polaris.engine.render.Texture;
+import com.polaris.engine.render.TextureManager;
 import com.polaris.engine.sound.OpenAL;
 import com.polaris.engine.thread.AppPacket;
 import com.polaris.engine.thread.LogicApp;
@@ -82,8 +81,8 @@ public abstract class App
 	
 	public static final Log log = LogFactory.getLog(App.class);
 	
-	public static int scaleToWidth = 1920;
-	public static int scaleToHeight = 1080;
+	public int scaleToWidth = 1920;
+	public int scaleToHeight = 1080;
 	
 	/**
 	 * long instance of the window this application takes on.
@@ -112,6 +111,8 @@ public abstract class App
 	private int windowWidth = 0;
 	private int windowHeight = 0;
 	
+	private TextureManager textureManager;
+	
 	private boolean isRunning;
 	
 	/**
@@ -134,6 +135,8 @@ public abstract class App
 		incomingPackets = new ConcurrentSkipListSet<AppPacket>(new PacketComparator());
 		
 		logicThread = new LogicApp(this, getMaxUPS());
+		
+		textureManager = new TextureManager();
 	}
 	
 	/**
@@ -331,10 +334,15 @@ public abstract class App
 	{
 		if(gameSettings.shouldWindowUpdate())
 		{
-			Map<String, ByteBuffer> textureData = getTextureData();
+			Collection<Texture> textureData = textureManager.getTextures();
+			
+			textureManager.clear();
+			
 			if(!create())
 				return true;
-			loadTextureData(textureData);
+			
+			textureManager.setTextures(textureData);
+			
 			currentGui.reload();
 		}
 		return false;
