@@ -471,4 +471,9 @@ public abstract class App
 		return input.getScrollDelta().y;
 	}
 
+	public TextureManager getTextureManager()
+	{
+		return textureManager;
+	}
+
 }

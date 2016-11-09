@@ -1,43 +1,37 @@
 package com.polaris.engine.render.model;
 
-import static com.polaris.engine.render.OpenGL.glBegin;
-import static com.polaris.engine.render.OpenGL.glVertex;
-import static com.polaris.engine.render.Texture.glBindTexture;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glRotated;
-import static org.lwjgl.opengl.GL11.glTranslated;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
-import org.lwjgl.opengl.GL11;
-
+import com.polaris.engine.App;
 import com.polaris.engine.logic.collision.ModelBounds;
+import com.polaris.engine.render.IBO;
 import com.polaris.engine.render.ITexture;
 import com.polaris.engine.render.Texture;
+import com.polaris.engine.render.VAO;
 
 public abstract class Model implements ITexture
 {
 	
-	protected short[][] faceArray;
-	protected float[][] vertexArray;
-	protected float[][] textureCoordArray;
-	protected boolean supportsQuads;
-	protected ModelBounds bounds;
-	private int textureId;
+	private App application;
+	private VAO modelVao;
+	private ModelBounds modelBounds;
+	private Texture modelTexture;
 
-	public Model(File modelLocation)
+	public Model(App app, File model)
 	{
+		application = app;
 		try
 		{
-			BufferedReader reader = new BufferedReader(new FileReader(modelLocation));
-			loadPolygons(reader);
-			reader.close();
+			FileInputStream stream = new FileInputStream(model);
+			
+			modelTexture = application.getTextureManager().genTexture("", null);
+			modelVao = generateVAO(stream);
+			modelBounds = new ModelBounds(((IBO) modelVao.getDrawCall()));
+			
+			stream.close();
 		}
 		catch (IOException e)
 		{
@@ -45,57 +39,16 @@ public abstract class Model implements ITexture
 		}
 	}
 	
-	protected abstract void loadPolygons(BufferedReader reader) throws IOException;
+	protected abstract VAO generateVAO(InputStream stream) throws IOException;
 	
-	public void render(double x, double y, double z, double rotationX, double rotationY, double rotationZ)
+	public void bind()
 	{
-		glPushMatrix();
-		glBindTexture(textureId);
-		glTranslated(x, y, z);
-		glRotated(rotationX, 1, 0, 0);
-		glRotated(rotationY, 0, 1, 0);
-		glRotated(rotationZ, 0, 0, 1);
-		if(supportsQuads)
-			glBegin();
-		else
-			glBegin(GL11.GL_TRIANGLES);
-		int i;
-		int j;
-		short[] face;
-		for(i = 0; i < faceArray.length; i++)
-		{
-			face = faceArray[i];
-			for(j = 0; j < face.length; j+=2)
-			{
-				glVertex(vertexArray[face[j]][0], vertexArray[face[j]][1], vertexArray[face[j]][2], textureCoordArray[face[j + 1]][0], textureCoordArray[face[j + 1]][1]);
-			}
-		}
-		glEnd();
-		glPopMatrix();
+		modelTexture.bind();
 	}
 	
-	public int getTextureID()
+	public void draw()
 	{
-		return textureId;
-	}
-	
-	public void setTextureID(int id)
-	{
-		textureId = id;
-	}
-	
-	public Texture getTexture() {return null;}
-	
-	public Texture getTexture(String textureName) {return null;}
-	
-	protected static Float parse(String s)
-	{
-		return Float.parseFloat(s);
-	}
-
-	protected static Short parse1(String s)
-	{
-		return Short.parseShort(s);
+		modelVao.draw();
 	}
 	
 }
