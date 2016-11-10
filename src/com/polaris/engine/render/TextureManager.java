@@ -35,6 +35,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.polaris.engine.App;
+
 
 /**
  * @author lec50
@@ -43,10 +45,12 @@ import java.util.Map;
 public class TextureManager
 {
 	
+	private App application;
 	private Map<String, Texture> textures;
 	
-	public TextureManager()
+	public TextureManager(App app)
 	{
+		application = app;
 		textures = new HashMap<String, Texture>();
 	}
 	
@@ -93,12 +97,11 @@ public class TextureManager
 		genTexture(texture, 1);
 	}
 	
-	public Texture genTexture(String textureName, File file, int numMipmaps)
+	public Texture genTexture(String textureName, File textureFile, int numMipmaps)
 	{
 		FileInputStream fileStream;
 		FileChannel channel;
 		MappedByteBuffer buffer;
-		ByteBuffer imageData;
 		Image image;
 		
 		int textureId;
@@ -106,18 +109,17 @@ public class TextureManager
 		
 		try
 		{
-			fileStream = new FileInputStream(file);
+			fileStream = new FileInputStream(textureFile);
 			channel = fileStream.getChannel();
 			buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
-			imageData = buffer.compact();
 			image = Toolkit.getDefaultToolkit().createImage(buffer.array());
 			
 			textureId = glGenTextures();
-			texture = new Texture(textureName, textureId, image.getWidth(null), image.getHeight(null), imageData);
+			texture = new Texture(textureName, textureId, image.getWidth(null), image.getHeight(null), buffer);
 
-			genTexture(textureId, texture.getWidth(), texture.getHeight(), texture.getImage(), numMipmaps);
+			genTexture(textureId, texture.getWidth(), texture.getHeight(), buffer, numMipmaps);
 			
-			textures.put(texture.getName(), texture);
+			textures.put(textureName, texture);
 			
 			fileStream.close();
 			
@@ -131,9 +133,45 @@ public class TextureManager
 		return null;
 	}
 	
-	public Texture genTexture(String textureName, File file)
+	public Texture genTexture(String textureName, File textureFile)
 	{
-		return genTexture(textureName, file);
+		return genTexture(textureName, textureFile);
+	}
+	
+	public TextureArray genTexture(String textureName, File textureFile, File arrayFile, int numMipmaps)
+	{
+		FileInputStream fileStream;
+		FileChannel channel;
+		MappedByteBuffer buffer;
+		TextureArray texture;
+		
+		try
+		{
+			fileStream = new FileInputStream(arrayFile);
+			channel = fileStream.getChannel();
+			buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+			
+			texture = new TextureArray(genTexture(textureName, textureFile, numMipmaps));
+			
+			textures.put(textureName, texture);
+			
+			texture.loadArray(buffer);
+			
+			fileStream.close();
+			
+			return texture;
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public TextureArray genTexture(String textureName, File textureFile, File arrayFile)
+	{
+		return genTexture(textureName, textureFile, arrayFile, 1);
 	}
 	
 	public void deleteTexture(int textureId)
@@ -174,6 +212,11 @@ public class TextureManager
 	public Texture getTexture(String texture)
 	{
 		return textures.get(texture);
+	}
+	
+	public App getApplication()
+	{
+		return application;
 	}
 	
 }

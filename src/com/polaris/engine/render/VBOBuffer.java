@@ -62,6 +62,16 @@ public class VBOBuffer
 		vboBuffer.put(color.w);
 	}
 	
+	public void addTextureVertex(float x, float y, float z, float u, float v)
+	{
+		vboBuffer.put(x);
+		vboBuffer.put(y);
+		vboBuffer.put(z);
+		
+		vboBuffer.put(u);
+		vboBuffer.put(v);
+	}
+	
 	public void rect(float x, float y, float x1, float y1, float z)
 	{
 		addVertex(x, y1, z);
@@ -76,6 +86,27 @@ public class VBOBuffer
 		addColorVertex(x1, y1, z, color);
 		addColorVertex(x1, y, z, color);
 		addColorVertex(x, y, z, color);
+	}
+	
+	public void rectUV(float x, float y, float x1, float y1, float z)
+	{
+		addTextureVertex(x, y1, z, 0, 1);
+		addTextureVertex(x1, y1, z, 1, 1);
+		addTextureVertex(x1, y, z, 1, 0);
+		addTextureVertex(x, y, z, 0, 0);
+	}
+	
+	public void rectUV(float x, float y, float x1, float y1, float z, TexCoord texture)
+	{
+		float u = texture.getMinU();
+		float v = texture.getMinV();
+		float u1 = texture.getMaxU();
+		float v1 = texture.getMaxV();
+		
+		addTextureVertex(x, y1, z, u, v1);
+		addTextureVertex(x1, y1, z, u1, v1);
+		addTextureVertex(x1, y, z, u1, v);
+		addTextureVertex(x, y, z, u, v);
 	}
 	
 	public void rect(float x, float y, float x1, float y1, float z, Vector4f bottomLeft, Vector4f bottomRight, Vector4f topRight, Vector4f topLeft)

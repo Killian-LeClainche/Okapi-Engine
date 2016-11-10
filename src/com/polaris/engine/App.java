@@ -136,7 +136,7 @@ public abstract class App
 		
 		logicThread = new LogicApp(this, getMaxUPS());
 		
-		textureManager = new TextureManager();
+		textureManager = new TextureManager(this);
 	}
 	
 	/**
