@@ -34,24 +34,35 @@ public class VBO implements IRenderObject
 	
 	public static final VertexAttribute[] POS = {POSITION}; 
 	public static final int POS_STRIDE = POSITION.getStride();
+	public static final int[] POS_OFFSET = {0};
 	
 	public static final VertexAttribute[] POS_COLOR = {POSITION, COLOR};
 	public static final int POS_COLOR_STRIDE = POS_STRIDE + COLOR.getStride();
+	public static final int[] POS_COLOR_OFFSET = {0, POS_STRIDE};
 	
 	public static final VertexAttribute[] POS_NORMAL = {POSITION, NORMAL};
 	public static final int POS_NORMAL_STRIDE = POS_STRIDE + NORMAL.getStride();
+	public static final int[] POS_NORMAL_OFFSET = {0, POS_STRIDE};
+	
+	public static final VertexAttribute[] POS_TEXTURE = {POSITION, TEXTURE};
+	public static final int POS_TEXTURE_STRIDE = POS_STRIDE + TEXTURE.getStride();
+	public static final int[] POS_TEXTURE_OFFSET = {0, POS_STRIDE};
 	
 	public static final VertexAttribute[] POS_COLOR_TEXTURE = {POSITION, COLOR, TEXTURE};
 	public static final int POS_COLOR_TEXTURE_STRIDE = POS_COLOR_STRIDE + TEXTURE.getStride();
+	public static final int[] POS_COLOR_TEXTURE_OFFSET = {0, POS_STRIDE, POS_COLOR_STRIDE};
 	
 	public static final VertexAttribute[] POS_COLOR_NORMAL = {POSITION, COLOR, NORMAL};
 	public static final int POS_COLOR_NORMAL_STRIDE = POS_COLOR_STRIDE + NORMAL.getStride();
+	public static final int[] POS_COLOR_NORMAL_OFFSET = {0, POS_STRIDE, POS_NORMAL_STRIDE};
 	
 	public static final VertexAttribute[] POS_NORMAL_TEXTURE = {POSITION, NORMAL, TEXTURE};
 	public static final int POS_NORMAL_TEXTURE_STRIDE = POS_NORMAL_STRIDE + TEXTURE.getStride();
+	public static final int[] POS_NORMAL_TEXTURE_OFFSET = {0, POS_STRIDE, POS_NORMAL_STRIDE};
 	
 	public static final VertexAttribute[] POS_COLOR_NORMAL_TEXTURE = {POSITION, COLOR, NORMAL, TEXTURE};
 	public static final int POS_COLOR_NORMAL_TEXTURE_STRIDE = POS_COLOR_NORMAL_STRIDE + TEXTURE.getStride();
+	public static final int[] POS_COLOR_NORMAL_TEXTURE_OFFSET = {0, POS_STRIDE, POS_COLOR_STRIDE, POS_COLOR_NORMAL_STRIDE};
 	
 	private static VBOBuffer mixBuffers(VBOBuffer[] buffers)
 	{

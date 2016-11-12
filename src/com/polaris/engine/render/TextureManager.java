@@ -3,6 +3,7 @@
  */
 package com.polaris.engine.render;
 
+import static com.polaris.engine.util.ResourceHelper.ioResourceToByteBuffer;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
@@ -22,18 +23,21 @@ import static org.lwjgl.opengl.GL11.glTexSubImage2D;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.opengl.GL42.glTexStorage2D;
 
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
+import java.nio.IntBuffer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.apache.sanselan.ImageParser;
+import org.apache.sanselan.ImageReadException;
+import org.apache.sanselan.common.SimpleBufferedImageFactory;
+import org.apache.sanselan.formats.png.PngImageParser;
+import org.lwjgl.BufferUtils;
 
 import com.polaris.engine.App;
 
@@ -45,6 +49,17 @@ import com.polaris.engine.App;
 public class TextureManager
 {
 	
+	private static Map<String, Object> params;
+	public static final ImageParser PNG_PARSER;
+	
+	static
+	{
+		params = new HashMap<String, Object>();
+		PNG_PARSER = new PngImageParser();
+		
+		params.put(ImageParser.BUFFERED_IMAGE_FACTORY, new SimpleBufferedImageFactory());
+	}
+	
 	private App application;
 	private Map<String, Texture> textures;
 	
@@ -54,7 +69,7 @@ public class TextureManager
 		textures = new HashMap<String, Texture>();
 	}
 	
-	public void genTexture(int textureId, int width, int height, ByteBuffer data, int numMipmaps)
+	public void genTexture(int textureId, int width, int height, IntBuffer data, int numMipmaps)
 	{
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -97,68 +112,75 @@ public class TextureManager
 		genTexture(texture, 1);
 	}
 	
-	public Texture genTexture(String textureName, File textureFile, int numMipmaps)
+	public Texture genTexture(String textureName, File textureFile, ImageParser parser, int numMipmaps)
 	{
-		FileInputStream fileStream;
-		FileChannel channel;
-		MappedByteBuffer buffer;
-		Image image;
-		
-		int textureId;
-		Texture texture;
-		
 		try
 		{
-			fileStream = new FileInputStream(textureFile);
-			channel = fileStream.getChannel();
-			buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
-			image = Toolkit.getDefaultToolkit().createImage(buffer.array());
+			BufferedImage image = parser.getBufferedImage(textureFile, params);
+			int width = image.getWidth();
+			int height = image.getHeight();
 			
-			textureId = glGenTextures();
-			texture = new Texture(textureName, textureId, image.getWidth(null), image.getHeight(null), buffer);
-
-			genTexture(textureId, texture.getWidth(), texture.getHeight(), buffer, numMipmaps);
+			IntBuffer buffer = BufferUtils.createIntBuffer(width * height);
+			
+			int textureId = glGenTextures();
+			
+			for(int i = 0; i < height; i++)
+			{
+				for(int j = 0; j < width; j++)
+				{
+					buffer.put(image.getRGB(j, i));
+				}
+			}
+			
+			buffer.flip();
+			
+			Texture texture = new Texture(textureName, textureId, width, height, buffer);
+			
+			genTexture(textureId, width, height, buffer, numMipmaps);
 			
 			textures.put(textureName, texture);
 			
-			fileStream.close();
+			image.flush();
 			
 			return texture;
 		}
-		catch(IOException e)
+		catch(IOException | ImageReadException e)
 		{
 			e.printStackTrace();
 		}
-		
 		return null;
+	}
+	
+	public Texture genTexture(String textureName, File textureFile, ImageParser parser)
+	{
+		return genTexture(textureName, textureFile, parser, 1);
+	}
+	
+	public Texture genTexture(String textureName, File textureFile, int numMipmaps)
+	{
+		return genTexture(textureName, textureFile, PNG_PARSER, numMipmaps);
 	}
 	
 	public Texture genTexture(String textureName, File textureFile)
 	{
-		return genTexture(textureName, textureFile);
+		return genTexture(textureName, textureFile, PNG_PARSER, 1);
 	}
 	
-	public TextureArray genTexture(String textureName, File textureFile, File arrayFile, int numMipmaps)
+	public TextureArray genTexture(String textureName, File textureFile, File arrayFile, ImageParser parser, int numMipmaps)
 	{
-		FileInputStream fileStream;
-		FileChannel channel;
-		MappedByteBuffer buffer;
+		ByteBuffer buffer;
 		TextureArray texture;
 		
 		try
 		{
-			fileStream = new FileInputStream(arrayFile);
-			channel = fileStream.getChannel();
-			buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+			buffer = ioResourceToByteBuffer(textureFile);
 			
-			texture = new TextureArray(genTexture(textureName, textureFile, numMipmaps));
+			texture = new TextureArray(genTexture(textureName, textureFile, parser, numMipmaps));
 			
 			textures.put(textureName, texture);
 			
 			texture.loadArray(buffer);
 			
-			fileStream.close();
-			
 			return texture;
 		}
 		catch(IOException e)
@@ -169,9 +191,19 @@ public class TextureManager
 		return null;
 	}
 	
+	public TextureArray genTexture(String textureName, File textureFile, File arrayFile, ImageParser parser)
+	{
+		return genTexture(textureName, textureFile, arrayFile, parser, 1);
+	}
+	
+	public TextureArray genTexture(String textureName, File textureFile, File arrayFile, int numMipmaps)
+	{
+		return genTexture(textureName, textureFile, arrayFile, PNG_PARSER, numMipmaps);
+	}
+	
 	public TextureArray genTexture(String textureName, File textureFile, File arrayFile)
 	{
-		return genTexture(textureName, textureFile, arrayFile, 1);
+		return genTexture(textureName, textureFile, arrayFile, PNG_PARSER, 1);
 	}
 	
 	public void deleteTexture(int textureId)

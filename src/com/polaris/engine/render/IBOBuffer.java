@@ -27,7 +27,7 @@ public class IBOBuffer
 		iboBuffer = BufferUtils.createIntBuffer(bufferSize);
 	}
 	
-	public void calculateVBO(VBOBuffer vboBuffer, int strideLength)
+	public void shrinkVBO(VBOBuffer vboBuffer, int strideLength)
 	{
 		FloatBuffer buffer = vboBuffer.getBuffer();
 		

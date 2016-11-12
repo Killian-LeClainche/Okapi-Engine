@@ -72,11 +72,11 @@ public class Helper
 			osName = "linux";
 		else
 			osName = "osx";
-		try
+		/*try
 		{
 			modelFormats.put("obj", ObjModel.class.getConstructor(File.class));
 		} 
-		catch (NoSuchMethodException | SecurityException e) {}
+		catch (NoSuchMethodException | SecurityException e) {}*/
 	}
 	
 }
