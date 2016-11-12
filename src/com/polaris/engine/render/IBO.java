@@ -25,6 +25,8 @@ public class IBO implements IRenderObject
 	{
 		iboIdWrapper = glGenBuffers();
 		
+		iboBuffer.getBuffer().flip();
+		
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboIdWrapper);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, iboBuffer.getBuffer(), vbo.getDrawMode());
 		

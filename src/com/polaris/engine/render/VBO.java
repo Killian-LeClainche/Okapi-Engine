@@ -22,6 +22,7 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL15;
 
 /**
  * @author Killian Le Clainche
@@ -93,6 +94,8 @@ public class VBO implements IRenderObject
 		vboIdWrapper = glGenBuffers();
 		
 		FloatBuffer buffer = vboBuffer.getBuffer();
+		
+		buffer.flip();
 		
 		glBindBuffer(GL_ARRAY_BUFFER, vboIdWrapper);
 		glBufferData(GL_ARRAY_BUFFER, buffer, glDraw);

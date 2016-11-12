@@ -36,6 +36,7 @@ public class IBOBuffer
 		int j = vboBuffer.getBufferSize();
 		
 		List<Float[]> vertices = new ArrayList<Float[]>();
+		List<Integer> verticeLoc = new ArrayList<Integer>();
 		Iterator<Float[]> verticeIt;
 		
 		boolean hasNext;
@@ -43,6 +44,10 @@ public class IBOBuffer
 		Float[] vertice;
 		
 		float x, y, z;
+		
+		buffer.clear();
+		
+		i = 0;
 		
 		while(i < j)
 		{
@@ -70,11 +75,26 @@ public class IBOBuffer
 			if(!verticeIt.hasNext())
 			{
 				vertices.add(new Float[] {x, y, z});
+				verticeLoc.add(i);
 			}
 			
 			iboBuffer.put(indice);
 			
 			i += offset;
+		}
+		
+		indice = 0;
+		
+		buffer.clear();
+		
+		for(i = 0; i < verticeLoc.size(); i++, indice += offset)
+		{
+			j = 0;
+			while(j < offset)
+			{
+				buffer.put(indice, buffer.get(verticeLoc.get(i) + j));
+				j++;
+			}
 		}
 	}
 	

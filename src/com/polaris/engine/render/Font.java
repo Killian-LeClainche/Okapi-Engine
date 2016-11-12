@@ -100,19 +100,22 @@ public class Font
 	
 	public void bind()
 	{
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fontTextureId);
 	}
 	
-	public VAO draw(String text, float x, float y, float z)
+	public VBO draw(String text, float x, float y, float z)
 	{
-		int bufferSize = text.length() * 4;
+		int bufferSize = text.length() * 4 * 5;
 		VBOBuffer vboBuffer = new VBOBuffer(bufferSize);
 		IBOBuffer iboBuffer = new IBOBuffer(bufferSize);
 		STBTTAlignedQuad quad = STBTTAlignedQuad.malloc();
 		VBO vbo;
-		
 		xBuffer.put(0, x);
 		yBuffer.put(0, y);
+		
+		//GL11.glColor4d(1, 1, 1, 1);
+		//GL11.glBegin(GL11.GL_QUADS);
 		
 		char c;
 		for(int i = 0; i < text.length(); i++)
@@ -127,23 +130,36 @@ public class Font
 			
 			stbtt_GetBakedQuad(fontChardata, fontWidth, fontHeight, c - 32, xBuffer, yBuffer, quad, true);
 			
+			/*GL11.glTexCoord2d(quad.s0(), quad.t1());
+			GL11.glVertex3d(quad.x0(), quad.y1(), z);
+			GL11.glTexCoord2d(quad.s1(), quad.t1());
+			GL11.glVertex3d(quad.x1(), quad.y1(), z);
+			GL11.glTexCoord2d(quad.s1(), quad.t0());
+			GL11.glVertex3d(quad.x1(), quad.y0(), z);
+			GL11.glTexCoord2d(quad.s0(), quad.t0());
+			GL11.glVertex3d(quad.x0(), quad.y0(), z);*/
+			
 			vboBuffer.addTextureVertex(quad.x0(), quad.y1(), z, quad.s0(), quad.t1());
 			vboBuffer.addTextureVertex(quad.x1(), quad.y1(), z, quad.s1(), quad.t1());
 			vboBuffer.addTextureVertex(quad.x1(), quad.y0(), z, quad.s1(), quad.t0());
 			vboBuffer.addTextureVertex(quad.x0(), quad.y0(), z, quad.s0(), quad.t0());
 		}
 		
+		//GL11.glEnd();
+		
 		quad.free();
 		
 		iboBuffer.shrinkVBO(vboBuffer, VBO.POS_TEXTURE_STRIDE);
 		
 		vbo = VBO.createStaticVBO(GL15.GL_STATIC_DRAW, VBO.POS_TEXTURE, VBO.POS_TEXTURE_STRIDE, VBO.POS_TEXTURE_OFFSET, vboBuffer);
-		return VAO.createVAO(IBO.createIBO(vbo, iboBuffer));
+		return vbo;
+		//return null;
 	}
 	
 	public void destroy()
 	{
 		fontChardata.free();
+		GL11.glDeleteTextures(fontTextureId);
 	}
 	
 	public int getId()
