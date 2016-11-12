@@ -69,6 +69,7 @@ import org.lwjgl.system.Configuration;
 
 import com.polaris.engine.options.Monitor;
 import com.polaris.engine.options.Settings;
+import com.polaris.engine.options.WindowMode;
 import com.polaris.engine.render.Texture;
 import com.polaris.engine.render.TextureManager;
 import com.polaris.engine.sound.OpenAL;
@@ -126,6 +127,8 @@ public abstract class App
 		Configuration.DEBUG.set(debug);
 		Configuration.GLFW_CHECK_THREAD0.set(!debug);
 		
+		windowInstance = -1;
+		
 		soundSystem = new OpenAL(this);
 		input = new Input(this);
 		gameSettings = loadSettings();
@@ -165,6 +168,8 @@ public abstract class App
 			}
 		}
 		
+		gameSettings.init();
+		
 		if(!create())
 		{
 			log.error("Failed to initialize application!");
@@ -194,7 +199,7 @@ public abstract class App
 		gameSettings.init();
 		
 		logicThread.setLogicHandler(getStartGui());
-		logicThread.run();
+		logicThread.start();
 		
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		glShadeModel(GL_SMOOTH);
@@ -263,20 +268,23 @@ public abstract class App
 		long monitorInstance = monitor.getInstance();
 		GLFWVidMode videoMode = monitor.getVideoMode();
 		
-		switch(gameSettings.getWindowMode())
+		WindowMode mode = gameSettings.getWindowMode();
+		
+		if(mode == WindowMode.WINDOWED)
 		{
-			case WINDOWED:
-				instance = createWindow();
-				break;
-			case FULLSCREEN:
-				glfwWindowHint(GLFW_RED_BITS, videoMode.redBits());
-				glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits());
-				glfwWindowHint(GLFW_BLUE_BITS, videoMode.blueBits());
-				glfwWindowHint(GLFW_REFRESH_RATE, videoMode.refreshRate());
-				instance = glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
-				break;
-			default:
-				instance = glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
+			instance = createWindow();
+		}
+		else if(mode == WindowMode.FULLSCREEN)
+		{
+			glfwWindowHint(GLFW_RED_BITS, videoMode.redBits());
+			glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits());
+			glfwWindowHint(GLFW_BLUE_BITS, videoMode.blueBits());
+			glfwWindowHint(GLFW_REFRESH_RATE, videoMode.refreshRate());
+			instance = glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
+		}
+		else
+		{
+			instance = glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
 		}
 		
 		if(instance == 0)
@@ -302,7 +310,7 @@ public abstract class App
 		glfwGetFramebufferSize(windowInstance, width, height);
 		
 		windowWidth = width[0];
-		windowHeight = height[1];
+		windowHeight = height[0];
 		
 		glfwShowWindow(windowInstance);
 		
@@ -389,7 +397,7 @@ public abstract class App
 	public long createWindow(int width, int height, String title, long parentInstance)
 	{
 		long monitor = gameSettings.getMonitorInstance();
-		long instance = glfwCreateWindow(width, height, title, monitor, parentInstance);
+		long instance = glfwCreateWindow(width, height, title, 0, parentInstance);
 		GLFWVidMode videoMode = glfwGetVideoMode(monitor);
 		glfwSetWindowPos(instance, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
 		return instance;

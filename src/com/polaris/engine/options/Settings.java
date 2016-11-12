@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWMonitorCallback;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
 
 import com.polaris.engine.App;
@@ -78,6 +79,8 @@ public class Settings
 	
 	private String title;
 	
+	private GLCapabilities glCapabilities;
+	
 	public Settings(App app)
 	{
 		application = app;
@@ -86,16 +89,18 @@ public class Settings
 	public void init()
 	{
 		monitor = getMonitor(glfwGetPrimaryMonitor());
+		windowMode = WindowMode.WINDOWED;
 	}
 	
 	public boolean createCapabilities()
 	{
-		return false;
+		glCapabilities = GL.createCapabilities();
+		return true;
 	}
 	
 	public GLCapabilities getCapabilities()
 	{
-		return null;
+		return glCapabilities;
 	}
 
 	/**
@@ -103,7 +108,7 @@ public class Settings
 	 */
 	public String getGLVersion()
 	{
-		return null;
+		return glCapabilities.toString();
 	}
 
 	/**
@@ -139,7 +144,7 @@ public class Settings
 	
 	public String getTitle()
 	{
-		return title;
+		return "Vandy";
 	}
 
 	/**
@@ -150,4 +155,9 @@ public class Settings
 		return 1;
 	}
 
+	public App getApplication()
+	{
+		return application;
+	}
+	
 }

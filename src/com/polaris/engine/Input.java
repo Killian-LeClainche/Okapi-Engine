@@ -41,10 +41,67 @@ public class Input
 	public Input(App app)
 	{
 		application = app;
+		
+		position = new Vector2d(0);
+		delta = new Vector2d(0);
+		scrollDelta = new Vector2d(0);
+		
 		keyboardMapping = new DualHashBidiMap<Integer, Key>();
 		mouseMapping = new DualHashBidiMap<Integer, Key>();
 		nameMapping = new DualHashBidiMap<String, Key>();
 		textInput = new String();
+		
+		addKey(GLFW.GLFW_KEY_APOSTROPHE);
+		addKey(GLFW.GLFW_KEY_TAB);
+		addKey(GLFW.GLFW_KEY_LEFT_SHIFT);
+		addKey(GLFW.GLFW_KEY_LEFT);
+		addKey(GLFW.GLFW_KEY_LEFT_ALT);
+		addKey(GLFW.GLFW_KEY_LEFT_BRACKET);
+		addKey(GLFW.GLFW_KEY_LEFT_CONTROL);
+		addKey(GLFW.GLFW_KEY_LEFT_SHIFT);
+		addKey(GLFW.GLFW_KEY_SPACE);
+		addKey(GLFW.GLFW_KEY_DELETE);
+		addKey(GLFW.GLFW_KEY_RIGHT);
+		addKey(GLFW.GLFW_KEY_RIGHT_ALT);
+		addKey(GLFW.GLFW_KEY_RIGHT_BRACKET);
+		addKey(GLFW.GLFW_KEY_RIGHT_CONTROL);
+		addKey(GLFW.GLFW_KEY_RIGHT_SHIFT);
+		addKey(GLFW.GLFW_KEY_UP);
+		addKey(GLFW.GLFW_KEY_DOWN);
+		addKey(GLFW.GLFW_KEY_COMMA);
+		addKey(GLFW.GLFW_KEY_PERIOD);
+		addKey(GLFW.GLFW_KEY_SLASH);
+		addKey(GLFW.GLFW_KEY_BACKSLASH);
+		addKey(GLFW.GLFW_KEY_BACKSLASH);
+		addKey(GLFW.GLFW_KEY_EQUAL);
+		addKey(GLFW.GLFW_KEY_ESCAPE);
+		addKey(GLFW.GLFW_KEY_GRAVE_ACCENT);
+		addKey(GLFW.GLFW_KEY_MINUS);
+		addKey(GLFW.GLFW_KEY_ENTER);
+		
+		for(int i = GLFW.GLFW_KEY_0; i <= GLFW.GLFW_KEY_9; i++)
+		{
+			addKey(i);
+		}
+		
+		for(int i = GLFW.GLFW_KEY_A; i <= GLFW.GLFW_KEY_Z; i++)
+		{
+			addKey(i);
+		}
+		
+		for(int i = 0; i <= 7; i++)
+		{
+			Key key = new Key("MOUSE" + i, i);
+			mouseMapping.put(i, key);
+			nameMapping.put(key.getName(), key);
+		}
+	}
+	
+	private void addKey(int i)
+	{
+		Key key = new Key(GLFW.glfwGetKeyName(i, 0), i);
+		keyboardMapping.put(i, key);
+		nameMapping.put(key.getName(), key);
 	}
 	
 	public void init()
@@ -57,6 +114,10 @@ public class Input
 		
 		glfwSetMouseButtonCallback(application.getWindow(), GLFWMouseButtonCallback.create((window, button, action, mods) -> {
 			Key mouseKey = mouseMapping.get(button);
+			
+			if(mouseKey == null)
+				return;
+			
 			if(action == GLFW.GLFW_PRESS)
 			{
 				mouseKey.press();
@@ -75,6 +136,10 @@ public class Input
 			if(key != -1)
 			{
 				Key keyboardKey = keyboardMapping.get(key);
+				
+				if(keyboardKey == null)
+					return;
+				
 				if(action == GLFW.GLFW_PRESS)
 				{
 					keyboardKey.press();
