@@ -215,4 +215,9 @@ public class Input
 		scrollDelta.add(dx, dy);
 	}
 	
+	public Key getKey(int keyCode)
+	{
+		return keyboardMapping.get(keyCode);
+	}
+	
 }

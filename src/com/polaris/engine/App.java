@@ -485,6 +485,11 @@ public abstract class App
 	{
 		return logicThread;
 	}
+	
+	public Input getInput()
+	{
+		return input;
+	}
 
 	public TextureManager getTextureManager()
 	{

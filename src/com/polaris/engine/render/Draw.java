@@ -263,7 +263,7 @@ public class Draw
 	{
 		float theta = (endAngle - startAngle) / resolution;
 		addVertex(circleX, circleY, z); 
-		while(resolution > 0)
+		while(resolution >= 0)
 		{
 			addVertex(circleX + radius * (float)cos((endAngle -= theta)), circleY + radius * (float) sin(endAngle), z);
 			
@@ -280,7 +280,7 @@ public class Draw
 	{
 		float theta = (endAngle - startAngle) / resolution;
 		addColorVertex(circleX, circleY, z, inColor); 
-		while(resolution > 0)
+		while(resolution >= 0)
 		{
 			addColorVertex(circleX + radius * (float)cos((endAngle -= theta)), circleY + radius * (float) sin(endAngle), z, outColor);
 			

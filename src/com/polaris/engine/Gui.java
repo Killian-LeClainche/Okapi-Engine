@@ -23,6 +23,7 @@ public abstract class Gui
 	public void render(double delta)
 	{
 		application.gl2d();
+		ticksExisted += delta;
 	}
 
 	public void reinit() {}
