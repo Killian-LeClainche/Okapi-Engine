@@ -17,10 +17,13 @@ import static org.lwjgl.stb.STBTTBakedChar.malloc;
 import static org.lwjgl.stb.STBTruetype.stbtt_BakeFontBitmap;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetBakedQuad;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+
+import javax.imageio.ImageIO;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -51,6 +54,19 @@ public class Font
 			ByteBuffer pixels = BufferUtils.createByteBuffer(width * height);
 			
 			stbtt_BakeFontBitmap(data, pointFont, pixels, width, height, 32, cdata);
+			
+			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			for(int i = 0; i < height; i++)
+			{
+				for(int j = 0; j < width; j++)
+				{
+					image.setRGB(j, i, pixels.get());
+				}
+			}
+			
+			ImageIO.write(image, "PNG", new File(fontFile.getParentFile(), "test.png"));
+			
+			pixels.clear();
 			
 			glBindTexture(GL_TEXTURE_2D, fontIdWrapper);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, pixels);
@@ -106,16 +122,16 @@ public class Font
 	
 	public VBO draw(String text, float x, float y, float z)
 	{
-		int bufferSize = text.length() * 4 * 5;
-		VBOBuffer vboBuffer = new VBOBuffer(bufferSize);
-		IBOBuffer iboBuffer = new IBOBuffer(bufferSize);
+		//int bufferSize = text.length() * 4 * 5;
+		//VBOBuffer vboBuffer = new VBOBuffer(bufferSize);
+		//IBOBuffer iboBuffer = new IBOBuffer(bufferSize);
 		STBTTAlignedQuad quad = STBTTAlignedQuad.malloc();
-		VBO vbo;
+		//VBO vbo;
 		xBuffer.put(0, x);
 		yBuffer.put(0, y);
 		
-		//GL11.glColor4d(1, 1, 1, 1);
-		//GL11.glBegin(GL11.GL_QUADS);
+		GL11.glColor4d(1, 1, 1, 1);
+		GL11.glBegin(GL11.GL_QUADS);
 		
 		char c;
 		for(int i = 0; i < text.length(); i++)
@@ -130,30 +146,30 @@ public class Font
 			
 			stbtt_GetBakedQuad(fontChardata, fontWidth, fontHeight, c - 32, xBuffer, yBuffer, quad, true);
 			
-			/*GL11.glTexCoord2d(quad.s0(), quad.t1());
+			GL11.glTexCoord2d(quad.s0(), quad.t1());
 			GL11.glVertex3d(quad.x0(), quad.y1(), z);
 			GL11.glTexCoord2d(quad.s1(), quad.t1());
 			GL11.glVertex3d(quad.x1(), quad.y1(), z);
 			GL11.glTexCoord2d(quad.s1(), quad.t0());
 			GL11.glVertex3d(quad.x1(), quad.y0(), z);
 			GL11.glTexCoord2d(quad.s0(), quad.t0());
-			GL11.glVertex3d(quad.x0(), quad.y0(), z);*/
+			GL11.glVertex3d(quad.x0(), quad.y0(), z);
 			
-			vboBuffer.addTextureVertex(quad.x0(), quad.y1(), z, quad.s0(), quad.t1());
+			/*vboBuffer.addTextureVertex(quad.x0(), quad.y1(), z, quad.s0(), quad.t1());
 			vboBuffer.addTextureVertex(quad.x1(), quad.y1(), z, quad.s1(), quad.t1());
 			vboBuffer.addTextureVertex(quad.x1(), quad.y0(), z, quad.s1(), quad.t0());
-			vboBuffer.addTextureVertex(quad.x0(), quad.y0(), z, quad.s0(), quad.t0());
+			vboBuffer.addTextureVertex(quad.x0(), quad.y0(), z, quad.s0(), quad.t0());*/
 		}
 		
-		//GL11.glEnd();
+		GL11.glEnd();
 		
 		quad.free();
 		
-		iboBuffer.shrinkVBO(vboBuffer, VBO.POS_TEXTURE_STRIDE);
+		//iboBuffer.shrinkVBO(vboBuffer, VBO.POS_TEXTURE_STRIDE);
 		
-		vbo = VBO.createStaticVBO(GL15.GL_STATIC_DRAW, VBO.POS_TEXTURE, VBO.POS_TEXTURE_STRIDE, VBO.POS_TEXTURE_OFFSET, vboBuffer);
-		return vbo;
-		//return null;
+		//vbo = VBO.createStaticVBO(GL11.GL_QUADS, VBO.POS_TEXTURE, VBO.POS_TEXTURE_STRIDE, VBO.POS_TEXTURE_OFFSET, vboBuffer);
+		//return vbo;
+		return null;
 	}
 	
 	public void destroy()

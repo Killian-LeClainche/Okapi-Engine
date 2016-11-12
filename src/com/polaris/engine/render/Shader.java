@@ -134,6 +134,10 @@ public class Shader
 	
 	public void destroy()
 	{
+		unbind();
+		GL20.glDetachShader(programId, vertShaderId);
+		GL20.glDetachShader(programId, fragShaderId);
+		
 		GL20.glDeleteShader(vertShaderId);
 		GL20.glDeleteShader(fragShaderId);
 		GL20.glDeleteProgram(programId);

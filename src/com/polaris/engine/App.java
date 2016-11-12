@@ -243,6 +243,8 @@ public abstract class App
 			currentGui.render(delta);
 			glfwSwapBuffers(windowInstance);
 		}
+		
+		logicThread.close();
 
 		glfwDestroyWindow(windowInstance);
 		GL.destroy();

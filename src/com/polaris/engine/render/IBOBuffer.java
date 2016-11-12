@@ -31,7 +31,7 @@ public class IBOBuffer
 	{
 		FloatBuffer buffer = vboBuffer.getBuffer();
 		
-		int offset = strideLength / 4;
+		int offset = strideLength;
 		int i = 0;
 		int j = vboBuffer.getBufferSize();
 		
