@@ -136,4 +136,9 @@ public class LogicApp extends Thread
 		return tickrate;
 	}
 	
+	public App getApplication()
+	{
+		return application;
+	}
+	
 }

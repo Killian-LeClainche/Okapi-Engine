@@ -470,6 +470,11 @@ public abstract class App
 	{
 		return input.getScrollDelta().y;
 	}
+	
+	public LogicApp getLogicHandler()
+	{
+		return logicThread;
+	}
 
 	public TextureManager getTextureManager()
 	{
