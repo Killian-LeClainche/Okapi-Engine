@@ -128,15 +128,19 @@ public class Font
 		return length;
 	}
 	
-	public VBO draw(String text, float x, float y, float z)
+	public VBO draw(String text, float x, float y, float z, float scale)
 	{
 		//int bufferSize = text.length() * 4 * 5;
 		//VBOBuffer vboBuffer = new VBOBuffer(bufferSize);
 		//IBOBuffer iboBuffer = new IBOBuffer(bufferSize);
 		STBTTAlignedQuad quad = STBTTAlignedQuad.malloc();
 		//VBO vbo;
-		xBuffer.put(0, x);
-		yBuffer.put(0, y);
+		xBuffer.put(0, 0);
+		yBuffer.put(0, 0);
+		
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+		GL11.glScalef(scale, scale, scale);
 		
 		GL11.glBegin(GL11.GL_QUADS);
 		
@@ -146,7 +150,7 @@ public class Font
 			c = text.charAt(i);
 			if(c == '\n')
 			{
-				xBuffer.put(0, x);
+				xBuffer.put(0, 0);
 				yBuffer.put(0, yBuffer.get(0) + fontSize);
 				continue;
 			}
@@ -169,6 +173,7 @@ public class Font
 		}
 		
 		GL11.glEnd();
+		GL11.glPopMatrix();
 		quad.free();
 		
 		//iboBuffer.shrinkVBO(vboBuffer, VBO.POS_TEXTURE_STRIDE);
