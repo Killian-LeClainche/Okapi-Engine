@@ -107,6 +107,8 @@ public class Input
 	public void init()
 	{
 		glfwSetCursorPosCallback(application.getWindow(), GLFWCursorPosCallback.create((window, xpos, ypos) -> {
+			xpos *= application.getWindowScaleX();
+			ypos *= application.getWindowScaleY();
 			setDelta(position.x - xpos, position.y - ypos);
 			position.x = xpos;
 			position.y = ypos;

@@ -1,14 +1,13 @@
 package com.polaris.engine.render;
 
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 public class TextureArray extends Texture
 {
 	
 	private TexCoord[] textures;
 	
-	public TextureArray(String name, int id, int width, int height, IntBuffer data)
+	public TextureArray(String name, int id, int width, int height, ByteBuffer data)
 	{
 		super(name, id, width, height, data);
 	}

@@ -50,6 +50,7 @@ public class LogicApp extends Thread
 		Iterator<AppPacket> polledPackets;
 		AppPacket packet;
 		long waitTime;
+		nextTickTime = System.nanoTime() + nanoTimeWait;
 		while(isRunning)
 		{
 			polledPackets = incomingPackets.iterator();

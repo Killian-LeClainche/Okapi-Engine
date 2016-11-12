@@ -27,7 +27,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,6 +37,7 @@ import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.common.SimpleBufferedImageFactory;
 import org.apache.sanselan.formats.png.PngImageParser;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import com.polaris.engine.App;
 
@@ -69,7 +69,7 @@ public class TextureManager
 		textures = new HashMap<String, Texture>();
 	}
 	
-	public void genTexture(int textureId, int width, int height, IntBuffer data, int numMipmaps)
+	public void genTexture(int textureId, int width, int height, ByteBuffer data, int numMipmaps)
 	{
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -84,8 +84,7 @@ public class TextureManager
 		}
 		else
 		{
-			glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA, width, height);
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			GL11.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		}
@@ -120,15 +119,20 @@ public class TextureManager
 			int width = image.getWidth();
 			int height = image.getHeight();
 			
-			IntBuffer buffer = BufferUtils.createIntBuffer(width * height);
+			ByteBuffer buffer = BufferUtils.createByteBuffer(4 * width * height);
 			
 			int textureId = glGenTextures();
+			int j, pixel;
 			
 			for(int i = 0; i < height; i++)
 			{
-				for(int j = 0; j < width; j++)
+				for(j = 0; j < width; j++)
 				{
-					buffer.put(image.getRGB(j, i));
+					pixel = image.getRGB(j, i);
+					buffer.put((byte) ((pixel >> 16) & 0xFF));
+					buffer.put((byte) ((pixel >> 8) & 0xFF));
+					buffer.put((byte) (pixel & 0xFF));
+					buffer.put((byte) ((pixel >> 24) & 0xFF));
 				}
 			}
 			
@@ -224,7 +228,7 @@ public class TextureManager
 	public void setTextures(Collection<Texture> textures)
 	{
 		Iterator<Texture> textureIt = textures.iterator();
-
+		
 		while(textureIt.hasNext())
 		{
 			genTexture(textureIt.next());

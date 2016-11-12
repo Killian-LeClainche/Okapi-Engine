@@ -3,7 +3,9 @@ package com.polaris.engine.render;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 
-import java.nio.IntBuffer;
+import java.nio.ByteBuffer;
+
+import org.lwjgl.opengl.GL11;
 
 public class Texture
 {
@@ -13,7 +15,7 @@ public class Texture
 	private int textureId;
 	private int textureWidth;
 	private int textureHeight;
-	private IntBuffer textureData;
+	private ByteBuffer textureData;
 
 	/**
 	 * @param textureName
@@ -21,7 +23,7 @@ public class Texture
 	 * @param height
 	 * @param imageData
 	 */
-	public Texture(String name, int id, int width, int height, IntBuffer data)
+	public Texture(String name, int id, int width, int height, ByteBuffer data)
 	{
 		textureName = name;
 		textureId = id;
@@ -33,6 +35,11 @@ public class Texture
 	public void bind()
 	{
 		glBindTexture(GL_TEXTURE_2D, textureId);
+	}
+	
+	public void destroy()
+	{
+		GL11.glDeleteTextures(textureId);
 	}
 	
 	public void setId(int id)
@@ -64,7 +71,7 @@ public class Texture
 		return textureHeight;
 	}
 	
-	public IntBuffer getImage()
+	public ByteBuffer getImage()
 	{
 		return textureData;
 	}

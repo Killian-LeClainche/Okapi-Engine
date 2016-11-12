@@ -496,4 +496,14 @@ public abstract class App
 		return textureManager;
 	}
 
+	public float getWindowScaleX()
+	{
+		return (float) scaleToWidth / (float) windowWidth;
+	}
+	
+	public float getWindowScaleY()
+	{
+		return (float) scaleToHeight / (float) windowHeight;
+	}
+	
 }
