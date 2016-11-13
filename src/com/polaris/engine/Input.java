@@ -221,5 +221,14 @@ public class Input
 	{
 		return keyboardMapping.get(keyCode);
 	}
+
+	/**
+	 * @param glfwMouseButtonLeft
+	 * @return
+	 */
+	public Key getMouse(int mouseCode)
+	{
+		return mouseMapping.get(mouseCode);
+	}
 	
 }

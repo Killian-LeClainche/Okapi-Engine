@@ -490,6 +490,11 @@ public abstract class App
 	{
 		return input;
 	}
+	
+	public Settings getSettings()
+	{
+		return gameSettings;
+	}
 
 	public TextureManager getTextureManager()
 	{

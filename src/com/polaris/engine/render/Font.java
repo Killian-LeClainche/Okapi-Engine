@@ -77,7 +77,6 @@ public class Font
 			e.printStackTrace();
 			cdata.free();
 		}
-		
 		return null;
 	}
 	
