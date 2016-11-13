@@ -30,5 +30,10 @@ public abstract class Gui
 	public void reload() {}
 
 	public void close() {}
+	
+	public App getApplication()
+	{
+		return application;
+	}
 
 }

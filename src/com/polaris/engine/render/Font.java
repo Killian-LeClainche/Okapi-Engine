@@ -127,6 +127,11 @@ public class Font
 		return length;
 	}
 	
+	public float getWidth(String text, float scale)
+	{
+		return getWidth(text) * scale;
+	}
+	
 	public VBO draw(String text, float x, float y, float z, float scale)
 	{
 		//int bufferSize = text.length() * 4 * 5;

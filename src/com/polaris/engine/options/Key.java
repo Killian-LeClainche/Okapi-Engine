@@ -87,6 +87,12 @@ public class Key
 		return wasQuickPressed;
 	}
 	
+	public final void removeQuickPress()
+	{
+		releaseFlag = false;
+		wasQuickPressed = false;
+	}
+	
 	public final long getPressedTime()
 	{
 		return System.nanoTime() - pressTimer;
