@@ -396,7 +396,7 @@ public abstract class App
 		//OpenAL.closeAL();
 	}
 
-	protected abstract LogicGui getStartGui();
+	public abstract LogicGui getStartGui();
 	
 	public long createWindow(int width, int height)
 	{
