@@ -361,9 +361,14 @@ public abstract class App
 	/**
 	 * @param packet
 	 */
-	public void sendPacket(AppPacket packet)
+	public void addPacket(AppPacket packet)
 	{
 		incomingPackets.add(packet);
+	}
+	
+	public void sendPacket(AppPacket packet)
+	{
+		logicThread.addPacket(packet);
 	}
 	
 	public final void initGui(Gui newGui)

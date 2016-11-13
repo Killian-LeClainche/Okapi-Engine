@@ -68,6 +68,8 @@ public class LogicApp extends Thread
 				waitTime = (long) ((nextTickTime - System.nanoTime()) / 1000000L);
 				if(waitTime > 0)
 					Thread.sleep(waitTime);
+				else
+					nextTickTime = System.nanoTime();
 			}
 			catch (InterruptedException e)
 			{
@@ -110,23 +112,33 @@ public class LogicApp extends Thread
 	{
 		isRunning = false;
 	}
+	
+	public final void addPacket(AppPacket packet)
+	{
+		incomingPackets.add(packet);
+	}
+	
+	public final void sendPacket(AppPacket packet)
+	{
+		application.addPacket(packet);
+	}
 
 	public final void sendTerminatePacket()
 	{
 		TerminateAppPacket packet = new TerminateAppPacket(application, this);
-		application.sendPacket(packet);
+		application.addPacket(packet);
 	}
 	
 	public final void sendInitGuiPacket(LogicGui logic)
 	{
 		InitGuiPacket packet = new InitGuiPacket(application, this, logic);
-		application.sendPacket(packet);
+		application.addPacket(packet);
 	}
 	
 	public final void sendReinitGuiPacket(LogicGui logic)
 	{
 		ReinitGuiPacket packet = new ReinitGuiPacket(application, this, logic);
-		application.sendPacket(packet);
+		application.addPacket(packet);
 	}
 	
 	/**
@@ -140,6 +152,11 @@ public class LogicApp extends Thread
 	public App getApplication()
 	{
 		return application;
+	}
+	
+	public LogicGui getLogicHandler()
+	{
+		return logicHandler;
 	}
 	
 }
