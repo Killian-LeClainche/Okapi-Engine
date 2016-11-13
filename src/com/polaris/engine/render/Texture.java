@@ -34,6 +34,7 @@ public class Texture
 	
 	public void bind()
 	{
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, textureId);
 	}
 	

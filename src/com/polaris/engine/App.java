@@ -249,6 +249,8 @@ public abstract class App
 		glfwDestroyWindow(windowInstance);
 		GL.destroy();
 		glfwTerminate();
+		
+		logicThread.interrupt();
 	}
 	
 	protected Settings loadSettings()
@@ -514,6 +516,16 @@ public abstract class App
 	public float getWindowScaleY()
 	{
 		return (float) scaleToHeight / (float) windowHeight;
+	}
+	
+	public int getWindowX()
+	{
+		return windowWidth;
+	}
+	
+	public int getWindowY()
+	{
+		return windowHeight;
 	}
 	
 }
