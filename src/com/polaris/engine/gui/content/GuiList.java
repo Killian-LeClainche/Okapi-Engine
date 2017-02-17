@@ -1,38 +1,34 @@
-package com.polaris.engine.gui.element;
+package com.polaris.engine.gui.content;
 
-import static com.polaris.engine.Application.getMouseX;
-import static com.polaris.engine.Application.getMouseY;
+import com.polaris.engine.options.Settings;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public abstract class ListElement<T> extends Element
+public abstract class GuiList<T, I extends Settings> extends GuiContent<I>
 {
-	protected ListItem<?>[] elementList;
+	protected GuiListItem<?>[] elementList;
 	protected double shiftWidth = 0;
 	protected double extraWidth = 0;
 	protected double shiftHeight = 0;
 	protected double extraHeight = 0;
 	protected boolean clicked = false;
 
-	public ListElement(double x, double y, double width, double height, ListItem<?> ... list)
+	public GuiList(double x, double y, double width, double height, GuiListItem<?> ... list)
 	{
 		this(x, y, 0, width, height, list);
 	}
 	
-	public ListElement(double x, double y, double z, double width, double height, ListItem<?> ... list)
+	public GuiList(double x, double y, double z, double width, double height, GuiListItem<?> ... list)
 	{
 		super(x, y, width, height);
 		elementList = list;
 		setListDimensions();
 	}
 
-	public ListElement(double x, double y, double width, double sWidth, double eWidth, double height, double sHeight, double eHeight, ListItem<?> ... list)
+	public GuiList(double x, double y, double width, double sWidth, double eWidth, double height, double sHeight, double eHeight, GuiListItem<?> ... list)
 	{
 		this(x, y, 0, width, sWidth, eWidth, height, sHeight, eHeight, list);
 	}
 	
-	public ListElement(double x, double y, double z, double width, double sWidth, double eWidth, double height, double sHeight, double eHeight, ListItem<?> ... list)
+	public GuiList(double x, double y, double z, double width, double sWidth, double eWidth, double height, double sHeight, double eHeight, GuiListItem<?> ... list)
 	{
 		this(x, y, z, width, height, list);
 		shiftWidth = sWidth;

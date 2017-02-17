@@ -13,10 +13,9 @@ public class Key
 	private static final long KEY_DOUBLE_PRESS = 1000000000 / 5;
 	
 	private final String keyName;
-	private int keyCode;
+	private final int keyCode;
 	
 	private boolean isPressed;
-	private boolean releaseFlag;
 	private boolean wasQuickPressed;
 	
 	private long pressTimer;
@@ -26,23 +25,18 @@ public class Key
 	{
 		keyName = name;
 		keyCode = code;
+		
 		isPressed = false;
-		releaseFlag = false;
 		wasQuickPressed = false;
+		
 		pressTimer = 0;
 		isDoublePressed = false;
-	}
-	
-	public final void setKeyCode(int code)
-	{
-		keyCode = code;
 	}
 	
 	public final void press()
 	{
 		isPressed = true;
 		wasQuickPressed = false;
-		releaseFlag = false;
 		
 		long time = System.nanoTime();
 		
@@ -57,14 +51,14 @@ public class Key
 		isPressed = false;
 		isDoublePressed = false;
 		
-		if(System.nanoTime() - pressTimer < KEY_DOUBLE_PRESS / (3 / 2))
-			releaseFlag = true;
+		if(getPressedTime() <= KEY_DOUBLE_PRESS)
+			wasQuickPressed = true;
 	}
 	
 	public final void update()
 	{
-		if(releaseFlag && getPressedTime() >= KEY_DOUBLE_PRESS)
-			wasQuickPressed = true;
+		if(wasQuickPressed)
+			wasQuickPressed = false;
 	}
 	
 	public final String getName()
@@ -95,5 +89,10 @@ public class Key
 	public final boolean isDoublePressed()
 	{
 		return isDoublePressed;
+	}
+	
+	public String toString()
+	{
+		return "Key: " + keyName + ", Key Code: " + keyCode + ", isPressed: " + isPressed + ", wasQuickPressed: " + wasQuickPressed + ", \n\t pressTimer: " + pressTimer + ", isDoublePressed: " + isDoublePressed;
 	}
 }

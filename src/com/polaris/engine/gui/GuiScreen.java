@@ -6,38 +6,56 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.polaris.engine.App;
-import com.polaris.engine.gui.element.Element;
+import com.polaris.engine.gui.content.GuiContent;
+import com.polaris.engine.options.Settings;
+import com.polaris.engine.util.MathHelper;
 
-public abstract class GuiScreen extends Gui
+public abstract class GuiScreen<T extends Settings> extends Gui<T>
 {
 
-	private List<Element> elementList = new ArrayList<Element>();
-	protected Element currentElement;
+	private List<GuiContent<T>> elementList;
+	private int elementCounter = 0;
+	
+	protected GuiContent<T> focusedElement;
 
-	public GuiScreen(App app)
+	public GuiScreen(App<T> app)
 	{
 		super(app);
+		
+		elementList = new ArrayList<GuiContent<T>>();
 	}
 
-	public GuiScreen(GuiScreen gui)
+	public GuiScreen(GuiScreen<T> gui)
 	{
-		this(gui.application);
-		parent = gui;
+		super(gui.application, gui, 0);
+		
+		elementList = new ArrayList<GuiContent<T>>();
 	}
 
-	public void run()
+	public void update(double delta)
 	{
-		super.run();
-		for(Element element : elementList)
+		super.update(delta);
+		
+		int flag = 0;
+		
+		double mouseX = input.getMouseX();
+		double mouseY = input.getMouseY();
+		
+		
+		for(GuiContent<T> element : elementList)
 		{
-			element.update();
+			if(MathHelper.inBounds(mouseX, mouseY, element.getBounds()))
+			{
+				flag = element.handleInput();
+			}
+			element.update(delta);
 		}
 	}
 
 	public void render(double delta)
 	{
 		super.render(delta);
-		for(Element element : elementList)
+		for(GuiContent<T> element : elementList)
 		{
 			element.render(delta);
 		}
@@ -45,12 +63,12 @@ public abstract class GuiScreen extends Gui
 
 	public boolean mouseClick(int mouseId)
 	{
-		for(Element element : elementList)
+		for(GuiContent<T> element : elementList)
 		{
-			if(element.isInRegion())
+			if(MathHelper.inBounds(input.getMouseX(), input.getMouseY(), element.getBounds()))
 			{
 				boolean flag = element.nMouseClick(mouseId);
-				if(flag && element != currentElement)
+				if(flag && element != focusedElement)
 				{
 					unbindCurrentElement(element);
 				}
@@ -63,7 +81,7 @@ public abstract class GuiScreen extends Gui
 
 	public void mouseHeld(int mouseId)
 	{
-		if(currentElement != null && currentElement.nMouseHeld(mouseId))
+		if(focusedElement != null && focusedElement.nMouseHeld(mouseId))
 		{
 			unbindCurrentElement();
 		}
@@ -71,7 +89,7 @@ public abstract class GuiScreen extends Gui
 
 	public void mouseRelease(int mouseId)
 	{
-		if(currentElement != null && !currentElement.nMouseRelease(mouseId))
+		if(focusedElement != null && !focusedElement.nMouseRelease(mouseId))
 		{
 			unbindCurrentElement();
 		}
@@ -79,7 +97,7 @@ public abstract class GuiScreen extends Gui
 
 	public void mouseScroll(double xOffset, double yOffset) 
 	{
-		if(currentElement != null && currentElement.nMouseScroll(xOffset, yOffset))
+		if(focusedElement != null && focusedElement.nMouseScroll(xOffset, yOffset))
 		{
 			unbindCurrentElement();
 		}
@@ -87,9 +105,9 @@ public abstract class GuiScreen extends Gui
 
 	public int keyPressed(int keyId, int mods) 
 	{
-		if(currentElement != null)
+		if(focusedElement != null)
 		{
-			return currentElement.nKeyPressed(keyId, mods);
+			return focusedElement.nKeyPressed(keyId, mods);
 		}
 		if(keyId == GLFW_KEY_ESCAPE)
 		{
@@ -116,40 +134,40 @@ public abstract class GuiScreen extends Gui
 
 	public int keyHeld(int keyId, int called, int mods)
 	{
-		if(currentElement != null)
+		if(focusedElement != null)
 		{
-			return currentElement.nKeyHeld(keyId, called, mods);
+			return focusedElement.nKeyHeld(keyId, called, mods);
 		}
 		return -1;
 	}
 
 	public void keyRelease(int keyId, int mods)
 	{
-		if(currentElement != null && currentElement.nKeyRelease(keyId, mods))
+		if(focusedElement != null && focusedElement.nKeyRelease(keyId, mods))
 		{
 			unbindCurrentElement();
 		}
 	}
 
-	public void unbindCurrentElement(Element e)
+	public void unbindCurrentElement(GuiContent<T> e)
 	{
 		unbindCurrentElement();
-		currentElement = e;
+		focusedElement = e;
 	}
 
 	public void unbindCurrentElement()
 	{
-		if(currentElement != null)
+		if(focusedElement != null)
 		{
-			currentElement.unbind();
-			currentElement = null;
+			focusedElement.unbind();
+			focusedElement = null;
 		}
 	}
 
-	public void addElement(Element e)
+	public void addElement(GuiContent<T> e)
 	{
-		e.setId(elementList.size());
-		e.setGui(this);
+		e.init(this, elementCounter);
+		elementCounter ++;
 		elementList.add(e);
 	}
 
@@ -166,7 +184,7 @@ public abstract class GuiScreen extends Gui
 		}
 	}
 
-	public Element getElement(int i)
+	public GuiContent<T> getElement(int i)
 	{
 		return elementList.get(i);
 	}
@@ -176,7 +194,7 @@ public abstract class GuiScreen extends Gui
 		return elementList.size();
 	}
 
-	public void elementUpdate(Element e, int actionId) {}
+	public void elementUpdate(GuiContent<T> e, int actionId) {}
 
 	public void clearElements()
 	{
@@ -185,22 +203,17 @@ public abstract class GuiScreen extends Gui
 
 	public void close() 
 	{
-		this.currentElement = null;
+		this.focusedElement = null;
 	}
 
-	public Element getCurrentElement()
+	public GuiContent<T> getCurrentElement()
 	{
-		return currentElement;
+		return focusedElement;
 	}
 
 	public void setCurrentElement(int id)
 	{
-		currentElement = this.getElement(id);
-	}
-	
-	public Application getApplication()
-	{
-		return application;
+		focusedElement = this.getElement(id);
 	}
 
 }

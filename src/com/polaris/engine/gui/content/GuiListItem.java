@@ -1,8 +1,6 @@
-package com.polaris.engine.gui.element;
+package com.polaris.engine.gui.content;
 
-import static com.polaris.engine.Application.*;
-
-public abstract class ListItem<T>
+public abstract class GuiListItem<T>
 {
 
 	private T value;
@@ -12,7 +10,7 @@ public abstract class ListItem<T>
 	protected double width = 0;
 	protected double height = 0;
 	
-	public ListItem(T val)
+	public GuiListItem(T val)
 	{
 		value = val;
 	}

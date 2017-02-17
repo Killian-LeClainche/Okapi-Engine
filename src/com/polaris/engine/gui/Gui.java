@@ -3,27 +3,34 @@ package com.polaris.engine.gui;
 import java.util.concurrent.ExecutorService;
 
 import com.polaris.engine.App;
+import com.polaris.engine.options.Input;
 import com.polaris.engine.options.Settings;
 
-public abstract class Gui implements Runnable
+public abstract class Gui<T extends Settings> implements Runnable
 {
-	
-	protected final App application;
-	
+
 	protected double ticksExisted;
 	
-	protected Gui parent;
-	protected Settings gameSettings;
+	protected final Gui<T> parent;
+	
+	protected final App<T> application;
+	protected final Input input;
+	protected final T gameSettings;
 
-	public Gui(App app)
+	public Gui(App<T> app)
 	{
 		this(app, null, 0);
 	}
 	
-	public Gui(App app, Gui p, double ticks)
+	public Gui(App<T> app, Gui<T> p, double ticks)
 	{
-		application = app;
 		ticksExisted = ticks;
+		
+		parent = p;
+		
+		application = app;
+		
+		input = app.getInput();
 		gameSettings = app.getSettings();
 	}
 	
@@ -33,7 +40,12 @@ public abstract class Gui implements Runnable
 	
 	public void run()
 	{
-		ticksExisted ++;
+		this.update(application.getTickDelta());
+	}
+	
+	public void update(double delta)
+	{
+		ticksExisted += delta;
 	}
 
 	public void render(double delta)
@@ -46,9 +58,24 @@ public abstract class Gui implements Runnable
 
 	public void close() {}
 	
-	public Gui getParent()
+	public Gui<T> getParent()
 	{
 		return parent;
+	}
+	
+	public App<T> getApplication()
+	{
+		return application;
+	}
+	
+	public Input getInput()
+	{
+		return input;
+	}
+	
+	public T getSettings()
+	{
+		return gameSettings;
 	}
 
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.polaris.engine;
+package com.polaris.engine.options;
 
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
@@ -22,8 +22,6 @@ import org.lwjgl.glfw.GLFWScrollCallback;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.polaris.engine.options.Key;
-import com.polaris.engine.options.Settings;
 
 /**
  * @author Killian Le Clainche
@@ -39,9 +37,8 @@ public class Input
 	
 	private final BiMap<Integer, Key> keyboardMapping;
 	private final BiMap<Integer, Key> mouseMapping;
-	private final BiMap<String, Key> nameMapping;
 	
-	private String textInput;
+	private StringBuilder textInput;
 	
 	public Input(Settings settings)
 	{
@@ -53,60 +50,8 @@ public class Input
 		
 		keyboardMapping = HashBiMap.create();
 		mouseMapping = HashBiMap.create();
-		nameMapping = HashBiMap.create();
-		textInput = new String();
+		textInput = new StringBuilder();
 		
-		addKey(GLFW.GLFW_KEY_APOSTROPHE);
-		addKey(GLFW.GLFW_KEY_TAB);
-		addKey(GLFW.GLFW_KEY_LEFT_SHIFT);
-		addKey(GLFW.GLFW_KEY_LEFT);
-		addKey(GLFW.GLFW_KEY_LEFT_ALT);
-		addKey(GLFW.GLFW_KEY_LEFT_BRACKET);
-		addKey(GLFW.GLFW_KEY_LEFT_CONTROL);
-		addKey(GLFW.GLFW_KEY_LEFT_SHIFT);
-		addKey(GLFW.GLFW_KEY_SPACE);
-		addKey(GLFW.GLFW_KEY_DELETE);
-		addKey(GLFW.GLFW_KEY_RIGHT);
-		addKey(GLFW.GLFW_KEY_RIGHT_ALT);
-		addKey(GLFW.GLFW_KEY_RIGHT_BRACKET);
-		addKey(GLFW.GLFW_KEY_RIGHT_CONTROL);
-		addKey(GLFW.GLFW_KEY_RIGHT_SHIFT);
-		addKey(GLFW.GLFW_KEY_UP);
-		addKey(GLFW.GLFW_KEY_DOWN);
-		addKey(GLFW.GLFW_KEY_COMMA);
-		addKey(GLFW.GLFW_KEY_PERIOD);
-		addKey(GLFW.GLFW_KEY_SLASH);
-		addKey(GLFW.GLFW_KEY_BACKSLASH);
-		addKey(GLFW.GLFW_KEY_BACKSPACE);
-		addKey(GLFW.GLFW_KEY_EQUAL);
-		addKey(GLFW.GLFW_KEY_ESCAPE);
-		addKey(GLFW.GLFW_KEY_GRAVE_ACCENT);
-		addKey(GLFW.GLFW_KEY_MINUS);
-		addKey(GLFW.GLFW_KEY_ENTER);
-		
-		for(int i = GLFW.GLFW_KEY_0; i <= GLFW.GLFW_KEY_9; i++)
-		{
-			addKey(i);
-		}
-		
-		for(int i = GLFW.GLFW_KEY_A; i <= GLFW.GLFW_KEY_Z; i++)
-		{
-			addKey(i);
-		}
-		
-		for(int i = 0; i <= 7; i++)
-		{
-			Key key = new Key("MOUSE" + i, i);
-			mouseMapping.put(i, key);
-			nameMapping.put(key.getName(), key);
-		}
-	}
-	
-	private void addKey(int i)
-	{
-		Key key = new Key(GLFW.glfwGetKeyName(i, 0), i);
-		keyboardMapping.put(i, key);
-		nameMapping.put(key.getName(), key);
 	}
 	
 	public void init(long windowInstance)
@@ -159,17 +104,70 @@ public class Input
 		}));
 		
 		glfwSetCharCallback(windowInstance, GLFWCharCallback.create((window, codepoint) -> {
-			textInput += (char) codepoint;
+			textInput.append((char) codepoint);
 		}));
+		
+		addKey(GLFW.GLFW_KEY_APOSTROPHE);
+		addKey(GLFW.GLFW_KEY_TAB, "Tab");
+		addKey(GLFW.GLFW_KEY_LEFT_SHIFT, "Left Shift");
+		addKey(GLFW.GLFW_KEY_LEFT, "Left Arrow");
+		addKey(GLFW.GLFW_KEY_LEFT_ALT, "Left Alt");
+		addKey(GLFW.GLFW_KEY_LEFT_BRACKET);
+		addKey(GLFW.GLFW_KEY_LEFT_CONTROL, "Left Control");
+		addKey(GLFW.GLFW_KEY_SPACE, "Spacebar");
+		addKey(GLFW.GLFW_KEY_DELETE, "Delete");
+		addKey(GLFW.GLFW_KEY_RIGHT, "Right Arrow");
+		addKey(GLFW.GLFW_KEY_RIGHT_ALT, "Right Alt");
+		addKey(GLFW.GLFW_KEY_RIGHT_BRACKET);
+		addKey(GLFW.GLFW_KEY_RIGHT_CONTROL, "Right Control");
+		addKey(GLFW.GLFW_KEY_RIGHT_SHIFT, "Right Shift");
+		addKey(GLFW.GLFW_KEY_UP, "Up Arrow");
+		addKey(GLFW.GLFW_KEY_DOWN, "Down Arrow");
+		addKey(GLFW.GLFW_KEY_COMMA);
+		addKey(GLFW.GLFW_KEY_PERIOD);
+		addKey(GLFW.GLFW_KEY_SLASH);
+		addKey(GLFW.GLFW_KEY_BACKSLASH);
+		addKey(GLFW.GLFW_KEY_BACKSPACE, "Backspace");
+		addKey(GLFW.GLFW_KEY_EQUAL);
+		addKey(GLFW.GLFW_KEY_ESCAPE, "Escape");
+		addKey(GLFW.GLFW_KEY_GRAVE_ACCENT);
+		addKey(GLFW.GLFW_KEY_MINUS);
+		addKey(GLFW.GLFW_KEY_ENTER, "Enter");
+		
+		for(int i = GLFW.GLFW_KEY_0; i <= GLFW.GLFW_KEY_9; i++)
+		{
+			addKey(i);
+		}
+		
+		for(int i = GLFW.GLFW_KEY_A; i <= GLFW.GLFW_KEY_Z; i++)
+		{
+			addKey(i);
+		}
+		
+		for(int i = 0; i <= 7; i++)
+		{
+			Key key = new Key("MOUSE" + i, i);
+			mouseMapping.put(i, key);
+		}
+	}
+	
+	private void addKey(int i)
+	{
+		Key key = new Key(GLFW.glfwGetKeyName(i, 0), i);
+		keyboardMapping.put(i, key);
+	}
+	
+	private void addKey(int i, String keyName)
+	{
+		Key key = new Key(keyName, i);
+		keyboardMapping.put(i, key);
 	}
 
 	public void update()
 	{
-		textInput = new String();
+		textInput.setLength(0);
 		setDelta(0, 0);
 		setScrollDelta(0, 0);
-		
-		glfwPollEvents();
 		
 		for(Key key : mouseMapping.values())
 		{
@@ -180,6 +178,8 @@ public class Input
 		{
 			key.update();
 		}
+		
+		glfwPollEvents();
 	}
 	
 	public void setCursorMode(long windowInstance, int mode)
@@ -187,37 +187,47 @@ public class Input
 		glfwSetInputMode(windowInstance, GLFW_CURSOR, mode);
 	}
 	
-	public Vector2d getPos()
+	public final double getMouseX()
 	{
-		return position;
+		return position.x;
 	}
 	
-	public Vector2d getDelta()
+	public final double getMouseY()
 	{
-		return delta;
+		return position.y;
 	}
 	
-	public Vector2d getScrollDelta()
+	public final double getMouseXDelta()
 	{
-		return scrollDelta;
+		return delta.x;
 	}
 	
-	public void setPos(double x, double y)
+	public final double getMouseYDelta()
 	{
-		position.set(x, y);
+		return delta.y;
 	}
 	
-	public void setDelta(double dx, double dy)
+	public final double getMouseScrollX()
+	{
+		return scrollDelta.x;
+	}
+	
+	public final double getMouseScrollY()
+	{
+		return scrollDelta.y;
+	}
+	
+	private final void setDelta(double dx, double dy)
 	{
 		delta.set(dx, dy);
 	}
 	
-	public void setScrollDelta(double dx, double dy)
+	private final void setScrollDelta(double dx, double dy)
 	{
 		scrollDelta.set(dx, dy);
 	}
 	
-	public void addScrollDelta(double dx, double dy)
+	private final void addScrollDelta(double dx, double dy)
 	{
 		scrollDelta.add(dx, dy);
 	}

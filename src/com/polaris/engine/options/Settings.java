@@ -11,8 +11,10 @@ import java.util.List;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWMonitorCallback;
 
-public class Settings
+public class Settings implements java.io.Serializable
 {
+	private static final long serialVersionUID = -2407354674964783920L;
+	
 	private static boolean staticInitialized = false;
 	private static List<Monitor> monitorList;
 	
@@ -76,8 +78,7 @@ public class Settings
 	
 	private int windowPosX, windowPosY;
 	
-	protected int windowWidth = 0;
-	protected int windowHeight = 0;
+	protected int windowWidth, windowHeight;
 	
 	private String title;
 
@@ -86,8 +87,10 @@ public class Settings
 		monitor = getMonitor(glfwGetPrimaryMonitor());
 		windowMode = WindowMode.WINDOWED;
 		defaultWindowMode = windowMode;
-		title = "Test";
 		windowPosX = windowPosY = -1;
+		windowWidth = windowHeight = 0;
+		
+		title = "Test";
 	}
 
 	/**

@@ -1,12 +1,14 @@
-package com.polaris.engine.gui.element;
+package com.polaris.engine.gui.content;
 
-public abstract class MultiButton extends Button
+import com.polaris.engine.options.Settings;
+
+public abstract class GuiModeButton<T extends Settings> extends GuiButton<T>
 {
 
 	protected String[] modeNames;
 	protected int mode = 0;
 
-	public MultiButton(double x, double y, double width, double height, String ... list)
+	public GuiModeButton(double x, double y, double width, double height, String ... list)
 	{
 		super(list[0], x, y, width, height);
 		modeNames = list;

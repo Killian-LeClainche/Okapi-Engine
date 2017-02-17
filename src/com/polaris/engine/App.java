@@ -68,34 +68,21 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.Configuration;
 
 import com.polaris.engine.gui.Gui;
+import com.polaris.engine.options.Input;
 import com.polaris.engine.options.Monitor;
 import com.polaris.engine.options.Settings;
 import com.polaris.engine.render.Texture;
 import com.polaris.engine.render.TextureManager;
 import com.polaris.engine.sound.OpenAL;
 import com.polaris.engine.thread.AppPacket;
-import com.polaris.engine.thread.LogicApp;
 import com.polaris.engine.thread.PacketComparator;
 
-public class App 
+public abstract class App<T extends Settings>
 {
 	
 	private static boolean hasSetup = false;
 	
-	public static void start(boolean debug, Gui gui)
-	{
-		setup();
-		
-		App app = new App(debug);
-		
-		app.init();
-		
-		app.initGui(gui);
-		
-		app.run();
-	}
-	
-	public static void start(final App app)
+	public static void start(final App<?> app)
 	{
 		setup();
 		
@@ -156,7 +143,7 @@ public class App
 	/**
 	 * The settings of the game, allows for inheritance.
 	 */
-	protected Settings gameSettings;
+	protected T gameSettings;
 	
 	protected TextureManager textureManager;
 	
@@ -165,7 +152,9 @@ public class App
 	/**
 	 * Instance of current screen being displayed.
 	 */
-	protected Gui currentGui;
+	protected Gui<T> currentGui;
+	
+	private double delta;
 	
 	protected App(boolean debug)
 	{
@@ -234,7 +223,6 @@ public class App
 		
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		
-		double delta;
 		Iterator<AppPacket> polledPackets;
 		AppPacket packet;
 		Future<?> finalTask;
@@ -260,6 +248,7 @@ public class App
 			input.update();
 			
 			currentGui.createTasks(taskExecutor);
+			
 			finalTask = taskExecutor.submit(currentGui);
 			
 			while(!finalTask.isDone());
@@ -281,10 +270,7 @@ public class App
 		while(!taskExecutor.isTerminated());
 	}
 	
-	protected Settings loadSettings()
-	{
-		return new Settings();
-	}
+	protected abstract T loadSettings();
 	
 	/**
 	 * sets up the environment for a window to be created.
@@ -393,7 +379,7 @@ public class App
 		//logicThread.handlePacket(packet);
 	}
 	
-	public final void initGui(Gui newGui)
+	public final void initGui(Gui<T> newGui)
 	{
 		if(currentGui != null)
 		{
@@ -403,7 +389,7 @@ public class App
 		currentGui = newGui;
 	}
 	
-	public final void reinitGui(Gui newGui)
+	public final void reinitGui(Gui<T> newGui)
 	{
 		currentGui.close();
 		newGui.reinit();
@@ -460,31 +446,6 @@ public class App
 		glLoadIdentity();
 	}
 	
-	public final long getWindow()
-	{
-		return windowInstance;
-	}
-	
-	public Input getInput()
-	{
-		return input;
-	}
-	
-	public Settings getSettings()
-	{
-		return gameSettings;
-	}
-	
-	public TextureManager getTextureManager()
-	{
-		return textureManager;
-	}
-	
-	public Gui getCurrentScreen()
-	{
-		return currentGui;
-	}
-	
 	public float getWindowScaleX()
 	{
 		return (float) scaleToWidth / (float) gameSettings.getWindowWidth();
@@ -495,50 +456,34 @@ public class App
 		return (float) scaleToHeight / (float) gameSettings.getWindowHeight();
 	}
 	
-	public int getWindowX()
+	public final long getWindow()
 	{
-		return gameSettings.getWindowWidth();
+		return windowInstance;
 	}
 	
-	public int getWindowY()
+	public Input getInput()
 	{
-		return gameSettings.getWindowHeight();
+		return input;
 	}
 	
-	/**
-	 * @return mouse position
-	 */
-	public final double getMouseX()
+	public T getSettings()
 	{
-		return input.getPos().x;
+		return gameSettings;
 	}
 	
-	/**
-	 * @return mouse position
-	 */
-	public final double getMouseY()
+	public TextureManager getTextureManager()
 	{
-		return input.getPos().y;
+		return textureManager;
 	}
 	
-	public final double getMouseDeltaX()
+	public Gui<T> getCurrentScreen()
 	{
-		return input.getDelta().x;
+		return currentGui;
 	}
 	
-	public final double getMouseDeltaY()
+	public final double getTickDelta()
 	{
-		return input.getDelta().y;
-	}
-	
-	public final double getScrollDeltaX()
-	{
-		return input.getScrollDelta().x;
-	}
-	
-	public final double getScrollDeltaY()
-	{
-		return input.getScrollDelta().y;
+		return delta;
 	}
 	
 }
