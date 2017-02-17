@@ -45,12 +45,10 @@ import com.polaris.engine.App;
 public class TextureManager
 {
 	
-	private App application;
 	private Map<String, Texture> textures;
 	
-	public TextureManager(App app)
+	public TextureManager()
 	{
-		application = app;
 		textures = new HashMap<String, Texture>();
 	}
 	
@@ -212,11 +210,6 @@ public class TextureManager
 	public Texture getTexture(String texture)
 	{
 		return textures.get(texture);
-	}
-	
-	public App getApplication()
-	{
-		return application;
 	}
 	
 }

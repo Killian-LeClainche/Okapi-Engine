@@ -18,8 +18,6 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import com.polaris.engine.util.Color4d;
-
 public class FontMap implements ITexture
 {
 

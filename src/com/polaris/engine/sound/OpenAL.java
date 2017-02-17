@@ -3,7 +3,7 @@
  */
 package com.polaris.engine.sound;
 
-import com.polaris.engine.App;
+import com.polaris.engine.options.Settings;
 
 /**
  * @author lec50
@@ -12,11 +12,11 @@ import com.polaris.engine.App;
 public class OpenAL
 {
 	
-	private final App application;
+	private final Settings gameSettings;
 
-	public OpenAL(App app)
+	public OpenAL(Settings settings)
 	{
-		application = app;
+		gameSettings = settings;
 	}
 	
 	public void init()

@@ -7,11 +7,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.polaris.engine.App;
-import com.polaris.engine.LogicGui;
+import com.polaris.engine.GameState;
 
 /**
  * @author Killian Le Clainche
@@ -19,7 +16,6 @@ import com.polaris.engine.LogicGui;
  */
 public class LogicApp extends Thread
 {
-	public static final Log log = LogFactory.getLog(LogicApp.class);
 	
 	private final App application;
 	private final Set<AppPacket> incomingPackets;
@@ -31,7 +27,7 @@ public class LogicApp extends Thread
 	
 	private long nextTickTime;
 	
-	private LogicGui logicHandler;
+	private GameState logicHandler;
 	
 	public LogicApp(App app, int maxUps)
 	{
@@ -70,7 +66,7 @@ public class LogicApp extends Thread
 			}
 			catch (InterruptedException e)
 			{
-				log.debug("Somehow this thread was stopped unconventially.");
+				//log.debug("Somehow this thread was stopped unconventially.");
 				isRunning = false;
 			}
 			finally
@@ -80,7 +76,7 @@ public class LogicApp extends Thread
 		}
 	}
 	
-	public void setLogicHandler(LogicGui logic)
+	public void setLogicHandler(GameState logic)
 	{
 		if(logic == null)
 		{
@@ -116,13 +112,13 @@ public class LogicApp extends Thread
 		application.sendPacket(packet);
 	}
 	
-	public final void sendInitGuiPacket(LogicGui logic)
+	public final void sendInitGuiPacket(GameState logic)
 	{
 		InitGuiPacket packet = new InitGuiPacket(application, this, logic);
 		application.sendPacket(packet);
 	}
 	
-	public final void sendReinitGuiPacket(LogicGui logic)
+	public final void sendReinitGuiPacket(GameState logic)
 	{
 		ReinitGuiPacket packet = new ReinitGuiPacket(application, this, logic);
 		application.sendPacket(packet);

@@ -10,9 +10,6 @@ import java.util.List;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWMonitorCallback;
-import org.lwjgl.opengl.GLCapabilities;
-
-import com.polaris.engine.App;
 
 public class Settings
 {
@@ -42,9 +39,11 @@ public class Settings
 				}
 			}));
 			PointerBuffer buffer = glfwGetMonitors();
-			while(buffer.hasRemaining())
+			int i = 0;
+			while(buffer.capacity() > i)
 			{
-				monitorList.add(Monitor.createMonitor(buffer.get()));
+				monitorList.add(Monitor.createMonitor(buffer.get(i)));
+				i++;
 			}
 			staticInitialized = true;
 		}
@@ -69,41 +68,26 @@ public class Settings
 		return null;
 	}
 	
-	private final App application;
-	
 	private Monitor monitor;
 	
+	private WindowMode defaultWindowMode;
 	private WindowMode windowMode;
 	private boolean updateWindow;
 	
+	private int windowPosX, windowPosY;
+	
+	protected int windowWidth = 0;
+	protected int windowHeight = 0;
+	
 	private String title;
-	
-	public Settings(App app)
-	{
-		application = app;
-	}
-	
+
 	public void init()
 	{
 		monitor = getMonitor(glfwGetPrimaryMonitor());
-	}
-	
-	public boolean createCapabilities()
-	{
-		return false;
-	}
-	
-	public GLCapabilities getCapabilities()
-	{
-		return null;
-	}
-
-	/**
-	 * @return
-	 */
-	public String getGLVersion()
-	{
-		return null;
+		windowMode = WindowMode.WINDOWED;
+		defaultWindowMode = windowMode;
+		title = "Test";
+		windowPosX = windowPosY = -1;
 	}
 
 	/**
@@ -114,6 +98,14 @@ public class Settings
 		boolean shouldUpdate = updateWindow;
 		updateWindow = false;
 		return shouldUpdate;
+	}
+	
+	public void changeWindowMode()
+	{
+		if(defaultWindowMode == windowMode)
+			windowMode = WindowMode.FULLSCREEN;
+		else
+			windowMode = defaultWindowMode;
 	}
 
 	/**
@@ -142,6 +134,42 @@ public class Settings
 		return title;
 	}
 
+	public int getWindowXPos(int w)
+	{
+		if(windowPosX == -1)
+			windowPosX = (monitor.getVideoMode().width() - w) / 2;
+		return windowPosX;
+	}
+	
+	public int getWindowYPos(int h)
+	{
+		if(windowPosY == -1)
+			windowPosY = (monitor.getVideoMode().height() - h) / 2;
+		return windowPosY;
+	}
+	
+	public void setWindowWidth(int w)
+	{
+		windowWidth = w;
+		windowPosX = (monitor.getVideoMode().width() - w) / 2;
+	}
+	
+	public void setWindowHeight(int h)
+	{
+		windowHeight = h;
+		windowPosY = (monitor.getVideoMode().height() - h) / 2;
+	}
+	
+	public int getWindowWidth()
+	{
+		return windowWidth;
+	}
+	
+	public int getWindowHeight()
+	{
+		return windowHeight;
+	}
+	
 	/**
 	 * @return
 	 */

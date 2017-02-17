@@ -3,26 +3,27 @@
  */
 package com.polaris.engine;
 
+import com.polaris.engine.gui.Gui;
 import com.polaris.engine.thread.LogicApp;
 
 /**
  * @author Killian Le Clainche
  *
  */
-public abstract class LogicGui
+public abstract class GameState
 {
 	
 	protected final LogicApp logic;
 	
 	protected int ticksExisted;
-	private LogicGui parent;
+	private GameState parent;
 	
-	public LogicGui(LogicApp app)
+	public GameState(LogicApp app)
 	{
 		this(app, null);
 	}
 	
-	public LogicGui(LogicApp app, LogicGui p)
+	public GameState(LogicApp app, GameState p)
 	{
 		logic = app;
 		
@@ -44,7 +45,7 @@ public abstract class LogicGui
 	
 	public void close() {}
 	
-	public LogicGui getParent()
+	public GameState getParent()
 	{
 		return parent;
 	}

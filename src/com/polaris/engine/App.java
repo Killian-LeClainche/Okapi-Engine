@@ -8,7 +8,6 @@ import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
-import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
@@ -59,14 +58,16 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.Configuration;
 
+import com.polaris.engine.gui.Gui;
 import com.polaris.engine.options.Monitor;
 import com.polaris.engine.options.Settings;
 import com.polaris.engine.render.Texture;
@@ -76,10 +77,59 @@ import com.polaris.engine.thread.AppPacket;
 import com.polaris.engine.thread.LogicApp;
 import com.polaris.engine.thread.PacketComparator;
 
-public abstract class App 
+public class App 
 {
 	
-	public static final Log log = LogFactory.getLog(App.class);
+	private static boolean hasSetup = false;
+	
+	public static void start(boolean debug, Gui gui)
+	{
+		setup();
+		
+		App app = new App(debug);
+		
+		app.init();
+		
+		app.initGui(gui);
+		
+		app.run();
+	}
+	
+	public static void start(final App app)
+	{
+		setup();
+		
+		app.init();
+		app.run();
+	}
+	
+	public static void setup()
+	{
+		if(!hasSetup)
+		{
+			if(!glfwInit())
+			{
+				//LOG.error("Failed to initialize application!");
+				//LOG.debug("create() method caused crash.");
+				return;
+			}
+			
+			Settings.staticInit();
+			
+			while(!Settings.hasMonitors())
+			{
+				try
+				{
+					Thread.sleep(10);
+				}
+				catch (InterruptedException e)
+				{
+					//LOG.error("CRASH?");
+				}
+			}
+			hasSetup = true;
+		}
+	}
 	
 	public int scaleToWidth = 1920;
 	public int scaleToHeight = 1080;
@@ -87,56 +137,76 @@ public abstract class App
 	/**
 	 * long instance of the window this application takes on.
 	 */
-	private long windowInstance;
+	protected long windowInstance;
 	
-	private final Set<AppPacket> incomingPackets;
+	protected final Set<AppPacket> incomingPackets;
 	
-	private final LogicApp logicThread;
+	protected final ExecutorService taskExecutor;
 	
 	/**
 	 * Instance of application's sound system.
 	 */
-	private final OpenAL soundSystem;
+	protected final OpenAL soundSystem;
 	
 	/**
 	 * Instance of application's mouse.
 	 */
-	private final Input input;
+	protected final Input input;
 	
 	/**
 	 * The settings of the game, allows for inheritance.
 	 */
-	private Settings gameSettings;
+	protected Settings gameSettings;
 	
-	private int windowWidth = 0;
-	private int windowHeight = 0;
+	protected TextureManager textureManager;
 	
-	private TextureManager textureManager;
-	
-	private boolean isRunning;
+	protected boolean isRunning;
 	
 	/**
 	 * Instance of current screen being displayed.
 	 */
-	private Gui currentGui;
-
-	public App(boolean debug)
+	protected Gui currentGui;
+	
+	protected App(boolean debug)
 	{
 		Configuration.DISABLE_CHECKS.set(!debug);
 		Configuration.DEBUG.set(debug);
 		Configuration.GLFW_CHECK_THREAD0.set(!debug);
 		
-		soundSystem = new OpenAL(this);
-		input = new Input(this);
+		windowInstance = -1;
+		
 		gameSettings = loadSettings();
+		
+		soundSystem = new OpenAL(gameSettings);
+		input = new Input(gameSettings);
 		
 		isRunning = true;
 		
 		incomingPackets = new ConcurrentSkipListSet<AppPacket>(new PacketComparator());
 		
-		logicThread = new LogicApp(this, getMaxUPS());
+		textureManager = new TextureManager();
 		
-		textureManager = new TextureManager(this);
+		taskExecutor = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors() - 2, 1));
+	}
+	
+	
+	protected void init()
+	{		
+		gameSettings.init();
+		
+		if(!create())
+		{
+			//LOG.error("Failed to initialize application!");
+			//LOG.debug("setup() method caused crash.");
+			return;
+		}
+		
+		soundSystem.init();
+		
+		glfwSetFramebufferSizeCallback(windowInstance, GLFWFramebufferSizeCallback.create((window, width, height) -> {
+			gameSettings.setWindowWidth(width);
+			gameSettings.setWindowHeight(height);
+		}));
 	}
 	
 	/**
@@ -144,57 +214,10 @@ public abstract class App
 	 */
 	public void run()
 	{
-		if(!glfwInit())
-		{
-			log.error("Failed to initialize application!");
-			log.debug("create() method caused crash.");
-			return;
-		}
+		//logicThread.setLogicHandler(getGameState());
+		//logicThread.run();
 		
-		Settings.staticInit();
-		
-		while(!Settings.hasMonitors())
-		{
-			try
-			{
-				Thread.sleep(10);
-			}
-			catch (InterruptedException e)
-			{
-				log.error("CRASH?");
-			}
-		}
-		
-		if(!create())
-		{
-			log.error("Failed to initialize application!");
-			log.debug("setup() method caused crash.");
-			return;
-		}
-		
-		if(!gameSettings.createCapabilities())
-		{
-			log.error("OpenGL Creation Failed");
-			if(gameSettings.getCapabilities() != null)
-			{
-				log.debug("The GL version is not to the needs of this application.");
-				log.debug("Requires " + gameSettings.getGLVersion());
-			}
-			else
-			{
-				log.debug("There is no GL Capabilities being created.");
-			}
-			return;
-		}
-		
-		init();
-		
-		soundSystem.init();
-		
-		gameSettings.init();
-		
-		logicThread.setLogicHandler(getStartGui());
-		logicThread.run();
+		GL.createCapabilities();
 		
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		glShadeModel(GL_SMOOTH);
@@ -206,21 +229,23 @@ public abstract class App
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		glDisable(GL_DITHER);
-
+		
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+		
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		
 		double delta;
 		Iterator<AppPacket> polledPackets;
 		AppPacket packet;
+		Future<?> finalTask;
+		
 		while(!glfwWindowShouldClose(windowInstance) && isRunning)
 		{
 			glfwMakeContextCurrent(windowInstance);
 			
 			delta = glfwGetTime();
 			glfwSetTime(0);
-
+			
 			if(updateWindow())
 				break;
 			
@@ -234,19 +259,31 @@ public abstract class App
 			
 			input.update();
 			
+			currentGui.createTasks(taskExecutor);
+			finalTask = taskExecutor.submit(currentGui);
+			
+			while(!finalTask.isDone());
+			
 			glClear(GL_ACCUM_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			
 			currentGui.render(delta);
 			glfwSwapBuffers(windowInstance);
 		}
-
+		destroy();
+	}
+	
+	protected void destroy()
+	{
 		glfwDestroyWindow(windowInstance);
-		GL.destroy();
 		glfwTerminate();
+		
+		taskExecutor.shutdown();
+		while(!taskExecutor.isTerminated());
 	}
 	
 	protected Settings loadSettings()
 	{
-		return new Settings(this);
+		return new Settings();
 	}
 	
 	/**
@@ -281,7 +318,7 @@ public abstract class App
 		
 		if(instance == 0)
 		{
-			glfwTerminate();
+			destroy();
 			return false;
 		}
 		
@@ -292,7 +329,7 @@ public abstract class App
 		
 		glfwMakeContextCurrent(windowInstance);
 		
-		input.init();
+		input.init(windowInstance);
 		
 		glfwSwapInterval(gameSettings.vsyncMode());
 		
@@ -301,8 +338,8 @@ public abstract class App
 		
 		glfwGetFramebufferSize(windowInstance, width, height);
 		
-		windowWidth = width[0];
-		windowHeight = height[1];
+		gameSettings.setWindowWidth(width[0]);
+		gameSettings.setWindowHeight(height[0]);
 		
 		glfwShowWindow(windowInstance);
 		
@@ -310,20 +347,12 @@ public abstract class App
 	}
 	
 	/**
-	 * initialize window
-	 */
-	protected void init() 
-	{
-		glfwSetFramebufferSizeCallback(windowInstance, GLFWFramebufferSizeCallback.create((window, width, height) -> {
-			windowWidth = width;
-			windowHeight = height;
-		}));
-	}
-
-	/**
 	 * create the window
 	 */
-	public abstract long createWindow();
+	public long createWindow()
+	{
+		return createWindow(1280, 720);
+	}
 	
 	public int getMaxUPS()
 	{
@@ -351,9 +380,17 @@ public abstract class App
 	/**
 	 * @param packet
 	 */
-	public void sendPacket(AppPacket packet)
+	public void handlePacket(AppPacket packet)
 	{
 		incomingPackets.add(packet);
+	}
+	
+	/**
+	 * @param newGui
+	 */
+	public void sendPacket(AppPacket packet)
+	{
+		//logicThread.handlePacket(packet);
 	}
 	
 	public final void initGui(Gui newGui)
@@ -372,14 +409,12 @@ public abstract class App
 		newGui.reinit();
 		currentGui = newGui;
 	}
-
+	
 	public void close()
 	{
 		isRunning = false;
 		//OpenAL.closeAL();
 	}
-
-	protected abstract LogicGui getStartGui();
 	
 	public long createWindow(int width, int height)
 	{
@@ -388,10 +423,8 @@ public abstract class App
 	
 	public long createWindow(int width, int height, String title, long parentInstance)
 	{
-		long monitor = gameSettings.getMonitorInstance();
-		long instance = glfwCreateWindow(width, height, title, monitor, parentInstance);
-		GLFWVidMode videoMode = glfwGetVideoMode(monitor);
-		glfwSetWindowPos(instance, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2);
+		long instance = glfwCreateWindow(width, height, title, 0, parentInstance);
+		glfwSetWindowPos(instance, gameSettings.getWindowXPos(width), gameSettings.getWindowYPos(height));
 		return instance;
 	}
 	
@@ -400,19 +433,21 @@ public abstract class App
 	 */
 	public void gl2d()
 	{
-		glViewport(0, 0, windowWidth, windowHeight);
+		glViewport(0, 0, gameSettings.getWindowWidth(), gameSettings.getWindowHeight());
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glOrtho(0, scaleToWidth, scaleToHeight, 0, -100, 100);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 	}
-
+	
 	/**
 	 * Call before performing 3d rendering
 	 */
 	public void gl3d(final float fovy, final float zNear, final float zFar)
 	{
+		int windowWidth = gameSettings.getWindowWidth();
+		int windowHeight = gameSettings.getWindowHeight();
 		glViewport(0, 0, windowWidth, windowHeight);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -430,11 +465,46 @@ public abstract class App
 		return windowInstance;
 	}
 	
-	public final Gui getCurrentScreen()
+	public Input getInput()
+	{
+		return input;
+	}
+	
+	public Settings getSettings()
+	{
+		return gameSettings;
+	}
+	
+	public TextureManager getTextureManager()
+	{
+		return textureManager;
+	}
+	
+	public Gui getCurrentScreen()
 	{
 		return currentGui;
 	}
-
+	
+	public float getWindowScaleX()
+	{
+		return (float) scaleToWidth / (float) gameSettings.getWindowWidth();
+	}
+	
+	public float getWindowScaleY()
+	{
+		return (float) scaleToHeight / (float) gameSettings.getWindowHeight();
+	}
+	
+	public int getWindowX()
+	{
+		return gameSettings.getWindowWidth();
+	}
+	
+	public int getWindowY()
+	{
+		return gameSettings.getWindowHeight();
+	}
+	
 	/**
 	 * @return mouse position
 	 */
@@ -442,7 +512,7 @@ public abstract class App
 	{
 		return input.getPos().x;
 	}
-
+	
 	/**
 	 * @return mouse position
 	 */
@@ -450,12 +520,12 @@ public abstract class App
 	{
 		return input.getPos().y;
 	}
-
+	
 	public final double getMouseDeltaX()
 	{
 		return input.getDelta().x;
 	}
-
+	
 	public final double getMouseDeltaY()
 	{
 		return input.getDelta().y;
@@ -470,10 +540,5 @@ public abstract class App
 	{
 		return input.getScrollDelta().y;
 	}
-
-	public TextureManager getTextureManager()
-	{
-		return textureManager;
-	}
-
+	
 }

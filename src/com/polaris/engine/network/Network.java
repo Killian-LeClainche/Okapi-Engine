@@ -15,7 +15,8 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
 
-import org.apache.commons.codec.binary.Base64;
+import com.google.common.io.BaseEncoding;
+
 
 public abstract class Network
 {	
@@ -162,7 +163,7 @@ public abstract class Network
 
 			dataToSecure = new ByteArrayOutputStream();
 			secureStream = new DataOutputStream(dataToSecure);
-			secureStream.writeUTF(new String(Base64.encodeBase64(encrypt.doFinal(data.toByteArray()))));
+			secureStream.writeUTF(new String(BaseEncoding.base64().encode(encrypt.doFinal(data.toByteArray()))));
 
 			securePacket = new PacketSecure(dataToSecure.toByteArray());
 
@@ -181,7 +182,7 @@ public abstract class Network
 		try 
 		{
 			DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(packetSecure.getEncoded()));
-			byte[] data = Base64.decodeBase64(inputStream.readUTF());
+			byte[] data = BaseEncoding.base64().decode(inputStream.readUTF());
 			inputStream = new DataInputStream(new ByteArrayInputStream(decrypt.doFinal(data)));
 			
 			int packet = inputStream.readShort();
