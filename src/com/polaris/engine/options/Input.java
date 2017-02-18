@@ -22,6 +22,7 @@ import org.lwjgl.glfw.GLFWScrollCallback;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.polaris.engine.App;
 
 /**
  * @author Killian Le Clainche
@@ -59,6 +60,8 @@ public class Input
 		glfwSetCursorPosCallback(windowInstance, GLFWCursorPosCallback.create((window, xpos, ypos) -> {
 			xpos /= (double) gameSettings.getWindowWidth();
 			ypos /= (double) gameSettings.getWindowHeight();
+			xpos *= App.scaleToWidth;
+			ypos *= App.scaleToHeight;
 			setDelta(position.x - xpos, position.y - ypos);
 			position.x = xpos;
 			position.y = ypos;

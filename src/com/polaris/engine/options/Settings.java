@@ -70,6 +70,11 @@ public class Settings implements java.io.Serializable
 		return null;
 	}
 	
+	public static Monitor getMonitor(int index)
+	{
+		return monitorList.get(index);
+	}
+	
 	private Monitor monitor;
 	
 	private WindowMode defaultWindowMode;
@@ -79,8 +84,6 @@ public class Settings implements java.io.Serializable
 	private int windowPosX, windowPosY;
 	
 	private int windowWidth, windowHeight;
-	
-	private String title;
 	
 	protected Input input;
 	
@@ -111,6 +114,8 @@ public class Settings implements java.io.Serializable
 			windowMode = WindowMode.FULLSCREEN;
 		else
 			windowMode = defaultWindowMode;
+		
+		updateWindow = true;
 	}
 
 	/**
@@ -136,7 +141,7 @@ public class Settings implements java.io.Serializable
 	
 	public String getTitle()
 	{
-		return title;
+		return "";
 	}
 
 	public int getWindowXPos(int w)

@@ -24,12 +24,14 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTTBakedChar.Buffer;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.stb.STBTruetype;
 
+import com.polaris.engine.App;
 import com.polaris.engine.util.MathHelper;
 /**
  * @author lec50
@@ -118,9 +120,11 @@ public class Font
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fontTextureId);
 	}
 	
-	public float getWidth(String text) {
+	public float getWidth(String text) 
+	{
 		float length = 0f;
-		for (int i = 0; i < text.length(); i++) {
+		for (int i = 0; i < text.length(); i++) 
+		{
 			STBTTBakedChar data = fontChardata.get(text.charAt(i) - 32);
 			length += data.xadvance();
 		}
@@ -134,7 +138,7 @@ public class Font
 	
 	public VBO draw(String text, float x, float y, float z, float scale)
 	{
-		//int bufferSize = text.length() * 4 * 5;
+		//int bufferSize = text.length() * 6 * 5;
 		//VBOBuffer vboBuffer = new VBOBuffer(bufferSize);
 		//IBOBuffer iboBuffer = new IBOBuffer(bufferSize);
 		STBTTAlignedQuad quad = STBTTAlignedQuad.malloc();
@@ -143,12 +147,12 @@ public class Font
 		yBuffer.put(0, 0);
 		
 		GL11.glPushMatrix();
-		GL11.glTranslatef(x, y, z);
-		GL11.glScalef(scale, scale, scale);
 		
+		GL11.glTranslated(x, y, z);
 		GL11.glBegin(GL11.GL_QUADS);
 		
 		char c;
+		float x0, y0, x1, y1;
 		for(int i = 0; i < text.length(); i++)
 		{
 			c = text.charAt(i);
@@ -159,30 +163,53 @@ public class Font
 				continue;
 			}
 			
+			x = xBuffer.get(0);
 			stbtt_GetBakedQuad(fontChardata, fontWidth, fontHeight, c - 32, xBuffer, yBuffer, quad, true);
 			
-			GL11.glTexCoord2d(quad.s0(), quad.t1());
-			GL11.glVertex3d(quad.x0(), quad.y1(), z);
-			GL11.glTexCoord2d(quad.s1(), quad.t1());
-			GL11.glVertex3d(quad.x1(), quad.y1(), z);
-			GL11.glTexCoord2d(quad.s1(), quad.t0());
-			GL11.glVertex3d(quad.x1(), quad.y0(), z);
-			GL11.glTexCoord2d(quad.s0(), quad.t0());
-			GL11.glVertex3d(quad.x0(), quad.y0(), z);
+			x0 = quad.x0();
+			y0 = quad.y0();
+			x1 = quad.x1();
+			y1 = quad.y1();
 			
-			/*vboBuffer.addTextureVertex(quad.x0(), quad.y1(), z, quad.s0(), quad.t1());
-			vboBuffer.addTextureVertex(quad.x1(), quad.y1(), z, quad.s1(), quad.t1());
-			vboBuffer.addTextureVertex(quad.x1(), quad.y0(), z, quad.s1(), quad.t0());
-			vboBuffer.addTextureVertex(quad.x0(), quad.y0(), z, quad.s0(), quad.t0());*/
+			x1 = x0 + (x1 - x0) * scale;
+			y0 = y1 + (y0 - y1) * scale;
+			
+			xBuffer.put(0, x + (xBuffer.get(0) - x) * scale);
+			
+			GL11.glTexCoord2d(quad.s0(), quad.t1());
+			GL11.glVertex3d(x0, y1, z);
+			GL11.glTexCoord2d(quad.s1(), quad.t1());
+			GL11.glVertex3d(x1, y1, z);
+			GL11.glTexCoord2d(quad.s1(), quad.t0());
+			GL11.glVertex3d(x1, y0, z);
+			GL11.glTexCoord2d(quad.s0(), quad.t0());
+			GL11.glVertex3d(x0, y0, z);
+			
+			/*vboBuffer.addVertex(x0, y1, z);
+			vboBuffer.addVertex(x1, y1, z);
+			vboBuffer.addVertex(x0, y0, z);
+
+			vboBuffer.addVertex(x0, y0, z);
+			vboBuffer.addVertex(x1, y1, z);
+			vboBuffer.addVertex(x1, y0, z);*/
+			
+			/*vboBuffer.addTextureVertex(x0, y1, z, quad.s0(), quad.t1());
+			vboBuffer.addTextureVertex(x1, y1, z, quad.s1(), quad.t1());
+			vboBuffer.addTextureVertex(x0, y0, z, quad.s0(), quad.t0());
+			
+			vboBuffer.addTextureVertex(x0, y0, z, quad.s0(), quad.t0());
+			vboBuffer.addTextureVertex(x1, y1, z, quad.s1(), quad.t1());
+			vboBuffer.addTextureVertex(x1, y0, z, quad.s1(), quad.t0());*/
 		}
 		
 		GL11.glEnd();
+		
 		GL11.glPopMatrix();
 		quad.free();
 		
 		//iboBuffer.shrinkVBO(vboBuffer, VBO.POS_TEXTURE_STRIDE);
 		
-		//vbo = VBO.createStaticVBO(GL11.GL_QUADS, VBO.POS_TEXTURE, VBO.POS_TEXTURE_STRIDE, VBO.POS_TEXTURE_OFFSET, vboBuffer);
+		//vbo = VBO.createStaticVBO(GL11.GL_TRIANGLES, VBO.POS_TEXTURE, VBO.POS_TEXTURE_STRIDE, VBO.POS_TEXTURE_OFFSET, vboBuffer);
 		//return vbo;
 		return null;
 	}

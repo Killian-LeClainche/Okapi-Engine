@@ -116,8 +116,8 @@ public abstract class App<T extends Settings>
 		}
 	}
 	
-	public int scaleToWidth = 1920;
-	public int scaleToHeight = 1080;
+	public static int scaleToWidth = 1920;
+	public static int scaleToHeight = 1080;
 	
 	/**
 	 * long instance of the window this application takes on.
@@ -156,9 +156,9 @@ public abstract class App<T extends Settings>
 	
 	protected App(boolean debug)
 	{
-		Configuration.DISABLE_CHECKS.set(!debug);
-		Configuration.DEBUG.set(debug);
-		Configuration.GLFW_CHECK_THREAD0.set(!debug);
+		//Configuration.DISABLE_CHECKS.set(!debug);
+		//Configuration.DEBUG.set(debug);
+		//Configuration.GLFW_CHECK_THREAD0.set(!debug);
 		
 		windowInstance = -1;
 
@@ -334,7 +334,7 @@ public abstract class App<T extends Settings>
 	 */
 	public long createWindow()
 	{
-		return createWindow(1280, 720);
+		return createWindow(gameSettings.getWindowWidth(), gameSettings.getWindowHeight());
 	}
 	
 	public int getMaxUPS()
@@ -417,10 +417,10 @@ public abstract class App<T extends Settings>
 	public void gl2d()
 	{
 		glViewport(0, 0, gameSettings.getWindowWidth(), gameSettings.getWindowHeight());
-		glMatrixMode(GL_PROJECTION);
+		/*glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, scaleToWidth, scaleToHeight, 0, -10, 10);
-		glMatrixMode(GL_MODELVIEW);
+		glOrtho(0, 1, 1, 0, -10, 10);
+		glMatrixMode(GL_MODELVIEW);*/
 	}
 	
 	/**
