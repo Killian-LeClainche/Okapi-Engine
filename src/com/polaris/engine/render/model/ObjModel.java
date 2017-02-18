@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjModel extends Model
+public class ObjModel //extends Model
 {
 
-	public ObjModel(File modelLocation)
+	/*public ObjModel(File modelLocation)
 	{
 		super(modelLocation);
 	}
@@ -79,5 +79,5 @@ public class ObjModel extends Model
 				faceArray[i][j] = (short) (coords[j] - 1);
 			}
 		}
-	}
+	}*/
 }

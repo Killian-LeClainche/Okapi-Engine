@@ -81,7 +81,7 @@ public class Settings implements java.io.Serializable
 	protected int windowWidth, windowHeight;
 	
 	private String title;
-
+	
 	public void init()
 	{
 		monitor = getMonitor(glfwGetPrimaryMonitor());
@@ -180,5 +180,5 @@ public class Settings implements java.io.Serializable
 	{
 		return 1;
 	}
-
+	
 }

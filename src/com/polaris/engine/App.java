@@ -72,6 +72,7 @@ import com.polaris.engine.network.Packet;
 import com.polaris.engine.options.Input;
 import com.polaris.engine.options.Monitor;
 import com.polaris.engine.options.Settings;
+import com.polaris.engine.options.WindowMode;
 import com.polaris.engine.render.Texture;
 import com.polaris.engine.render.TextureManager;
 import com.polaris.engine.sound.OpenAL;
@@ -162,7 +163,7 @@ public abstract class App<T extends Settings>
 		Configuration.GLFW_CHECK_THREAD0.set(!debug);
 		
 		windowInstance = -1;
-		
+
 		gameSettings = loadSettings();
 		
 		soundSystem = new OpenAL(gameSettings);
@@ -285,20 +286,23 @@ public abstract class App<T extends Settings>
 		long monitorInstance = monitor.getInstance();
 		GLFWVidMode videoMode = monitor.getVideoMode();
 		
-		switch(gameSettings.getWindowMode())
+		WindowMode mode = gameSettings.getWindowMode();
+		
+		if(mode == WindowMode.WINDOWED)
 		{
-			case WINDOWED:
-				instance = createWindow();
-				break;
-			case FULLSCREEN:
-				glfwWindowHint(GLFW_RED_BITS, videoMode.redBits());
-				glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits());
-				glfwWindowHint(GLFW_BLUE_BITS, videoMode.blueBits());
-				glfwWindowHint(GLFW_REFRESH_RATE, videoMode.refreshRate());
-				instance = glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
-				break;
-			default:
-				instance = glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
+			instance = createWindow();
+		}
+		else if(mode == WindowMode.FULLSCREEN)
+		{
+			glfwWindowHint(GLFW_RED_BITS, videoMode.redBits());
+			glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits());
+			glfwWindowHint(GLFW_BLUE_BITS, videoMode.blueBits());
+			glfwWindowHint(GLFW_REFRESH_RATE, videoMode.refreshRate());
+			instance = glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
+		}
+		else
+		{
+			instance = glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
 		}
 		
 		if(instance == 0)
@@ -322,7 +326,7 @@ public abstract class App<T extends Settings>
 		int[] height = new int[1];
 		
 		glfwGetFramebufferSize(windowInstance, width, height);
-		
+
 		gameSettings.setWindowWidth(width[0]);
 		gameSettings.setWindowHeight(height[0]);
 		
@@ -469,7 +473,6 @@ public abstract class App<T extends Settings>
 	{
 		return gameSettings;
 	}
-	
 	public TextureManager getTextureManager()
 	{
 		return textureManager;

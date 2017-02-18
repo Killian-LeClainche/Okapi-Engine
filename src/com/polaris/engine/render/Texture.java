@@ -5,6 +5,8 @@ import static org.lwjgl.opengl.GL11.glBindTexture;
 
 import java.nio.ByteBuffer;
 
+import org.lwjgl.opengl.GL11;
+
 public class Texture
 {
 	private TextureManager manager;
@@ -32,7 +34,13 @@ public class Texture
 	
 	public void bind()
 	{
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, textureId);
+	}
+	
+	public void destroy()
+	{
+		GL11.glDeleteTextures(textureId);
 	}
 	
 	public void setId(int id)

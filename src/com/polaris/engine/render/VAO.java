@@ -19,6 +19,7 @@ public class VAO
 		vaoIdWrapper = glGenVertexArrays();
 		
 		glBindVertexArray(vaoIdWrapper);
+		render.bind();
 		render.setupDrawEnable();
 		glBindVertexArray(0);
 		render.disable();

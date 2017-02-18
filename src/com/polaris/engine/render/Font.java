@@ -1,5 +1,9 @@
+/**
+ * 
+ */
 package com.polaris.engine.render;
 
+import static com.polaris.engine.util.ResourceHelper.ioResourceToByteBuffer;
 import static org.lwjgl.opengl.GL11.GL_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -27,7 +31,6 @@ import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.stb.STBTruetype;
 
 import com.polaris.engine.util.MathHelper;
-import com.polaris.engine.util.ResourceHelper;
 /**
  * @author lec50
  *
@@ -45,7 +48,7 @@ public class Font
 		
 		try
 		{
-			ByteBuffer data = ResourceHelper.ioResourceToByteBuffer(fontFile);
+			ByteBuffer data = ioResourceToByteBuffer(fontFile);
 			
 			ByteBuffer pixels = BufferUtils.createByteBuffer(width * height);
 			
