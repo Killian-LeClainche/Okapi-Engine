@@ -95,12 +95,14 @@ public class VBO implements IRenderObject
 		
 		FloatBuffer buffer = vboBuffer.getBuffer();
 		
+		buffer.flip();
+		
 		glBindBuffer(GL_ARRAY_BUFFER, vboIdWrapper);
 		glBufferData(GL_ARRAY_BUFFER, buffer, glDraw);
 		
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		
-		return new VBO(vboIdWrapper, vboBuffer, attributes, strideLength, offsets, drawStyle, verticeSize);
+		return new VBO(vboIdWrapper, vboBuffer, attributes, strideLength - POS_STRIDE, offsets, drawStyle, verticeSize);
 	}
 	
 	private static VBO createVBO(int drawStyle, VertexAttribute[] attributes, int strideLength, VBOBuffer ... buffers)
@@ -201,7 +203,6 @@ public class VBO implements IRenderObject
 		while(i < vboAttribs.length)
 		{
 			attrib = vboAttribs[i];
-			
 			glEnableVertexAttribArray(attrib.getId());
 			glVertexAttribPointer(attrib.getId(), attrib.getSize(), GL_FLOAT, false, vboStrideLength, vboAttribOffsets[i]);
 			i++;

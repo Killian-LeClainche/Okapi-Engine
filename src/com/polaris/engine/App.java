@@ -62,9 +62,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.Configuration;
 
 import com.polaris.engine.gui.Gui;
@@ -196,6 +198,8 @@ public abstract class App<T extends Settings>
 			gameSettings.setWindowWidth(width);
 			gameSettings.setWindowHeight(height);
 		}));
+		
+		GL.createCapabilities();
 	}
 	
 	/**
@@ -203,13 +207,7 @@ public abstract class App<T extends Settings>
 	 */
 	public void run()
 	{
-		//logicThread.setLogicHandler(getGameState());
-		//logicThread.run();
-		
-		GL.createCapabilities();
-		
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-		glShadeModel(GL_SMOOTH);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearDepth(1.0f);
 		glClearStencil(0);
@@ -316,7 +314,7 @@ public abstract class App<T extends Settings>
 		
 		windowInstance = instance;
 		
-		glfwMakeContextCurrent(windowInstance);
+		glfwMakeContextCurrent(windowInstance);		
 		
 		input.init(windowInstance);
 		
@@ -425,9 +423,8 @@ public abstract class App<T extends Settings>
 		glViewport(0, 0, gameSettings.getWindowWidth(), gameSettings.getWindowHeight());
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, scaleToWidth, scaleToHeight, 0, -100, 100);
+		glOrtho(0, scaleToWidth, scaleToHeight, 0, -10, 10);
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
 	}
 	
 	/**

@@ -6,7 +6,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
-		<lwjgl.version>3.1.2-SNAPSHOT</lwjgl.version>
+		<lwjgl.version>3.1.1</lwjgl.version>
 		<swt.version>4.6.1</swt.version>
 		<joml.version>1.9.2</joml.version>
 		<!-- Can be overwritten via -D property during mvn invoke to specify a 
@@ -247,11 +247,6 @@
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-nanovg</artifactId>
 			<version>3.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.lwjgl</groupId>
-			<artifactId>lwjgl-jemalloc</artifactId>
-			<version>3.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>

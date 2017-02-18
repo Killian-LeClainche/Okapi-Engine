@@ -75,8 +75,11 @@ public class VBOBuffer
 	{
 		addVertex(x, y1, z);
 		addVertex(x1, y1, z);
-		addVertex(x1, y, z);
 		addVertex(x, y, z);
+		
+		addVertex(x, y, z);
+		addVertex(x1, y1, z);
+		addVertex(x1, y, z);
 	}
 	
 	public void rect(float x, float y, float x1, float y1, float z, Vector4f color)
