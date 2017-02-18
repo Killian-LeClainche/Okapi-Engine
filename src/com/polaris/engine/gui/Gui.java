@@ -1,6 +1,7 @@
 package com.polaris.engine.gui;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import com.polaris.engine.App;
 import com.polaris.engine.options.Input;

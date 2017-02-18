@@ -78,19 +78,21 @@ public class Settings implements java.io.Serializable
 	
 	private int windowPosX, windowPosY;
 	
-	protected int windowWidth, windowHeight;
+	private int windowWidth, windowHeight;
 	
 	private String title;
 	
-	public void init()
+	protected Input input;
+	
+	public void init(Input i)
 	{
+		input = i;
+		
 		monitor = getMonitor(glfwGetPrimaryMonitor());
 		windowMode = WindowMode.WINDOWED;
 		defaultWindowMode = windowMode;
 		windowPosX = windowPosY = -1;
 		windowWidth = windowHeight = 0;
-		
-		title = "Test";
 	}
 
 	/**
