@@ -46,7 +46,7 @@ public abstract class GuiScreen<T extends Settings> extends Gui<T>
 		{
 			if(MathHelper.inBounds(mouseX, mouseY, element.getBounds()))
 			{
-				flag = element.handleInput();
+				//flag = element.handleInput();
 			}
 			element.update(delta);
 		}

@@ -3,7 +3,6 @@
  */
 package com.polaris.engine.render;
 
-import static com.polaris.engine.util.Helper.TWOPI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
@@ -175,7 +174,7 @@ public class VBOBuffer
 	
 	public void arc(float circleX, float circleY, float z, float radius, int resolution, float thickness)
 	{
-		arc(circleX, circleY, z, radius, 0, TWOPI, resolution, thickness);
+		arc(circleX, circleY, z, radius, 0, (float)Math.PI * 2, resolution, thickness);
 	}
 	
 	public void arc(float circleX, float circleY, float z, float radius, float startAngle, float endAngle, int resolution, float thickness)
@@ -212,7 +211,7 @@ public class VBOBuffer
 	
 	public void arc(float circleX, float circleY, float z, float radius, int resolution, float thickness, Vector4f startColor, Vector4f endColor)
 	{
-		arc(circleX, circleY, z, radius, 0, TWOPI, resolution, thickness, startColor, endColor);
+		arc(circleX, circleY, z, radius, 0, (float)Math.PI * 2, resolution, thickness, startColor, endColor);
 	}
 	
 	public void arc(float circleX, float circleY, float z, float radius, float startAngle, float endAngle, int resolution, float thickness, Vector4f startColor, Vector4f endColor)
@@ -258,7 +257,7 @@ public class VBOBuffer
 	public void arcCircle(float circleX, float circleY, float z, float radius, int resolution, float thickness, Vector4f outColor, Vector4f inColor)
 	{
 		float angle = 0;
-		float theta = TWOPI / resolution;
+		float theta = (float)Math.PI * 2 / resolution;
 		
 		float cos = 1;
 		float sin = 0;
@@ -290,7 +289,7 @@ public class VBOBuffer
 	
 	public void circle(float circleX, float circleY, float z, float radius, int resolution)
 	{
-		circle(circleX, circleY, z, radius, 0, TWOPI, resolution);
+		circle(circleX, circleY, z, radius, 0, (float)Math.PI * 2, resolution);
 	}
 	
 	public void circle(float circleX, float circleY, float z, float radius, float startAngle, float endAngle, int resolution)
@@ -307,7 +306,7 @@ public class VBOBuffer
 	
 	public void circle(float circleX, float circleY, float z, float radius, int resolution, Vector4f outColor, Vector4f inColor)
 	{
-		circle(circleX, circleY, z, radius, 0, TWOPI, resolution, outColor, inColor);
+		circle(circleX, circleY, z, radius, 0, (float)Math.PI * 2, resolution, outColor, inColor);
 	}
 	
 	public void circle(float circleX, float circleY, float z, float radius, float startAngle, float endAngle, int resolution, Vector4f outColor, Vector4f inColor)

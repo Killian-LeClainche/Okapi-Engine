@@ -19,6 +19,7 @@ import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -173,6 +174,21 @@ public class ResourceHelper
 		} while (len != -1);
 
 		return entryBuffer.toByteArray();
+	}
+	
+	public static ByteBuffer ioResourceToByteBuffer(File file) throws IOException
+	{
+		FileInputStream fileStream;
+		FileChannel channel;
+		MappedByteBuffer buffer;
+		
+		fileStream = new FileInputStream(file);
+		channel = fileStream.getChannel();
+		buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+		
+		fileStream.close();
+		
+		return buffer;
 	}
 	
 	public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {

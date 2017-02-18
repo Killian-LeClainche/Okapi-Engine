@@ -47,7 +47,7 @@ public abstract class GuiList<T, I extends Settings> extends GuiContent<I>
 		{
 			for(int i = 0; i < elementList.length; i++)
 			{
-				elementList[i].update(delta);
+				//elementList[i].update(delta);
 			}
 		}
 	}
@@ -71,10 +71,6 @@ public abstract class GuiList<T, I extends Settings> extends GuiContent<I>
 		{
 			clicked = true;
 		}
-		else if(super.isInRegion())
-		{
-			clicked = false;
-		}
 		return 2;
 	}
 
@@ -87,11 +83,6 @@ public abstract class GuiList<T, I extends Settings> extends GuiContent<I>
 	public int getListSize()
 	{
 		return elementList.length;
-	}
-
-	public boolean isInRegion()
-	{
-		return super.isInRegion() || (clicked && getMouseX() >= position.x - shiftWidth && getMouseY() >= position.y - shiftHeight && getMouseX() <= (position.x - shiftWidth + extraWidth) && getMouseY() <= (position.y + elementHeight - shiftHeight + extraHeight));
 	}
 	
 	public void mouseOutOfRegion(int mouseId)

@@ -1,440 +1,209 @@
 package com.polaris.engine.render;
 
-import static com.polaris.engine.render.OpenGL.getAlpha;
-import static com.polaris.engine.render.OpenGL.getBlue;
-import static com.polaris.engine.render.OpenGL.getGreen;
-import static com.polaris.engine.render.OpenGL.getRed;
-import static com.polaris.engine.render.OpenGL.glBegin;
-import static java.lang.Integer.parseInt;
-import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.GL_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glTexImage2D;
+import static org.lwjgl.opengl.GL11.glTexParameteri;
+import static org.lwjgl.stb.STBTTBakedChar.malloc;
+import static org.lwjgl.stb.STBTruetype.stbtt_BakeFontBitmap;
+import static org.lwjgl.stb.STBTruetype.stbtt_GetBakedQuad;
 
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
-import javax.imageio.ImageIO;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.stb.STBTTAlignedQuad;
+import org.lwjgl.stb.STBTTBakedChar;
+import org.lwjgl.stb.STBTTBakedChar.Buffer;
+import org.lwjgl.stb.STBTTFontinfo;
+import org.lwjgl.stb.STBTruetype;
 
-public class FontMap implements ITexture
+import com.polaris.engine.util.MathHelper;
+import com.polaris.engine.util.ResourceHelper;
+/**
+ * @author lec50
+ *
+ */
+public class Font
 {
-
-	private Map<Integer, IntObject> textureArray = new HashMap<Integer, IntObject>();
-	private int textureId = 0;
-
-	public BufferedImage genTextureMap(File baseLoc) throws IOException
+	
+	private static int fontIdWrapper = 0;
+	
+	public static Font createFont(File fontFile, int pointFont, int width, int height)
 	{
-		BufferedImage image = ImageIO.read(new File(baseLoc, "font.png")); 
-		File fontFile = new File(baseLoc, "font.txt");
-		File kerningFile = new File(baseLoc, "kerning.txt");
-		float largestWidth = 0;
-		float largestHeight = 0;
-		BufferedReader reader = new BufferedReader(new FileReader(fontFile));
-		String line = null;
-		while((line = reader.readLine()) != null && line.length() > 0 && !line.startsWith("#"))
+		fontIdWrapper = GL11.glGenTextures();
+		
+		Buffer cdata = malloc(96);
+		
+		try
 		{
-			String[] content = line.split(" ");
-			IntObject object = new IntObject();
-			textureArray.put(parseInt(content[0]), object);
-			int x = parseInt(content[1]);
-			int y = parseInt(content[2]);
-			object.width = parseInt(content[3]);
-			object.height = parseInt(content[4]);
-			object.xOffset = Float.parseFloat(content[5]);
-			object.yOffset = Float.parseFloat(content[6]);
-			object.xadvance = Float.parseFloat(content[7]);
-			largestWidth = Math.max(largestWidth, object.width);
-			largestHeight = Math.max(largestHeight, object.height);
-			object.texture = new Texture(x, y, x + object.width, y + object.height);
-			object.texture.reduce(image.getWidth(), image.getHeight());
-			object.kerning = null;
-		}
-		for(Integer charID : textureArray.keySet())
-		{
-			IntObject object = textureArray.get(charID);
-			object.width /= largestWidth;
-			object.xOffset /= largestWidth;
-			object.height /= largestHeight;
-			object.yOffset /= largestHeight;
-			object.xadvance /= largestWidth;
-		}
-		reader.close();
-		if(kerningFile.exists() && kerningFile.isFile())
-		{
-			reader = new BufferedReader(new FileReader(kerningFile));
-			line = null;
-			while((line = reader.readLine()) != null && line.length() > 0 && !line.startsWith("#"))
+			ByteBuffer data = ResourceHelper.ioResourceToByteBuffer(fontFile);
+			
+			ByteBuffer pixels = BufferUtils.createByteBuffer(width * height);
+			
+			STBTTFontinfo info = STBTTFontinfo.malloc();
+			
+			if(STBTruetype.stbtt_InitFont(info, data) == false)
 			{
-				String[] content = line.split(" ");
-				IntObject object = textureArray.get(parseInt(content[1]));
-				if(object.kerning == null)
-				{
-					object.kerning = new Kerning();
-				}
-				object.kerning.add(textureArray.get(parseInt(content[0])), Float.parseFloat(content[2]) / largestWidth);
+				cdata.free();
+				info.free();
+				return null;
 			}
+			
+			stbtt_BakeFontBitmap(data, pointFont, pixels, width, height, 32, cdata);
+			
+			pixels.clear();
+			
+			glBindTexture(GL_TEXTURE_2D, fontIdWrapper);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, pixels);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			
+			return new Font(fontIdWrapper, pointFont, width, height, info, cdata);
 		}
-		return image;
-	}
-
-	public IntObject getCharData(char letter)
-	{
-		if(textureArray.containsKey((int) letter))
-			return textureArray.get((int) letter);
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			cdata.free();
+		}
 		return null;
-	}
-
-	public IntObject getCharData(int letter)
-	{
-		if(textureArray.containsKey(letter))
-			return textureArray.get(letter);
-		return null;
-	}
-
-	/**
-	 * Simple form of drawing a string, will draw left->right
-	 * @param whatchars : contains the content to be written
-	 * @param x : x-position on screen to draw string on
-	 * @param y : y-position on screen to draw string on
-	 * @param z : z-level
-	 * @param pointFont : size of characters
-	 */
-	public void drawString(CharSequence whatchars, double x, double y, double z, double pointFont)
-	{
-		drawChars(whatchars, x, y, z, pointFont);
 	}
 	
-	public void drawUpString(CharSequence whatchars, double x, double y, double z, double pointFont)
+	public static Font createFont(File fontFile, int pointFont)
 	{
-	    drawChars(whatchars, x, y - pointFont, z, pointFont);
+		int width = (int) Math.round(Math.pow(2, Math.ceil(MathHelper.log(2, pointFont * 8))));
+		int height = (int) Math.round(Math.pow(2, MathHelper.log(2, pointFont * 12)));
+		return createFont(fontFile, pointFont, width, height);
 	}
-
-	/**
-	 * Draw an aligned string
-	 * @param whatchars : contains the content to be written
-	 * @param x : x-position on screen to draw string on
-	 * @param y : y-position on screen to draw string on
-	 * @param z : z-level
-	 * @param pointFont : size of characters
-	 * @param alignment : 0->left, 1->center, 2->right alignment of string relative to x
-	 */
-	public void drawAlignedString(CharSequence whatchars, double x, double y, double z, double pointFont, int alignment)
+	
+	private int fontTextureId;
+	private int fontSize;
+	private int fontWidth;
+	private int fontHeight;
+	private STBTTFontinfo fontInfo;
+	private Buffer fontChardata;
+	private FloatBuffer xBuffer;
+	private FloatBuffer yBuffer;
+	
+	private Font(int id, int size, int width, int height, STBTTFontinfo info, Buffer data)
 	{
-		switch(alignment)
-		{
-		case 1:
-			x = x - getTextWidth(whatchars, pointFont) / 2;
-			break;
-		case 2:
-			x = x - getTextWidth(whatchars, pointFont);
-			break;
+		fontTextureId = id;
+		fontSize = size;
+		fontWidth = width;
+		fontHeight = height;
+		fontInfo = info;
+		fontChardata = data;
+		
+		xBuffer = BufferUtils.createFloatBuffer(1);
+		yBuffer = BufferUtils.createFloatBuffer(1);
+		
+		xBuffer.put(0, 0);
+		yBuffer.put(0, 0);
+	}
+	
+	public void bind()
+	{
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fontTextureId);
+	}
+	
+	public float getWidth(String text) {
+		float length = 0f;
+		for (int i = 0; i < text.length(); i++) {
+			STBTTBakedChar data = fontChardata.get(text.charAt(i) - 32);
+			length += data.xadvance();
 		}
-		drawChars(whatchars, x, y, z, pointFont);
+		return length;
 	}
-
-	/**
-	 * Draw string with maximum bounds, stretching or compressing if necessary
-	 * @param whatchars : contains the content to be written
-	 * @param x : x-position on screen to draw string on
-	 * @param y : y-position on screen to draw string on
-	 * @param z : z-level
-	 * @param width : maximum width the string can be
-	 * @param height : maximum height the string can be
-	 */
-	public void drawFittedString(CharSequence whatchars, double x, double y, double z, double width, double height)
+	
+	public float getWidth(String text, float scale)
 	{
-		drawChars(whatchars, x, y, z, Math.min(height / getTextHeight(whatchars), width / getTextWidth(whatchars)));
+		return getWidth(text) * scale;
 	}
-
-	/**
-	 * Draw string with maximum bounds, stretching or compressing if necessary
-	 * @param whatchars : contains the content to be written
-	 * @param x : x-position on screen to draw string on
-	 * @param y : y-position on screen to draw string on
-	 * @param z : z-level
-	 * @param alignment : 0->left, 1->center, 2->right alignment of string relative to x
-	 * @param width : maximum width the string can be
-	 * @param height : maximum height the string can be
-	 */
-	public void drawAlignedFittedString(CharSequence whatchars, double x, double y, double z, int alignment, double width, double height)
+	
+	public VBO draw(String text, float x, float y, float z, float scale)
 	{
-		double pointFont = Math.min(height / getTextHeight(whatchars), width / getTextWidth(whatchars));
-		switch(alignment)
+		//int bufferSize = text.length() * 4 * 5;
+		//VBOBuffer vboBuffer = new VBOBuffer(bufferSize);
+		//IBOBuffer iboBuffer = new IBOBuffer(bufferSize);
+		STBTTAlignedQuad quad = STBTTAlignedQuad.malloc();
+		//VBO vbo;
+		xBuffer.put(0, 0);
+		yBuffer.put(0, 0);
+		
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x, y, z);
+		GL11.glScalef(scale, scale, scale);
+		
+		GL11.glBegin(GL11.GL_QUADS);
+		
+		char c;
+		for(int i = 0; i < text.length(); i++)
 		{
-		case 1:
-			x = x - getTextWidth(whatchars, pointFont) / 2;
-			break;
-		case 2:
-			x = x - getTextWidth(whatchars, pointFont);
-			break;
-		}
-		drawChars(whatchars, x, y, z, pointFont);
-	}
-
-	/**
-	 * Draw a color shifted string from left->right color shifting
-	 * @param whatchars : contains the content to be written
-	 * @param x : x-position on screen to draw string on
-	 * @param y : y-position on screen to draw string on
-	 * @param z : z-level
-	 * @param pointFont : size of characters
-	 * @param shiftToColor : ending color on the right
-	 */
-	public void drawColorString(CharSequence whatchars, double x, double y, double z, double pointFont, Color4d shiftToColor)
-	{
-		drawChars(whatchars, x, y, z, pointFont, shiftToColor);
-	}
-
-	/**
-	 * Draw a color shifted, aligned string with left->right color shifting
-	 * @param whatchars : contains the content to be written
-	 * @param x : x-position on screen to draw string on
-	 * @param y : y-position on screen to draw string on
-	 * @param z : z-level
-	 * @param pointFont : size of characters
-	 * @param alignment : 0->left, 1->center, 2->right alignment of string relative to x
-	 * @param shiftToColor : ending color on the right
-	 */
-	public void drawAlignedCString(CharSequence whatchars, double x, double y, double z, double pointFont, int alignment, Color4d shiftToColor)
-	{
-		switch(alignment)
-		{
-		case 1:
-			x -= getTextWidth(whatchars, pointFont) / 2;
-			break;
-		case 2:
-			x -= getTextWidth(whatchars, pointFont);
-			break;
-		}
-		drawChars(whatchars, x, y, z, pointFont, shiftToColor);
-	}
-
-	/**
-	 * Draw a color shifted, aligned, and fitted string with left->right color shifting
-	 * @param whatchars : contains the content to be written
-	 * @param x : x-position on screen to draw string on
-	 * @param y : y-position on screen to draw string on
-	 * @param z : z-level 
-	 * @param alignment : 0->left, 1->center, 2->right alignment of string relative to x
-	 * @param shiftToColor : ending color on the right
-	 * @param width : maximum width the string can be
-	 * @param height : maximum height the string can be
-	 */
-	public void drawAlignedFCString(CharSequence whatchars, double x, double y, double z, int alignment, double width, double height, Color4d shiftToColor)
-	{
-		double pointFont = Math.min(height / getTextHeight(whatchars), width / getTextWidth(whatchars));
-		switch(alignment)
-		{
-		case 1:
-			x -= getTextWidth(whatchars, pointFont) / 2;
-			break;
-		case 2:
-			x -= getTextWidth(whatchars, pointFont);
-			break;
-		}
-		drawChars(whatchars, x, y, z, pointFont, shiftToColor);
-	}
-
-	private void drawChars(CharSequence whatchars, double x, double y, double z, double pointFont)
-	{
-		IntObject letter;
-		int i;
-		double width;
-		double xOffset;
-		double yOffset;
-		glBegin();
-		for(i = 0; i < whatchars.length(); i++)
-		{
-			letter = getCharData(whatchars.charAt(i));
-			if(letter != null)
+			c = text.charAt(i);
+			if(c == '\n')
 			{
-				width = letter.getWidth() * pointFont;
-				xOffset = letter.getXOffset() * pointFont;
-				yOffset = letter.getYOffset() * pointFont;
-				if(whatchars.charAt(i) != ' ')
-					Draw.rectUV(x + xOffset, y + yOffset, x + width + xOffset, y + letter.getHeight() * pointFont + yOffset, z, letter.getTexture());
-				x += letter.getAdvance() * pointFont;
+				xBuffer.put(0, 0);
+				yBuffer.put(0, yBuffer.get(0) + fontSize);
+				continue;
 			}
-		}
-		glEnd();
-	}
-
-	private void drawChars(CharSequence whatchars, double x, double y, double z, double pointFont, Color4d shiftToColor)
-	{
-		double textWidth = getTextWidth(whatchars, pointFont);
-		double redShift = (shiftToColor.getRed() - getRed()) / textWidth;
-		double greenShift = (shiftToColor.getGreen() - getGreen()) / textWidth;
-		double blueShift = (shiftToColor.getBlue() - getBlue()) / textWidth;
-		double alphaShift = (shiftToColor.getAlpha() - getAlpha()) / textWidth;
-
-		IntObject pastLetter = null;
-		IntObject letter;
-		int i;
-		double width = 0;
-		double xOffset;
-		double yOffset;
-		glBegin();
-		for(i = 0; i < whatchars.length(); i++)
-		{
-			letter = getCharData(whatchars.charAt(i));
-			if(letter != null)
-			{
-				width = letter.getWidth() * pointFont;
-				xOffset = letter.getXOffset() * pointFont;
-				if(letter.getKerning() != null && pastLetter != null)
-				{
-					xOffset += letter.getKerning().get(pastLetter) * pointFont;
-				}
-				yOffset = letter.getYOffset() * pointFont;
-				if(whatchars.charAt(i) != ' ')
-					Draw.colorHRectUV(x + xOffset, y + yOffset, x + width + xOffset, y + letter.getHeight() * pointFont + yOffset, z, letter.getTexture(), getRed() + (redShift * width), getGreen() + (greenShift * width), getBlue() + (blueShift * width), getAlpha() + (alphaShift * width));
-				x += letter.getAdvance() * pointFont;
-				pastLetter = letter;
-			}
-		}
-		glEnd();
-	}
-
-	/**
-	 * Gets the width of the text (without any point font multiplication)
-	 * @param whatchars : contains the content to be written
-	 * @return total width of whatchars with a <b>double return type</b>
-	 */
-	public double getTextWidth(CharSequence whatchars)
-	{
-		double totalWidth = 0;
-		IntObject letter = null;
-
-		for (int i = 0; i < whatchars.length(); i++)
-		{
-			letter = getCharData(whatchars.charAt(i));
-			if(letter != null)
-			{
-				totalWidth += letter.getAdvance();
-			}
-			else
-			{
-				return 0;
-			}
-		}
-		return totalWidth;
-	}
-
-	/**
-	 * Gets the width of the text
-	 * @param whatchars : contains the content to be written
-	 * @param pointFont : size of characters
-	 * @return total width of whatchars * pointFont, <b>double return type</b>
-	 */
-	public double getTextWidth(CharSequence whatchars, double pointFont)
-	{
-		return getTextWidth(whatchars) * pointFont;
-	}
-
-	public double getTextHeight(CharSequence whatchars)
-	{
-		double largestHeight = 0;
-		IntObject intObject = null;
-
-		for (int i = 0; i < whatchars.length(); i++)
-		{
-			intObject = getCharData(whatchars.charAt(i));
-			if(intObject != null)
-			{
-				largestHeight = Math.max(intObject.getHeight() + intObject.getYOffset(), largestHeight);
-			}
-		}
-		return largestHeight;
-	}
-
-	public double getTextHeight(CharSequence whatchars, double pointFont)
-	{
-		return getTextHeight(whatchars) * pointFont;
-	}
-
-	private static class IntObject
-	{
-		private Texture texture;
-		private Kerning kerning;
-		private float width;
-		private float height;
-		private float xOffset;
-		private float yOffset;
-		private float xadvance;
-
-		public Texture getTexture()
-		{
-			return texture;
-		}
-
-		public float getWidth()
-		{
-			return width;
-		}
-
-		public float getHeight()
-		{
-			return height;
-		}
-
-		public float getXOffset()
-		{
-			return xOffset;
-		}
-
-		public float getYOffset()
-		{
-			return yOffset;
-		}
-
-		public float getAdvance()
-		{
-			return xadvance;
+			
+			stbtt_GetBakedQuad(fontChardata, fontWidth, fontHeight, c - 32, xBuffer, yBuffer, quad, true);
+			
+			GL11.glTexCoord2d(quad.s0(), quad.t1());
+			GL11.glVertex3d(quad.x0(), quad.y1(), z);
+			GL11.glTexCoord2d(quad.s1(), quad.t1());
+			GL11.glVertex3d(quad.x1(), quad.y1(), z);
+			GL11.glTexCoord2d(quad.s1(), quad.t0());
+			GL11.glVertex3d(quad.x1(), quad.y0(), z);
+			GL11.glTexCoord2d(quad.s0(), quad.t0());
+			GL11.glVertex3d(quad.x0(), quad.y0(), z);
+			
+			/*vboBuffer.addTextureVertex(quad.x0(), quad.y1(), z, quad.s0(), quad.t1());
+			vboBuffer.addTextureVertex(quad.x1(), quad.y1(), z, quad.s1(), quad.t1());
+			vboBuffer.addTextureVertex(quad.x1(), quad.y0(), z, quad.s1(), quad.t0());
+			vboBuffer.addTextureVertex(quad.x0(), quad.y0(), z, quad.s0(), quad.t0());*/
 		}
 		
-		public Kerning getKerning()
-		{
-			return kerning;
-		}
-	}
-
-	private static class Kerning
-	{
-
-		private Map<Integer, Float> kernings = new HashMap<Integer, Float>();
-
-		public void add(IntObject otherChar, float adjustment)
-		{
-			kernings.put(otherChar.hashCode(), adjustment);
-		}
-
-		public float get(IntObject otherChar)
-		{
-			if(kernings.containsKey(otherChar.hashCode()))
-				return kernings.get(otherChar.hashCode());
-			return 0;
-		}
-
-	}
-
-	@Override
-	public Texture getTexture() 
-	{
+		GL11.glEnd();
+		GL11.glPopMatrix();
+		quad.free();
+		
+		//iboBuffer.shrinkVBO(vboBuffer, VBO.POS_TEXTURE_STRIDE);
+		
+		//vbo = VBO.createStaticVBO(GL11.GL_QUADS, VBO.POS_TEXTURE, VBO.POS_TEXTURE_STRIDE, VBO.POS_TEXTURE_OFFSET, vboBuffer);
+		//return vbo;
 		return null;
 	}
-
-	@Override
-	public int getTextureID() 
+	
+	public void unbind()
 	{
-		return textureId;
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
-
-	@Override
-	public void setTextureID(int id)
+	
+	public void destroy()
 	{
-		textureId = id;
+		fontChardata.free();
+		GL11.glDeleteTextures(fontTextureId);
 	}
-
+	
+	public int getId()
+	{
+		return fontTextureId;
+	}
+	
+	public int getSize()
+	{
+		return fontSize;
+	}
+	
 }

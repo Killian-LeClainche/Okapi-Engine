@@ -68,14 +68,13 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.Configuration;
 
 import com.polaris.engine.gui.Gui;
+import com.polaris.engine.network.Packet;
 import com.polaris.engine.options.Input;
 import com.polaris.engine.options.Monitor;
 import com.polaris.engine.options.Settings;
 import com.polaris.engine.render.Texture;
 import com.polaris.engine.render.TextureManager;
 import com.polaris.engine.sound.OpenAL;
-import com.polaris.engine.thread.AppPacket;
-import com.polaris.engine.thread.PacketComparator;
 
 public abstract class App<T extends Settings>
 {
@@ -126,7 +125,7 @@ public abstract class App<T extends Settings>
 	 */
 	protected long windowInstance;
 	
-	protected final Set<AppPacket> incomingPackets;
+	protected final Set<Packet> incomingPackets;
 	
 	protected final ExecutorService taskExecutor;
 	
@@ -171,7 +170,7 @@ public abstract class App<T extends Settings>
 		
 		isRunning = true;
 		
-		incomingPackets = new ConcurrentSkipListSet<AppPacket>(new PacketComparator());
+		incomingPackets = new ConcurrentSkipListSet<Packet>();
 		
 		textureManager = new TextureManager();
 		
@@ -223,8 +222,8 @@ public abstract class App<T extends Settings>
 		
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		
-		Iterator<AppPacket> polledPackets;
-		AppPacket packet;
+		Iterator<Packet> polledPackets;
+		Packet packet;
 		Future<?> finalTask;
 		
 		while(!glfwWindowShouldClose(windowInstance) && isRunning)
@@ -242,7 +241,7 @@ public abstract class App<T extends Settings>
 			{
 				packet = polledPackets.next();
 				polledPackets.remove();
-				packet.handle();
+				//packet.handle();
 			}
 			
 			input.update();
@@ -366,7 +365,7 @@ public abstract class App<T extends Settings>
 	/**
 	 * @param packet
 	 */
-	public void handlePacket(AppPacket packet)
+	public void handlePacket(Packet packet)
 	{
 		incomingPackets.add(packet);
 	}
@@ -374,7 +373,7 @@ public abstract class App<T extends Settings>
 	/**
 	 * @param newGui
 	 */
-	public void sendPacket(AppPacket packet)
+	public void sendPacket(Packet packet)
 	{
 		//logicThread.handlePacket(packet);
 	}
