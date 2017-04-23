@@ -23,6 +23,7 @@ public abstract class Network
 	private ConcurrentLinkedQueue<Packet> packets;
 
 	protected Socket socket;
+
 	private DataInputStream inputStream;
 	private DataOutputStream outputStream;
 

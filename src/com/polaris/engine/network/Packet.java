@@ -20,9 +20,7 @@ public abstract class Packet
 		addPacket(PacketAES.class);
 		addPacket(PacketSecure.class);
 	}
-	
-	private short packetHeader = 0;
-	
+
 	public static void addPacket(Class<? extends Packet> packet)
 	{
 		packetList.add(packet);
@@ -64,7 +62,9 @@ public abstract class Packet
 		p.copy(dataStream);
 		return p;
 	}
-	
+
+	private short packetHeader = 0;
+
 	public Packet() 
 	{
 		packetHeader = getPacketHeader(this);
@@ -74,19 +74,25 @@ public abstract class Packet
 	
 	public abstract void copy(DataInputStream data) throws IOException;
 	
-	public abstract void handle(Network network);
+	public abstract void handle();
 
 	public final int getHeader()
 	{
 		return packetHeader;
 	}
 
+	public abstract int getWeight();
+
 	/**
 	 * @return
 	 */
-	public long getCreationTime()
+	public final long getCreationTime()
 	{
 		return 0;
 	}
+
+	public boolean isTCPPacket() { return true; }
+
+	public int getPacketRank() { return 1; }
 
 }

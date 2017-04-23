@@ -4,6 +4,7 @@
 package com.polaris.engine.sound;
 
 import com.polaris.engine.options.Settings;
+import org.lwjgl.openal.*;
 
 /**
  * @author lec50
@@ -11,8 +12,11 @@ import com.polaris.engine.options.Settings;
  */
 public class OpenAL
 {
-	
-	private final Settings gameSettings;
+
+	protected final Settings gameSettings;
+
+	protected ALCCapabilities alcCapabilities;
+	protected ALCapabilities alCapabilities;
 
 	public OpenAL(Settings settings)
 	{
@@ -21,7 +25,21 @@ public class OpenAL
 	
 	public void init()
 	{
-		
+		String defaultDeviceName = ALC10.alcGetString(0, ALC10.ALC_DEFAULT_DEVICE_SPECIFIER);
+
+		long device = ALC10.alcOpenDevice(defaultDeviceName);
+		int[] attributes = {0};
+		long context = ALC10.alcCreateContext(device, attributes);
+
+		ALC10.alcMakeContextCurrent(context);
+
+		alcCapabilities = ALC.createCapabilities(device);
+		alCapabilities = AL.createCapabilities(alcCapabilities);
+	}
+
+	public void close()
+	{
+
 	}
 	
 }

@@ -1,5 +1,6 @@
 package com.polaris.engine.gui;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -37,7 +38,7 @@ public abstract class Gui<T extends Settings> implements Runnable
 	
 	public void init() {}
 	
-	public void createTasks(ExecutorService service) {}
+	public void createTasks(List<Runnable> service) {}
 	
 	public void run()
 	{

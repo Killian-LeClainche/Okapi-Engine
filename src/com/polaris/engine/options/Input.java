@@ -3,26 +3,13 @@
  */
 package com.polaris.engine.options;
 
-import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.glfw.GLFW.glfwSetCharCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
-import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
-
-import org.joml.Vector2d;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWCharCallback;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
-import org.lwjgl.glfw.GLFWScrollCallback;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.polaris.engine.App;
+import org.joml.Vector2d;
+import org.lwjgl.glfw.*;
+
+import static org.lwjgl.glfw.GLFW.*;
 
 /**
  * @author Killian Le Clainche
@@ -241,7 +228,7 @@ public class Input
 	}
 
 	/**
-	 * @param glfwMouseButtonLeft
+	 * @param mouseCode
 	 * @return
 	 */
 	public Key getMouse(int mouseCode)
