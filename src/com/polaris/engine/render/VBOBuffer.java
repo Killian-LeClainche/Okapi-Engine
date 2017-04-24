@@ -1,19 +1,18 @@
 /**
- * 
+ *
  */
 package com.polaris.engine.render;
-
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-
-import java.nio.FloatBuffer;
 
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
+import java.nio.FloatBuffer;
+
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 /**
  * @author Killian Le Clainche
- *
  */
 public class VBOBuffer
 {
@@ -33,13 +32,6 @@ public class VBOBuffer
 		vboBuffer = buffer;
 		bufferSize = buffer.capacity();
 	}
-
-	public void addVertex(float x, float y, float z)
-	{
-		vboBuffer.put(x);
-		vboBuffer.put(y);
-		vboBuffer.put(z);
-	}
 	
 	public void addColor(Vector4f color)
 	{
@@ -47,6 +39,32 @@ public class VBOBuffer
 		vboBuffer.put(color.y);
 		vboBuffer.put(color.z);
 		vboBuffer.put(color.w);
+	}
+	
+	public void rect(float x, float y, float x1, float y1, float z)
+	{
+		addVertex(x, y1, z);
+		addVertex(x1, y1, z);
+		addVertex(x, y, z);
+		
+		addVertex(x, y, z);
+		addVertex(x1, y1, z);
+		addVertex(x1, y, z);
+	}
+	
+	public void addVertex(float x, float y, float z)
+	{
+		vboBuffer.put(x);
+		vboBuffer.put(y);
+		vboBuffer.put(z);
+	}
+	
+	public void rect(float x, float y, float x1, float y1, float z, Vector4f color)
+	{
+		addColorVertex(x, y1, z, color);
+		addColorVertex(x1, y1, z, color);
+		addColorVertex(x1, y, z, color);
+		addColorVertex(x, y, z, color);
 	}
 	
 	public void addColorVertex(float x, float y, float z, Vector4f color)
@@ -61,6 +79,14 @@ public class VBOBuffer
 		vboBuffer.put(color.w);
 	}
 	
+	public void rectUV(float x, float y, float x1, float y1, float z)
+	{
+		addTextureVertex(x, y1, z, 0, 1);
+		addTextureVertex(x1, y1, z, 1, 1);
+		addTextureVertex(x1, y, z, 1, 0);
+		addTextureVertex(x, y, z, 0, 0);
+	}
+	
 	public void addTextureVertex(float x, float y, float z, float u, float v)
 	{
 		vboBuffer.put(x);
@@ -69,33 +95,6 @@ public class VBOBuffer
 		
 		vboBuffer.put(u);
 		vboBuffer.put(v);
-	}
-	
-	public void rect(float x, float y, float x1, float y1, float z)
-	{
-		addVertex(x, y1, z);
-		addVertex(x1, y1, z);
-		addVertex(x, y, z);
-		
-		addVertex(x, y, z);
-		addVertex(x1, y1, z);
-		addVertex(x1, y, z);
-	}
-	
-	public void rect(float x, float y, float x1, float y1, float z, Vector4f color)
-	{
-		addColorVertex(x, y1, z, color);
-		addColorVertex(x1, y1, z, color);
-		addColorVertex(x1, y, z, color);
-		addColorVertex(x, y, z, color);
-	}
-	
-	public void rectUV(float x, float y, float x1, float y1, float z)
-	{
-		addTextureVertex(x, y1, z, 0, 1);
-		addTextureVertex(x1, y1, z, 1, 1);
-		addTextureVertex(x1, y, z, 1, 0);
-		addTextureVertex(x, y, z, 0, 0);
 	}
 	
 	public void rectUV(float x, float y, float x1, float y1, float z, TexCoord texture)
@@ -177,7 +176,7 @@ public class VBOBuffer
 	
 	public void arc(float circleX, float circleY, float z, float radius, int resolution, float thickness)
 	{
-		arc(circleX, circleY, z, radius, 0, (float)Math.PI * 2, resolution, thickness);
+		arc(circleX, circleY, z, radius, 0, (float) Math.PI * 2, resolution, thickness);
 	}
 	
 	public void arc(float circleX, float circleY, float z, float radius, float startAngle, float endAngle, int resolution, float thickness)
@@ -192,7 +191,7 @@ public class VBOBuffer
 		
 		float nullArea = radius - thickness;
 		
-		while(resolution > 0)
+		while (resolution > 0)
 		{
 			addVertex(circleX + x, circleY + y, z);
 			addVertex(circleX + nullArea * cos, circleY + nullArea * sin, z);
@@ -214,7 +213,7 @@ public class VBOBuffer
 	
 	public void arc(float circleX, float circleY, float z, float radius, int resolution, float thickness, Vector4f startColor, Vector4f endColor)
 	{
-		arc(circleX, circleY, z, radius, 0, (float)Math.PI * 2, resolution, thickness, startColor, endColor);
+		arc(circleX, circleY, z, radius, 0, (float) Math.PI * 2, resolution, thickness, startColor, endColor);
 	}
 	
 	public void arc(float circleX, float circleY, float z, float radius, float startAngle, float endAngle, int resolution, float thickness, Vector4f startColor, Vector4f endColor)
@@ -232,7 +231,7 @@ public class VBOBuffer
 		endColor.sub(startColor);
 		endColor.div(resolution);
 		
-		while(resolution > 0)
+		while (resolution > 0)
 		{
 			addColorVertex(circleX + x, circleY + y, z, startColor);
 			addColorVertex(circleX + nullArea * cos, circleY + nullArea * sin, z, startColor);
@@ -260,7 +259,7 @@ public class VBOBuffer
 	public void arcCircle(float circleX, float circleY, float z, float radius, int resolution, float thickness, Vector4f outColor, Vector4f inColor)
 	{
 		float angle = 0;
-		float theta = (float)Math.PI * 2 / resolution;
+		float theta = (float) Math.PI * 2 / resolution;
 		
 		float cos = 1;
 		float sin = 0;
@@ -270,7 +269,7 @@ public class VBOBuffer
 		
 		float nullArea = radius - thickness;
 		
-		while(resolution > 0)
+		while (resolution > 0)
 		{
 			addColorVertex(circleX + x, circleY + y, z, outColor);
 			addColorVertex(circleX + nullArea * cos, circleY + nullArea * sin, z, inColor);
@@ -292,35 +291,35 @@ public class VBOBuffer
 	
 	public void circle(float circleX, float circleY, float z, float radius, int resolution)
 	{
-		circle(circleX, circleY, z, radius, 0, (float)Math.PI * 2, resolution);
+		circle(circleX, circleY, z, radius, 0, (float) Math.PI * 2, resolution);
 	}
 	
 	public void circle(float circleX, float circleY, float z, float radius, float startAngle, float endAngle, int resolution)
 	{
 		float theta = (endAngle - startAngle) / resolution;
-		addVertex(circleX, circleY, z); 
-		while(resolution > 0)
+		addVertex(circleX, circleY, z);
+		while (resolution > 0)
 		{
-			addVertex(circleX + radius * (float)cos((endAngle -= theta)), circleY + radius * (float) sin(endAngle), z);
+			addVertex(circleX + radius * (float) cos((endAngle -= theta)), circleY + radius * (float) sin(endAngle), z);
 			
-			resolution --;
+			resolution--;
 		}
 	}
 	
 	public void circle(float circleX, float circleY, float z, float radius, int resolution, Vector4f outColor, Vector4f inColor)
 	{
-		circle(circleX, circleY, z, radius, 0, (float)Math.PI * 2, resolution, outColor, inColor);
+		circle(circleX, circleY, z, radius, 0, (float) Math.PI * 2, resolution, outColor, inColor);
 	}
 	
 	public void circle(float circleX, float circleY, float z, float radius, float startAngle, float endAngle, int resolution, Vector4f outColor, Vector4f inColor)
 	{
 		float theta = (endAngle - startAngle) / resolution;
-		addColorVertex(circleX, circleY, z, inColor); 
-		while(resolution > 0)
+		addColorVertex(circleX, circleY, z, inColor);
+		while (resolution > 0)
 		{
-			addColorVertex(circleX + radius * (float)cos((endAngle -= theta)), circleY + radius * (float) sin(endAngle), z, outColor);
+			addColorVertex(circleX + radius * (float) cos((endAngle -= theta)), circleY + radius * (float) sin(endAngle), z, outColor);
 			
-			resolution --;
+			resolution--;
 		}
 	}
 	

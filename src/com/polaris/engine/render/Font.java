@@ -1,46 +1,42 @@
 /**
- * 
+ *
  */
 package com.polaris.engine.render;
 
-import static com.polaris.engine.util.ResourceHelper.ioResourceToByteBuffer;
-import static org.lwjgl.opengl.GL11.GL_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glTexImage2D;
-import static org.lwjgl.opengl.GL11.glTexParameteri;
-import static org.lwjgl.stb.STBTTBakedChar.malloc;
-import static org.lwjgl.stb.STBTruetype.stbtt_BakeFontBitmap;
-import static org.lwjgl.stb.STBTruetype.stbtt_GetBakedQuad;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-
+import com.polaris.engine.util.MathHelper;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTTBakedChar.Buffer;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.stb.STBTruetype;
 
-import com.polaris.engine.App;
-import com.polaris.engine.util.MathHelper;
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+
+import static com.polaris.engine.util.ResourceHelper.ioResourceToByteBuffer;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.stb.STBTTBakedChar.malloc;
+import static org.lwjgl.stb.STBTruetype.stbtt_BakeFontBitmap;
+import static org.lwjgl.stb.STBTruetype.stbtt_GetBakedQuad;
+
 /**
  * @author lec50
- *
  */
 public class Font
 {
 	
 	private static int fontIdWrapper = 0;
+	
+	public static Font createFont(File fontFile, int pointFont)
+	{
+		int width = (int) Math.round(Math.pow(2, Math.ceil(MathHelper.log(2, pointFont * 8))));
+		int height = (int) Math.round(Math.pow(2, MathHelper.log(2, pointFont * 12)));
+		return createFont(fontFile, pointFont, width, height);
+	}
 	
 	public static Font createFont(File fontFile, int pointFont, int width, int height)
 	{
@@ -56,7 +52,7 @@ public class Font
 			
 			STBTTFontinfo info = STBTTFontinfo.malloc();
 			
-			if(STBTruetype.stbtt_InitFont(info, data) == false)
+			if (STBTruetype.stbtt_InitFont(info, data) == false)
 			{
 				cdata.free();
 				info.free();
@@ -81,14 +77,6 @@ public class Font
 		}
 		return null;
 	}
-	
-	public static Font createFont(File fontFile, int pointFont)
-	{
-		int width = (int) Math.round(Math.pow(2, Math.ceil(MathHelper.log(2, pointFont * 8))));
-		int height = (int) Math.round(Math.pow(2, MathHelper.log(2, pointFont * 12)));
-		return createFont(fontFile, pointFont, width, height);
-	}
-	
 	private int fontTextureId;
 	private int fontSize;
 	private int fontWidth;
@@ -120,20 +108,20 @@ public class Font
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fontTextureId);
 	}
 	
-	public float getWidth(String text) 
+	public float getWidth(String text, float scale)
+	{
+		return getWidth(text) * scale;
+	}
+	
+	public float getWidth(String text)
 	{
 		float length = 0f;
-		for (int i = 0; i < text.length(); i++) 
+		for (int i = 0; i < text.length(); i++)
 		{
 			STBTTBakedChar data = fontChardata.get(text.charAt(i) - 32);
 			length += data.xadvance();
 		}
 		return length;
-	}
-	
-	public float getWidth(String text, float scale)
-	{
-		return getWidth(text) * scale;
 	}
 	
 	public VBO draw(String text, float x, float y, float z, float scale)
@@ -153,10 +141,10 @@ public class Font
 		
 		char c;
 		float x0, y0, x1, y1;
-		for(int i = 0; i < text.length(); i++)
+		for (int i = 0; i < text.length(); i++)
 		{
 			c = text.charAt(i);
-			if(c == '\n')
+			if (c == '\n')
 			{
 				xBuffer.put(0, 0);
 				yBuffer.put(0, yBuffer.get(0) + fontSize);

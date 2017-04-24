@@ -11,24 +11,26 @@ public abstract class GuiList<T, I extends Settings> extends GuiContent<I>
 	protected double extraHeight = 0;
 	protected boolean clicked = false;
 
-	public GuiList(double x, double y, double width, double height, GuiListItem<?> ... list)
+	public GuiList(double x, double y, double width, double height, GuiListItem<?>... list)
 	{
 		this(x, y, 0, width, height, list);
 	}
 	
-	public GuiList(double x, double y, double z, double width, double height, GuiListItem<?> ... list)
+	public GuiList(double x, double y, double z, double width, double height, GuiListItem<?>... list)
 	{
 		super(x, y, width, height);
 		elementList = list;
 		setListDimensions();
 	}
 
-	public GuiList(double x, double y, double width, double sWidth, double eWidth, double height, double sHeight, double eHeight, GuiListItem<?> ... list)
+	protected abstract void setListDimensions();
+	
+	public GuiList(double x, double y, double width, double sWidth, double eWidth, double height, double sHeight, double eHeight, GuiListItem<?>... list)
 	{
 		this(x, y, 0, width, sWidth, eWidth, height, sHeight, eHeight, list);
 	}
-	
-	public GuiList(double x, double y, double z, double width, double sWidth, double eWidth, double height, double sHeight, double eHeight, GuiListItem<?> ... list)
+
+	public GuiList(double x, double y, double z, double width, double sWidth, double eWidth, double height, double sHeight, double eHeight, GuiListItem<?>... list)
 	{
 		this(x, y, z, width, height, list);
 		shiftWidth = sWidth;
@@ -37,15 +39,13 @@ public abstract class GuiList<T, I extends Settings> extends GuiContent<I>
 		extraHeight = eHeight;
 	}
 
-	protected abstract void setListDimensions();
-
 	@Override
 	public void update(double delta)
 	{
 		ticksExisted++;
-		if(clicked)
+		if (clicked)
 		{
-			for(int i = 0; i < elementList.length; i++)
+			for (int i = 0; i < elementList.length; i++)
 			{
 				//elementList[i].update(delta);
 			}
@@ -55,9 +55,9 @@ public abstract class GuiList<T, I extends Settings> extends GuiContent<I>
 	@Override
 	public void render(double delta)
 	{
-		if(clicked)
+		if (clicked)
 		{
-			for(int i = 0; i < elementList.length; i++)
+			for (int i = 0; i < elementList.length; i++)
 			{
 				elementList[i].render(delta);
 			}
@@ -65,9 +65,9 @@ public abstract class GuiList<T, I extends Settings> extends GuiContent<I>
 	}
 
 	@Override
-	public int mouseClick(int mouseId) 
+	public int mouseClick(int mouseId)
 	{
-		if(!clicked)
+		if (!clicked)
 		{
 			clicked = true;
 		}

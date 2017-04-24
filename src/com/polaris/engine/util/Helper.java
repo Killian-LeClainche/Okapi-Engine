@@ -6,13 +6,13 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Helper 
+public class Helper
 {
 	
 	public static final ClassLoader classLoader = Helper.class.getClassLoader();
 	
 	public static final Map<String, Constructor<? extends Model>> modelFormats = new HashMap<String, Constructor<? extends Model>>();
-
+	
 	static
 	{
 		/*try

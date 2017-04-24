@@ -1,18 +1,16 @@
 /**
- * 
+ *
  */
 package com.polaris.engine.render;
 
 
 /**
  * @author Killian Le Clainche
- *
  */
 public enum VertexAttribute
 {
 	
-	POSITION((byte) 0, (byte) 3, (byte) 3), COLOR((byte) 1, (byte) 4, (byte) 4), NORMAL((byte) 2, (byte) 3, (byte) 3), 
-	TEXTURE((byte) 3, (byte) 2, (byte) 2);
+	POSITION((byte) 0, (byte) 3, (byte) 3), COLOR((byte) 1, (byte) 4, (byte) 4), NORMAL((byte) 2, (byte) 3, (byte) 3), TEXTURE((byte) 3, (byte) 2, (byte) 2);
 	
 	private final byte attributeId;
 	private final byte attributeSize;

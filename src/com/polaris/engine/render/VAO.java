@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.polaris.engine.render;
 
@@ -7,7 +7,6 @@ import static org.lwjgl.opengl.GL30.*;
 
 /**
  * @author Killian Le Clainche
- *
  */
 public class VAO
 {

@@ -23,19 +23,9 @@ public class PacketRSA extends Packet
 	}
 
 	@Override
-	public void writeData(DataOutputStream output) throws IOException 
+	public void copy(DataInputStream data) throws IOException
 	{
-		if(aesBitLength > 0)
-		{
-			output.writeInt(aesBitLength);
-			output.write(encoded);
-		}
-	}
-
-	@Override
-	public void copy(DataInputStream data) throws IOException 
-	{
-		if(data.available() > 0)
+		if (data.available() > 0)
 		{
 			aesBitLength = data.readInt();
 			encoded = new byte[data.available()];
@@ -44,7 +34,17 @@ public class PacketRSA extends Packet
 	}
 
 	@Override
-	public void handle(Network network) 
+	public void writeData(DataOutputStream output) throws IOException
+	{
+		if (aesBitLength > 0)
+		{
+			output.writeInt(aesBitLength);
+			output.write(encoded);
+		}
+	}
+
+	@Override
+	public void handle(Network network)
 	{
 		
 	}

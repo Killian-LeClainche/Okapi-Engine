@@ -11,19 +11,19 @@ public class TextureArray extends Texture
 	{
 		super(name, id, width, height, data);
 	}
-
+	
 	public TextureArray(Texture texture)
 	{
 		super(texture.getName(), texture.getId(), texture.getWidth(), texture.getHeight(), texture.getImage());
 	}
-
+	
 	public void loadArray(ByteBuffer buffer)
 	{
 		textures = new TexCoord[buffer.getInt()];
 		
 		int index = 0;
 		
-		while(buffer.hasRemaining())
+		while (buffer.hasRemaining())
 		{
 			textures[index] = new TexCoord(buffer.getFloat(), buffer.getFloat(), buffer.getFloat(), buffer.getFloat());
 			index++;

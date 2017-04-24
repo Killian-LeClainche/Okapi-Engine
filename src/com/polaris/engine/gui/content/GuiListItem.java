@@ -3,12 +3,12 @@ package com.polaris.engine.gui.content;
 public abstract class GuiListItem<T>
 {
 
-	private T value;
 	protected boolean highlighted = false;
 	protected double posX = 0;
 	protected double posY = 0;
 	protected double width = 0;
 	protected double height = 0;
+	private T value;
 	
 	public GuiListItem(T val)
 	{

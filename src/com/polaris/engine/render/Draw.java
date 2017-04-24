@@ -1,40 +1,22 @@
 /**
- * 
+ *
  */
 package com.polaris.engine.render;
-
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 /**
  * @author lec50
- *
  */
 public class Draw
 {
-	public static void addVertex(float x, float y, float z)
-	{
-		GL11.glVertex3f(x, y, z);
-	}
-	
 	public static void addColor(Vector4f color)
 	{
 		GL11.glColor4f(color.x, color.y, color.z, color.w);
-	}
-	
-	public static void addColorVertex(float x, float y, float z, Vector4f color)
-	{
-		GL11.glColor4f(color.x, color.y, color.z, color.w);
-		GL11.glVertex3f(x, y, z);
-	}
-	
-	public static void addTextureVertex(float x, float y, float z, float u, float v)
-	{
-		GL11.glTexCoord2d(u, v);
-		GL11.glVertex3f(x, y, z);
 	}
 	
 	public static void rect(float x, float y, float x1, float y1, float z)
@@ -45,6 +27,11 @@ public class Draw
 		addVertex(x, y, z);
 	}
 	
+	public static void addVertex(float x, float y, float z)
+	{
+		GL11.glVertex3f(x, y, z);
+	}
+	
 	public static void rect(float x, float y, float x1, float y1, float z, Vector4f color)
 	{
 		addColorVertex(x, y1, z, color);
@@ -53,12 +40,24 @@ public class Draw
 		addColorVertex(x, y, z, color);
 	}
 	
+	public static void addColorVertex(float x, float y, float z, Vector4f color)
+	{
+		GL11.glColor4f(color.x, color.y, color.z, color.w);
+		GL11.glVertex3f(x, y, z);
+	}
+	
 	public static void rectUV(float x, float y, float x1, float y1, float z)
 	{
 		addTextureVertex(x, y1, z, 0, 1);
 		addTextureVertex(x1, y1, z, 1, 1);
 		addTextureVertex(x1, y, z, 1, 0);
 		addTextureVertex(x, y, z, 0, 0);
+	}
+	
+	public static void addTextureVertex(float x, float y, float z, float u, float v)
+	{
+		GL11.glTexCoord2d(u, v);
+		GL11.glVertex3f(x, y, z);
 	}
 	
 	public static void rectUV(float x, float y, float x1, float y1, float z, TexCoord texture)
@@ -155,7 +154,7 @@ public class Draw
 		
 		float nullArea = radius - thickness;
 		
-		while(resolution > 0)
+		while (resolution > 0)
 		{
 			addVertex(circleX + x, circleY + y, z);
 			addVertex(circleX + nullArea * cos, circleY + nullArea * sin, z);
@@ -195,7 +194,7 @@ public class Draw
 		endColor.sub(startColor);
 		endColor.div(resolution);
 		
-		while(resolution > 0)
+		while (resolution > 0)
 		{
 			addColorVertex(circleX + x, circleY + y, z, startColor);
 			addColorVertex(circleX + nullArea * cos, circleY + nullArea * sin, z, startColor);
@@ -233,7 +232,7 @@ public class Draw
 		
 		float nullArea = radius - thickness;
 		
-		while(resolution > 0)
+		while (resolution > 0)
 		{
 			addColorVertex(circleX + x, circleY + y, z, outColor);
 			addColorVertex(circleX + nullArea * cos, circleY + nullArea * sin, z, inColor);
@@ -261,12 +260,12 @@ public class Draw
 	public static void circle(float circleX, float circleY, float z, float radius, float startAngle, float endAngle, int resolution)
 	{
 		float theta = (endAngle - startAngle) / resolution;
-		addVertex(circleX, circleY, z); 
-		while(resolution >= 0)
+		addVertex(circleX, circleY, z);
+		while (resolution >= 0)
 		{
-			addVertex(circleX + radius * (float)cos((endAngle -= theta)), circleY + radius * (float) sin(endAngle), z);
+			addVertex(circleX + radius * (float) cos((endAngle -= theta)), circleY + radius * (float) sin(endAngle), z);
 			
-			resolution --;
+			resolution--;
 		}
 	}
 	
@@ -278,12 +277,12 @@ public class Draw
 	public static void circle(float circleX, float circleY, float z, float radius, float startAngle, float endAngle, int resolution, Vector4f outColor, Vector4f inColor)
 	{
 		float theta = (endAngle - startAngle) / resolution;
-		addColorVertex(circleX, circleY, z, inColor); 
-		while(resolution >= 0)
+		addColorVertex(circleX, circleY, z, inColor);
+		while (resolution >= 0)
 		{
-			addColorVertex(circleX + radius * (float)cos((endAngle -= theta)), circleY + radius * (float) sin(endAngle), z, outColor);
+			addColorVertex(circleX + radius * (float) cos((endAngle -= theta)), circleY + radius * (float) sin(endAngle), z, outColor);
 			
-			resolution --;
+			resolution--;
 		}
 	}
 }

@@ -1,14 +1,14 @@
 package com.polaris.engine.render.model;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import com.polaris.engine.App;
 import com.polaris.engine.render.ITexture;
 import com.polaris.engine.render.Texture;
 import com.polaris.engine.render.VAO;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public abstract class Model implements ITexture
 {
@@ -17,7 +17,7 @@ public abstract class Model implements ITexture
 	private VAO modelVao;
 	//private ModelBounds modelBounds;
 	private Texture modelTexture;
-
+	
 	public Model(App app, File model)
 	{
 		application = app;

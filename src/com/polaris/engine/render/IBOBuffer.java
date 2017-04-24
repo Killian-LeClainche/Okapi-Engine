@@ -1,7 +1,9 @@
 /**
- * 
+ *
  */
 package com.polaris.engine.render;
+
+import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -9,17 +11,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.lwjgl.BufferUtils;
-
-import static com.polaris.engine.util.MathHelper.*;
+import static com.polaris.engine.util.MathHelper.isEqual;
 
 /**
  * @author Killian Le Clainche
- *
  */
 public class IBOBuffer
 {
-
+	
 	private IntBuffer iboBuffer;
 	
 	public IBOBuffer(int bufferSize)
@@ -49,7 +48,7 @@ public class IBOBuffer
 		
 		i = 0;
 		
-		while(i < j)
+		while (i < j)
 		{
 			x = buffer.get(i);
 			y = buffer.get(i + 1);
@@ -58,10 +57,10 @@ public class IBOBuffer
 			verticeIt = vertices.iterator();
 			hasNext = verticeIt.hasNext();
 			indice = 0;
-			while(hasNext)
+			while (hasNext)
 			{
 				vertice = verticeIt.next();
-				if(isEqual(vertice[0], x) && isEqual(vertice[1], y) && isEqual(vertice[2], z))
+				if (isEqual(vertice[0], x) && isEqual(vertice[1], y) && isEqual(vertice[2], z))
 				{
 					hasNext = false;
 				}
@@ -72,9 +71,9 @@ public class IBOBuffer
 				}
 			}
 			
-			if(!verticeIt.hasNext())
+			if (!verticeIt.hasNext())
 			{
-				vertices.add(new Float[] {x, y, z});
+				vertices.add(new Float[]{x, y, z});
 				verticeLoc.add(i);
 			}
 			
@@ -87,10 +86,10 @@ public class IBOBuffer
 		
 		buffer.clear();
 		
-		for(i = 0; i < verticeLoc.size(); i++, indice += offset)
+		for (i = 0; i < verticeLoc.size(); i++, indice += offset)
 		{
 			j = 0;
-			while(j < offset)
+			while (j < offset)
 			{
 				buffer.put(indice, buffer.get(verticeLoc.get(i) + j));
 				j++;
@@ -103,9 +102,9 @@ public class IBOBuffer
 		iboBuffer.put(vertice);
 	}
 	
-	public void addAll(int ... vertices)
+	public void addAll(int... vertices)
 	{
-		for(int vertex : vertices)
+		for (int vertex : vertices)
 		{
 			iboBuffer.put(vertex);
 		}

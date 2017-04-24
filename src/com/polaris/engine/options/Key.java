@@ -1,11 +1,10 @@
 /**
- * 
+ *
  */
 package com.polaris.engine.options;
 
 /**
  * @author lec50
- *
  */
 public class Key
 {
@@ -40,8 +39,7 @@ public class Key
 		
 		long time = System.nanoTime();
 		
-		if(time - pressTimer < KEY_DOUBLE_PRESS)
-			isDoublePressed = true;
+		if (time - pressTimer < KEY_DOUBLE_PRESS) isDoublePressed = true;
 		
 		pressTimer = time;
 	}
@@ -51,14 +49,17 @@ public class Key
 		isPressed = false;
 		isDoublePressed = false;
 		
-		if(getPressedTime() <= KEY_DOUBLE_PRESS)
-			wasQuickPressed = true;
+		if (getPressedTime() <= KEY_DOUBLE_PRESS) wasQuickPressed = true;
+	}
+	
+	public final long getPressedTime()
+	{
+		return System.nanoTime() - pressTimer;
 	}
 	
 	public final void update()
 	{
-		if(wasQuickPressed)
-			wasQuickPressed = false;
+		if (wasQuickPressed) wasQuickPressed = false;
 	}
 	
 	public final String getName()
@@ -84,11 +85,6 @@ public class Key
 	public final void removeQuickPress()
 	{
 		wasQuickPressed = false;
-	}
-	
-	public final long getPressedTime()
-	{
-		return System.nanoTime() - pressTimer;
 	}
 	
 	public final boolean isDoublePressed()

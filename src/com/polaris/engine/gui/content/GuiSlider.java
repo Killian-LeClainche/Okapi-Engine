@@ -24,7 +24,7 @@ public abstract class GuiSlider<T, I extends Settings> extends GuiContent<I>
 	}
 
 	@Override
-	public int mouseClick(int mouseId) 
+	public int mouseClick(int mouseId)
 	{
 		return 2;
 	}

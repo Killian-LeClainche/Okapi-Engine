@@ -7,7 +7,7 @@ public class BackgroundSound extends StaticSound
 	{
 		super(location);
 	}
-
+	
 	public void quiet()
 	{
 		
@@ -17,5 +17,5 @@ public class BackgroundSound extends StaticSound
 	{
 		
 	}
-
+	
 }

@@ -1,20 +1,15 @@
 /**
- * 
+ *
  */
 package com.polaris.engine.options;
-
-import static org.lwjgl.glfw.GLFW.glfwGetGammaRamp;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitorName;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitorPhysicalSize;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitorPos;
-import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 
 import org.lwjgl.glfw.GLFWGammaRamp;
 import org.lwjgl.glfw.GLFWVidMode;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 /**
  * @author lec50
- *
  */
 public class Monitor
 {

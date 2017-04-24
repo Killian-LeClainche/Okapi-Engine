@@ -1,12 +1,11 @@
 /**
- * 
+ *
  */
 package com.polaris.engine.render;
 
 
 /**
  * @author Killian Le Clainche
- *
  */
 public class TexCoord
 {
@@ -23,7 +22,7 @@ public class TexCoord
 		textureMaxU = maxU;
 		textureMaxV = maxV;
 	}
-
+	
 	public float getMinU()
 	{
 		return textureMinU;
@@ -33,12 +32,12 @@ public class TexCoord
 	{
 		return textureMinV;
 	}
-
+	
 	public float getMaxU()
 	{
 		return textureMaxU;
 	}
-
+	
 	public float getMaxV()
 	{
 		return textureMaxV;

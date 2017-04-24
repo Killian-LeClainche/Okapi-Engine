@@ -1,11 +1,5 @@
 package com.polaris.engine.render.model;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 public class ObjModel //extends Model
 {
 

@@ -1,11 +1,11 @@
 package com.polaris.engine.render;
 
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBindTexture;
+import org.lwjgl.opengl.GL11;
 
 import java.nio.ByteBuffer;
 
-import org.lwjgl.opengl.GL11;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 
 public class Texture
 {
@@ -16,7 +16,7 @@ public class Texture
 	private int textureWidth;
 	private int textureHeight;
 	private ByteBuffer textureData;
-
+	
 	/**
 	 * @param textureName
 	 * @param width
@@ -43,30 +43,30 @@ public class Texture
 		GL11.glDeleteTextures(textureId);
 	}
 	
-	public void setId(int id)
-	{
-		if(textureId != 0)
-		{
-			manager.deleteTexture(this);
-		}
-		textureId = id;
-	}
-	
 	public String getName()
 	{
 		return textureName;
-	}	
+	}
 	
 	public int getId()
 	{
 		return textureId;
 	}
 	
+	public void setId(int id)
+	{
+		if (textureId != 0)
+		{
+			manager.deleteTexture(this);
+		}
+		textureId = id;
+	}
+	
 	public int getWidth()
 	{
 		return textureWidth;
 	}
-
+	
 	public int getHeight()
 	{
 		return textureHeight;
@@ -76,6 +76,6 @@ public class Texture
 	{
 		return textureData;
 	}
-
+	
 	
 }

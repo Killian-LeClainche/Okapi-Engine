@@ -1,11 +1,10 @@
 package com.polaris.engine.gui.content;
 
 
-import org.joml.Vector4d;
-
 import com.polaris.engine.gui.GuiScreen;
 import com.polaris.engine.options.Input;
 import com.polaris.engine.options.Settings;
+import org.joml.Vector4d;
 
 public abstract class GuiContent<T extends Settings>
 {
@@ -40,7 +39,7 @@ public abstract class GuiContent<T extends Settings>
 		input = g.getInput();
 		gameSettings = g.getSettings();
 	}
-
+	
 	public void update(double delta)
 	{
 		ticksExisted += delta;
@@ -52,12 +51,11 @@ public abstract class GuiContent<T extends Settings>
 	public final boolean nMouseClick(int mouseId)
 	{
 		int flag = mouseClick(mouseId);
-		if(flag > 1)
-			gui.elementUpdate(this, 0);
+		if (flag > 1) gui.elementUpdate(this, 0);
 		return flag % 2 == 1;
 	}
 	
-	protected int mouseClick(int mouseId) 
+	protected int mouseClick(int mouseId)
 	{
 		return 0;
 	}
@@ -65,12 +63,11 @@ public abstract class GuiContent<T extends Settings>
 	public final boolean nMouseHeld(int mouseId)
 	{
 		int flag = mouseHeld(mouseId);
-		if(flag > 1)
-			gui.elementUpdate(this, 1);
+		if (flag > 1) gui.elementUpdate(this, 1);
 		return flag % 2 == 1;
 	}
 	
-	protected int mouseHeld(int mouseId) 
+	protected int mouseHeld(int mouseId)
 	{
 		return 1;
 	}
@@ -78,12 +75,11 @@ public abstract class GuiContent<T extends Settings>
 	public final boolean nMouseRelease(int mouseId)
 	{
 		int flag = mouseRelease(mouseId);
-		if(flag > 1)
-			gui.elementUpdate(this, 2);
+		if (flag > 1) gui.elementUpdate(this, 2);
 		return flag % 2 == 1;
 	}
 	
-	protected int mouseRelease(int mouseId) 
+	protected int mouseRelease(int mouseId)
 	{
 		return 1;
 	}
@@ -91,12 +87,11 @@ public abstract class GuiContent<T extends Settings>
 	public final boolean nMouseScroll(double xOffset, double yOffset)
 	{
 		int flag = mouseScroll(xOffset, yOffset);
-		if(flag > 1)
-			gui.elementUpdate(this, 3);
+		if (flag > 1) gui.elementUpdate(this, 3);
 		return flag % 2 == 1;
 	}
 	
-	protected int mouseScroll(double xOffset, double yOffset) 
+	protected int mouseScroll(double xOffset, double yOffset)
 	{
 		return 0;
 	}
@@ -104,12 +99,11 @@ public abstract class GuiContent<T extends Settings>
 	public final int nKeyPressed(int keyId, int mods)
 	{
 		int flag = keyPressed(keyId, mods);
-		if((flag & 0x0000FFFF) == 1)
-			gui.elementUpdate(this, 4);
+		if ((flag & 0x0000FFFF) == 1) gui.elementUpdate(this, 4);
 		return flag >>> 16;
 	}
 	
-	protected int keyPressed(int keyId, int mods) 
+	protected int keyPressed(int keyId, int mods)
 	{
 		return 0;
 	}
@@ -117,12 +111,11 @@ public abstract class GuiContent<T extends Settings>
 	public final int nKeyHeld(int keyId, int called, int mods)
 	{
 		int flag = keyHeld(keyId, called, mods);
-		if((flag & 0x0000FFFF) == 1)
-			gui.elementUpdate(this, 5);
+		if ((flag & 0x0000FFFF) == 1) gui.elementUpdate(this, 5);
 		return flag >>> 16;
 	}
 	
-	protected int keyHeld(int keyId, int called, int mods) 
+	protected int keyHeld(int keyId, int called, int mods)
 	{
 		return 0;
 	}
@@ -130,29 +123,32 @@ public abstract class GuiContent<T extends Settings>
 	public final boolean nKeyRelease(int keyId, int mods)
 	{
 		int flag = keyRelease(keyId, mods);
-		if(flag > 1)
-			gui.elementUpdate(this, 6);
+		if (flag > 1) gui.elementUpdate(this, 6);
 		return flag % 2 == 1;
 	}
 	
-	protected int keyRelease(int keyId, int mods) 
+	protected int keyRelease(int keyId, int mods)
 	{
 		return 0;
 	}
 	
-	public int getId() 
-	{
-		return elementId;
-	}
-	
-	public boolean equals(GuiContent<T> e) 
+	public boolean equals(GuiContent<T> e)
 	{
 		return getId() == e.getId();
 	}
 	
-	public void close() {}
-
-	public void unbind() {}
+	public int getId()
+	{
+		return elementId;
+	}
+	
+	public void close()
+	{
+	}
+	
+	public void unbind()
+	{
+	}
 	
 	public final Vector4d getBounds()
 	{

@@ -1,21 +1,14 @@
 /**
- * 
+ *
  */
 package com.polaris.engine.render;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glDeleteBuffers;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
-
-import java.nio.IntBuffer;
+import static org.lwjgl.opengl.GL15.*;
 
 /**
  * @author Killian Le Clainche
- *
  */
 public class IBO implements IRenderObject
 {

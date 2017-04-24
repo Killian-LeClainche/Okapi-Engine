@@ -2,10 +2,10 @@ package com.polaris.engine.sound;
 
 public class Sound extends StaticSound
 {
-
+	
 	private ISound soundObject;
 	
-	protected Sound(String location) 
+	protected Sound(String location)
 	{
 		super(location);
 	}
@@ -14,5 +14,5 @@ public class Sound extends StaticSound
 	{
 		
 	}
-
+	
 }

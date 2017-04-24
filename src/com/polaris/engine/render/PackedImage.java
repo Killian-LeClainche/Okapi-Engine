@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;*/
 
-public class PackedImage 
+public class PackedImage
 {
 
 	/*private int defaultWidth = 2;
@@ -236,5 +236,5 @@ public class PackedImage
 			this.cells.addAll(Arrays.asList(cells));
 		}
 	}*/
-
+	
 }

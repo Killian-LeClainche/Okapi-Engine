@@ -8,7 +8,7 @@ public abstract class GuiModeButton<T extends Settings> extends GuiButton<T>
 	protected String[] modeNames;
 	protected int mode = 0;
 
-	public GuiModeButton(double x, double y, double width, double height, String ... list)
+	public GuiModeButton(double x, double y, double width, double height, String... list)
 	{
 		super(list[0], x, y, width, height);
 		modeNames = list;

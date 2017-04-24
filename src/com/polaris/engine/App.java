@@ -20,23 +20,64 @@ import java.util.concurrent.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
+/**
+ * Created by Killian Le Clainche on April 23, 2017.
+ * The base file which all applications should extend to provide functionality.
+ *
+ * @param <T> The Settings Class which should be used for all of the system.
+ */
 public abstract class App<T extends Settings>
 {
 	
+	/**
+	 * The width that all rendering should be bound to, it will automatically scale things properly.
+	 */
+	public static int scaleToWidth = 1920;
+	/**
+	 * The height that all rendering should be bound to, it will automatically scale things properly.
+	 */
+	public static int scaleToHeight = 1080;
+	/**
+	 * In case there are two windows created in one Java run, this prevents reinitializing everything.
+	 */
 	private static boolean hasSetup = false;
+	/**
+	 * Static counter meant to determine if glfw should be terminated.
+	 */
+	private static int applicationCount = 0;
 	
-	public static void start(final App<?> app) throws ExecutionException, InterruptedException {
+	/**
+	 * The static method to call from your static void main function (or where ever, whenever) that will create
+	 * the application for you.
+	 *
+	 * @param app The application object to initialize and run.
+	 */
+	public static void start(final App<?> app)
+	{
 		setup();
 		
 		app.init();
-		app.run();
+		try
+		{
+			app.run();
+		}
+		catch (ExecutionException | InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+		
+		applicationCount ++;
 	}
 	
+	/**
+	 * Private method for guarenteeing that the proper things have been initialized. I keep it private so that the
+	 * autocomplete isn't cluttered with non called methods.
+	 */
 	private static void setup()
 	{
-		if(!hasSetup)
+		if (!hasSetup)
 		{
-			if(!glfwInit())
+			if (!glfwInit())
 			{
 				//LOG.error("Failed to initialize application!");
 				//LOG.debug("create() method caused crash.");
@@ -45,7 +86,7 @@ public abstract class App<T extends Settings>
 			
 			Settings.staticInit();
 			
-			while(!Settings.hasMonitors())
+			while (!Settings.hasMonitors())
 			{
 				try
 				{
@@ -60,44 +101,58 @@ public abstract class App<T extends Settings>
 		}
 	}
 	
-	public static int scaleToWidth = 1920;
-	public static int scaleToHeight = 1080;
-	
 	/**
-	 * long instance of the window this application takes on.
+	 * I'm trying to get the server -> client, client -> server network properly implemented. Currently,
+	 * I have very little idea on how I'll be doing it and minimizing overhead and maximizing potential.
 	 */
-	protected long windowInstance;
-	
 	protected final Set<Packet> incomingPackets;
-	
+	/**
+	 * Task system is the current proper implementation for multi-threading. I would like to maximize the potential of
+	 * the products I decide to make with this.
+	 */
 	protected final ExecutorService taskExecutor;
-	
 	/**
 	 * Instance of application's sound system.
 	 */
 	protected final OpenAL soundSystem;
-	
 	/**
 	 * Instance of application's mouse.
 	 */
 	protected final Input input;
-	
+	/**
+	 * long instance of the window this application takes on.
+	 */
+	protected long windowInstance;
 	/**
 	 * The settings of the game, allows for inheritance.
 	 */
 	protected T gameSettings;
-	
+	/**
+	 * Handles all textures involved in the applications environment. I have to overhaul it again to try and find
+	 * that perfect balance that I feel comfortable with.
+	 */
 	protected TextureManager textureManager;
-	
+	/**
+	 * The protected field that determines if this application should continue to run.
+	 */
 	protected boolean isRunning;
-	
 	/**
 	 * Instance of current screen being displayed.
 	 */
 	protected Gui<T> currentGui;
-	
+	/**
+	 * The change of time since the previous delta setup call
+	 * (which is basically glfwGetTime(); glfwSetTime(0);)
+	 */
 	private double delta;
 	
+	/**
+	 * Protected constructor of the Application.
+	 * I do this because I don't want people to see this constructor.
+	 *
+	 * @param debug     Called from children constructors to determine whether the application should be debugging or
+	 *                  not in the console.
+	 */
 	protected App(boolean debug)
 	{
 		Configuration.DISABLE_CHECKS.set(!debug);
@@ -105,7 +160,7 @@ public abstract class App<T extends Settings>
 		Configuration.GLFW_CHECK_THREAD0.set(!debug);
 		
 		windowInstance = -1;
-
+		
 		gameSettings = loadSettings();
 		
 		soundSystem = new OpenAL(gameSettings);
@@ -118,14 +173,17 @@ public abstract class App<T extends Settings>
 		textureManager = new TextureManager();
 		
 		taskExecutor = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors() - 1, 1));
+		
+		delta = 0;
 	}
 	
+	protected abstract T loadSettings();
 	
 	protected void init()
-	{		
+	{
 		gameSettings.init(input);
 		
-		if(!create())
+		if (!create())
 		{
 			//LOG.error("Failed to initialize application!");
 			//LOG.debug("setup() method caused crash.");
@@ -134,7 +192,8 @@ public abstract class App<T extends Settings>
 		
 		soundSystem.init();
 		
-		glfwSetFramebufferSizeCallback(windowInstance, GLFWFramebufferSizeCallback.create((window, width, height) -> {
+		glfwSetFramebufferSizeCallback(windowInstance, GLFWFramebufferSizeCallback.create((window, width, height) ->
+		{
 			gameSettings.setWindowWidth(width);
 			gameSettings.setWindowHeight(height);
 		}));
@@ -146,6 +205,61 @@ public abstract class App<T extends Settings>
 	 * Initializes a window application
 	 */
 	public void run() throws ExecutionException, InterruptedException
+	{
+		setupGL();
+		
+		Iterator<Packet> polledPackets;
+		Packet packet;
+		
+		List<Runnable> runnableList = new LinkedList<>();
+		List<Future> futureList = new LinkedList<>();
+		
+		glfwSetTime(0);
+		
+		while (!glfwWindowShouldClose(windowInstance) && isRunning)
+		{
+			glfwMakeContextCurrent(windowInstance);
+			
+			delta = glfwGetTime();
+			glfwSetTime(0);
+			
+			if (updateWindow()) break;
+			
+			polledPackets = incomingPackets.iterator();
+			while (polledPackets.hasNext())
+			{
+				packet = polledPackets.next();
+				polledPackets.remove();
+				packet.handle();
+			}
+			
+			input.update();
+			
+			currentGui.createTasks(runnableList);
+			
+			for (Runnable r : runnableList)
+			{
+				futureList.add(taskExecutor.submit(r));
+			}
+			
+			runnableList.clear();
+			
+			futureList.add(taskExecutor.submit(currentGui));
+			
+			for (Future f : futureList)
+			{
+				f.get();
+			}
+			
+			glClear(GL_ACCUM_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			
+			currentGui.render(delta);
+			glfwSwapBuffers(windowInstance);
+		}
+		destroy();
+	}
+	
+	protected void setupGL()
 	{
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -160,65 +274,21 @@ public abstract class App<T extends Settings>
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		
-		Iterator<Packet> polledPackets;
-		Packet packet;
-
-		List<Runnable> runnableList = new LinkedList<>();
-		List<Future> futureList = new LinkedList<>();
-
-		while(!glfwWindowShouldClose(windowInstance) && isRunning)
-		{
-			glfwMakeContextCurrent(windowInstance);
-			
-			delta = glfwGetTime();
-			glfwSetTime(0);
-			
-			if(updateWindow())
-				break;
-			
-			polledPackets = incomingPackets.iterator();
-			while(polledPackets.hasNext())
-			{
-				packet = polledPackets.next();
-				polledPackets.remove();
-				packet.handle();
-			}
-			
-			input.update();
-			
-			currentGui.createTasks(runnableList);
-
-			for(Runnable r : runnableList)
-			{
-				futureList.add(taskExecutor.submit(r));
-			}
-
-			runnableList.clear();
-
-			futureList.add(taskExecutor.submit(currentGui));
-
-			for(Future f : futureList)
-			{
-				f.get();
-			}
-			
-			glClear(GL_ACCUM_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-			
-			currentGui.render(delta);
-			glfwSwapBuffers(windowInstance);
-		}
-		destroy();
 	}
 	
 	protected void destroy()
 	{
+		applicationCount --;
+		
 		soundSystem.close();
-
+		
 		glfwDestroyWindow(windowInstance);
-		glfwTerminate();
+		
+		if(applicationCount == 0)
+			glfwTerminate();
 		
 		taskExecutor.shutdown();
+		
 		try
 		{
 			taskExecutor.awaitTermination(1, TimeUnit.MILLISECONDS);
@@ -229,10 +299,9 @@ public abstract class App<T extends Settings>
 		}
 	}
 	
-	protected abstract T loadSettings();
-	
 	/**
 	 * sets up the environment for a window to be created.
+	 *
 	 * @return true for success, false otherwise
 	 */
 	public boolean create()
@@ -247,35 +316,31 @@ public abstract class App<T extends Settings>
 		
 		WindowMode mode = gameSettings.getWindowMode();
 		
-		if(mode == WindowMode.WINDOWED)
+		if (mode == WindowMode.WINDOWED)
 		{
-			instance = createWindow();
+			instance = createWindowed();
 		}
-		else if(mode == WindowMode.FULLSCREEN)
+		else if (mode == WindowMode.FULLSCREEN)
 		{
-			glfwWindowHint(GLFW_RED_BITS, videoMode.redBits());
-			glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits());
-			glfwWindowHint(GLFW_BLUE_BITS, videoMode.blueBits());
-			glfwWindowHint(GLFW_REFRESH_RATE, videoMode.refreshRate());
-			instance = glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
+			instance = createFullscreen(videoMode, gameTitle, monitorInstance);
 		}
 		else
 		{
-			instance = glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
+			instance = createBorderless(videoMode, gameTitle, monitorInstance);
 		}
 		
-		if(instance == 0)
+		if (instance == 0)
 		{
 			destroy();
 			return false;
 		}
 		
-		if(windowInstance != -1)
+		if (windowInstance != -1)
 			glfwDestroyWindow(windowInstance);
 		
 		windowInstance = instance;
 		
-		glfwMakeContextCurrent(windowInstance);		
+		glfwMakeContextCurrent(windowInstance);
 		
 		input.init(windowInstance);
 		
@@ -285,7 +350,7 @@ public abstract class App<T extends Settings>
 		int[] height = new int[1];
 		
 		glfwGetFramebufferSize(windowInstance, width, height);
-
+		
 		gameSettings.setWindowWidth(width[0]);
 		gameSettings.setWindowHeight(height[0]);
 		
@@ -295,27 +360,43 @@ public abstract class App<T extends Settings>
 	}
 	
 	/**
-	 * create the window
+	 * Creates the window in windowed mode.
 	 */
-	public long createWindow()
+	public long createWindowed()
 	{
 		return createWindow(gameSettings.getWindowWidth(), gameSettings.getWindowHeight());
 	}
 	
-	public int getMaxUPS()
+	/**
+	 * Creates the window in fullscreen mode.
+	 */
+	public long createFullscreen(GLFWVidMode videoMode, String gameTitle, long monitorInstance)
 	{
-		return 60;
+		glfwWindowHint(GLFW_RED_BITS, videoMode.redBits());
+		glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits());
+		glfwWindowHint(GLFW_BLUE_BITS, videoMode.blueBits());
+		glfwWindowHint(GLFW_REFRESH_RATE, videoMode.refreshRate());
+		return glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
+	}
+	
+	/**
+	 * Creates the window in borderless mode.
+	 */
+	public long createBorderless(GLFWVidMode videoMode, String gameTitle, long monitorInstance)
+	{
+		return glfwCreateWindow(videoMode.width(), videoMode.height(), gameTitle, monitorInstance, windowInstance);
+		
 	}
 	
 	private boolean updateWindow()
 	{
-		if(gameSettings.shouldWindowUpdate())
+		if (gameSettings.shouldWindowUpdate())
 		{
 			Collection<Texture> textureData = textureManager.getTextures();
 			
 			textureManager.clear();
 			
-			if(!create())
+			if (!create())
 				return true;
 			
 			textureManager.setTextures(textureData);
@@ -333,17 +414,9 @@ public abstract class App<T extends Settings>
 		incomingPackets.add(packet);
 	}
 	
-	/**
-	 * @param packet
-	 */
-	public void sendPacket(Packet packet)
-	{
-		//logicThread.handlePacket(packet);
-	}
-	
 	public final void initGui(Gui<T> newGui)
 	{
-		if(currentGui != null)
+		if (currentGui != null)
 		{
 			currentGui.close();
 		}
@@ -398,13 +471,18 @@ public abstract class App<T extends Settings>
 		glViewport(0, 0, windowWidth, windowHeight);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		double ymax = zNear * Math.tan( fovy * Math.PI / 360.0 );
+		double ymax = zNear * Math.tan(fovy * Math.PI / 360.0);
 		double ymin = -ymax;
 		double xmin = ymin * windowWidth / windowHeight;
 		double xmax = ymax * windowWidth / windowHeight;
-		glFrustum( xmin, xmax, ymin, ymax, zNear, zFar );
+		glFrustum(xmin, xmax, ymin, ymax, zNear, zFar);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
+	}
+	
+	public int getMaxUPS()
+	{
+		return 60;
 	}
 	
 	public float getWindowScaleX()
@@ -431,6 +509,7 @@ public abstract class App<T extends Settings>
 	{
 		return gameSettings;
 	}
+	
 	public TextureManager getTextureManager()
 	{
 		return textureManager;

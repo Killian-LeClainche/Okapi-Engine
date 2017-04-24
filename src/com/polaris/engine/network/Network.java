@@ -1,37 +1,26 @@
 package com.polaris.engine.network;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import com.google.common.io.BaseEncoding;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.ShortBufferException;
-
-import com.google.common.io.BaseEncoding;
-
 
 public abstract class Network
-{	
-	private ConcurrentLinkedQueue<Packet> packets;
-
+{
 	protected Socket socket;
-
-	private DataInputStream inputStream;
-	private DataOutputStream outputStream;
-
 	protected Cipher encrypt;
 	protected Cipher decrypt;
-
 	protected LinkedBlockingQueue<Packet> packetsToSend;
-
+	private ConcurrentLinkedQueue<Packet> packets;
+	private DataInputStream inputStream;
+	private DataOutputStream outputStream;
 	private boolean isConnected = true;
 
 	public Network()
@@ -43,14 +32,14 @@ public abstract class Network
 	protected void connect(Socket connectionSocket) throws IOException
 	{
 		socket = connectionSocket;
-		if(socket != null)
+		if (socket != null)
 		{
 			socket.setTcpNoDelay(true);
 			inputStream = new DataInputStream(socket.getInputStream());
 			outputStream = new DataOutputStream(socket.getOutputStream());
 			outputStream.flush();
 
-			if(inputStream == null || outputStream == null)
+			if (inputStream == null || outputStream == null)
 			{
 				socket.close();
 				throw new IOException("");
@@ -69,20 +58,20 @@ public abstract class Network
 			@Override
 			public void run()
 			{
-				try 
+				try
 				{
-					while(isConnected)
+					while (isConnected)
 					{
 						int packet = inputStream.readShort();
 						byte[] data = new byte[inputStream.readInt()];
 						inputStream.readFully(data);
 						packets.offer(Packet.wrap(packet, data));
 					}
-				} 
-				catch (IOException | ReflectiveOperationException e) 
+				}
+				catch (IOException | ReflectiveOperationException e)
 				{
 					e.printStackTrace();
-					if(e instanceof SocketException)
+					if (e instanceof SocketException)
 					{
 						isConnected = false;
 					}
@@ -96,7 +85,7 @@ public abstract class Network
 			{
 				try
 				{
-					while(isConnected)
+					while (isConnected)
 					{
 						Packet packetToSend = packetsToSend.take();
 						ByteArrayOutputStream data = new ByteArrayOutputStream();
@@ -111,12 +100,12 @@ public abstract class Network
 				catch (IOException e)
 				{
 					e.printStackTrace();
-					if(e instanceof SocketException)
+					if (e instanceof SocketException)
 					{
 						isConnected = false;
 					}
-				} 
-				catch (InterruptedException e) 
+				}
+				catch (InterruptedException e)
 				{
 					e.printStackTrace();
 				}
@@ -127,7 +116,7 @@ public abstract class Network
 	public void update(double delta)
 	{
 		Packet nextPacket = null;
-		while((nextPacket = packets.poll()) != null)
+		while ((nextPacket = packets.poll()) != null)
 		{
 			nextPacket.handle(this);
 		}
@@ -135,11 +124,11 @@ public abstract class Network
 
 	public void sendPacket(Packet packetToSend)
 	{
-		try 
+		try
 		{
 			packetsToSend.put(packetToSend);
 		}
-		catch (InterruptedException e) 
+		catch (InterruptedException e)
 		{
 			e.printStackTrace();
 		}
@@ -147,7 +136,7 @@ public abstract class Network
 
 	public void sendSecurePacket(Packet packetToSend)
 	{
-		try 
+		try
 		{
 			PacketSecure securePacket = null;
 
@@ -172,15 +161,15 @@ public abstract class Network
 			secureStream.close();
 			dataStream.close();
 		}
-		catch (IOException | InterruptedException | IllegalBlockSizeException | BadPaddingException e) 
+		catch (IOException | InterruptedException | IllegalBlockSizeException | BadPaddingException e)
 		{
 			e.printStackTrace();
 		}
 	}
 
-	public void decryptPacket(PacketSecure packetSecure) 
+	public void decryptPacket(PacketSecure packetSecure)
 	{
-		try 
+		try
 		{
 			DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(packetSecure.getEncoded()));
 			byte[] data = BaseEncoding.base64().decode(inputStream.readUTF());
@@ -190,7 +179,7 @@ public abstract class Network
 			data = new byte[inputStream.readInt()];
 			inputStream.readFully(data);
 			Packet.wrap(packet, data).handle(this);
-		} 
+		}
 		catch (IOException | ReflectiveOperationException | IllegalBlockSizeException | BadPaddingException e1)
 		{
 			e1.printStackTrace();
@@ -198,7 +187,7 @@ public abstract class Network
 
 	}
 
-	public void invalidate() throws IOException 
+	public void invalidate() throws IOException
 	{
 		socket.close();
 	}

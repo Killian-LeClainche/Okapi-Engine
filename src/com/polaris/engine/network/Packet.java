@@ -20,7 +20,7 @@ public abstract class Packet
 		addPacket(PacketAES.class);
 		addPacket(PacketSecure.class);
 	}
-
+	
 	public static void addPacket(Class<? extends Packet> packet)
 	{
 		packetList.add(packet);
@@ -29,31 +29,26 @@ public abstract class Packet
 	public static void sortPackets()
 	{
 		List<Class<? extends Packet>> sortedList = new ArrayList<Class<? extends Packet>>();
-		for(Class<? extends Packet> packetCL : packetList)
+		for (Class<? extends Packet> packetCL : packetList)
 		{
 			boolean placed = false;
-			for(int i = 0; i < sortedList.size(); i++)
+			for (int i = 0; i < sortedList.size(); i++)
 			{
-				if(sortedList.get(i).toString().compareTo(packetCL.toString()) < 0)
+				if (sortedList.get(i).toString().compareTo(packetCL.toString()) < 0)
 				{
 					placed = true;
 					sortedList.add(i, packetCL);
 					i = sortedList.size();
 				}
 			}
-			if(!placed)
+			if (!placed)
 			{
 				sortedList.add(packetCL);
 			}
 		}
 	}
 	
-	public static short getPacketHeader(Packet packet)
-	{
-		return (short) packetList.indexOf(packet.getClass());
-	}
-	
-	public static Packet wrap(int packet, byte[] data) throws ReflectiveOperationException, IOException 
+	public static Packet wrap(int packet, byte[] data) throws ReflectiveOperationException, IOException
 	{
 		Class<? extends Packet> packetClass = packetList.get(packet);
 		Constructor<? extends Packet> packetInstance = packetClass.getConstructor();
@@ -62,27 +57,31 @@ public abstract class Packet
 		p.copy(dataStream);
 		return p;
 	}
-
+	
+	public abstract void copy(DataInputStream data) throws IOException;
 	private short packetHeader = 0;
-
-	public Packet() 
+	
+	public Packet()
 	{
 		packetHeader = getPacketHeader(this);
 	}
 	
+	public static short getPacketHeader(Packet packet)
+	{
+		return (short) packetList.indexOf(packet.getClass());
+	}
+	
 	public abstract void writeData(DataOutputStream output) throws IOException;
 	
-	public abstract void copy(DataInputStream data) throws IOException;
-	
 	public abstract void handle();
-
+	
 	public final int getHeader()
 	{
 		return packetHeader;
 	}
-
+	
 	public abstract int getWeight();
-
+	
 	/**
 	 * @return
 	 */
@@ -90,9 +89,15 @@ public abstract class Packet
 	{
 		return 0;
 	}
-
-	public boolean isTCPPacket() { return true; }
-
-	public int getPacketRank() { return 1; }
-
+	
+	public boolean isTCPPacket()
+	{
+		return true;
+	}
+	
+	public int getPacketRank()
+	{
+		return 1;
+	}
+	
 }

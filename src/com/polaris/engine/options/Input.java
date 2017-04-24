@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.polaris.engine.options;
 
@@ -13,19 +13,16 @@ import static org.lwjgl.glfw.GLFW.*;
 
 /**
  * @author Killian Le Clainche
- *
  */
 public class Input
 {
 	
 	private final Settings gameSettings;
+	private final BiMap<Integer, Key> keyboardMapping;
+	private final BiMap<Integer, Key> mouseMapping;
 	private Vector2d position;
 	private Vector2d delta;
 	private Vector2d scrollDelta;
-	
-	private final BiMap<Integer, Key> keyboardMapping;
-	private final BiMap<Integer, Key> mouseMapping;
-	
 	private StringBuilder textInput;
 	
 	public Input(Settings settings)
@@ -44,7 +41,8 @@ public class Input
 	
 	public void init(long windowInstance)
 	{
-		glfwSetCursorPosCallback(windowInstance, GLFWCursorPosCallback.create((window, xpos, ypos) -> {
+		glfwSetCursorPosCallback(windowInstance, GLFWCursorPosCallback.create((window, xpos, ypos) ->
+		{
 			xpos /= (double) gameSettings.getWindowWidth();
 			ypos /= (double) gameSettings.getWindowHeight();
 			xpos *= App.scaleToWidth;
@@ -54,46 +52,48 @@ public class Input
 			position.y = ypos;
 		}));
 		
-		glfwSetMouseButtonCallback(windowInstance, GLFWMouseButtonCallback.create((window, button, action, mods) -> {
+		glfwSetMouseButtonCallback(windowInstance, GLFWMouseButtonCallback.create((window, button, action, mods) ->
+		{
 			Key mouseKey = mouseMapping.get(button);
 			
-			if(mouseKey == null)
-				return;
+			if (mouseKey == null) return;
 			
-			if(action == GLFW.GLFW_PRESS)
+			if (action == GLFW.GLFW_PRESS)
 			{
 				mouseKey.press();
 			}
-			else if(action == GLFW.GLFW_RELEASE)
+			else if (action == GLFW.GLFW_RELEASE)
 			{
 				mouseKey.release();
 			}
 		}));
 		
-		glfwSetScrollCallback(windowInstance, GLFWScrollCallback.create((window, xoffset, yoffset) ->{
+		glfwSetScrollCallback(windowInstance, GLFWScrollCallback.create((window, xoffset, yoffset) ->
+		{
 			addScrollDelta(xoffset, yoffset);
 		}));
 		
-		glfwSetKeyCallback(windowInstance, GLFWKeyCallback.create((window, key, scancode, action, mods) -> {
-			if(key != -1)
+		glfwSetKeyCallback(windowInstance, GLFWKeyCallback.create((window, key, scancode, action, mods) ->
+		{
+			if (key != -1)
 			{
 				Key keyboardKey = keyboardMapping.get(key);
 				
-				if(keyboardKey == null)
-					return;
+				if (keyboardKey == null) return;
 				
-				if(action == GLFW.GLFW_PRESS)
+				if (action == GLFW.GLFW_PRESS)
 				{
 					keyboardKey.press();
 				}
-				else if(action == GLFW.GLFW_RELEASE)
+				else if (action == GLFW.GLFW_RELEASE)
 				{
 					keyboardKey.release();
 				}
 			}
 		}));
 		
-		glfwSetCharCallback(windowInstance, GLFWCharCallback.create((window, codepoint) -> {
+		glfwSetCharCallback(windowInstance, GLFWCharCallback.create((window, codepoint) ->
+		{
 			textInput.append((char) codepoint);
 		}));
 		
@@ -124,21 +124,31 @@ public class Input
 		addKey(GLFW.GLFW_KEY_MINUS);
 		addKey(GLFW.GLFW_KEY_ENTER, "Enter");
 		
-		for(int i = GLFW.GLFW_KEY_0; i <= GLFW.GLFW_KEY_9; i++)
+		for (int i = GLFW.GLFW_KEY_0; i <= GLFW.GLFW_KEY_9; i++)
 		{
 			addKey(i);
 		}
 		
-		for(int i = GLFW.GLFW_KEY_A; i <= GLFW.GLFW_KEY_Z; i++)
+		for (int i = GLFW.GLFW_KEY_A; i <= GLFW.GLFW_KEY_Z; i++)
 		{
 			addKey(i);
 		}
 		
-		for(int i = 0; i <= 7; i++)
+		for (int i = 0; i <= 7; i++)
 		{
 			Key key = new Key("MOUSE" + i, i);
 			mouseMapping.put(i, key);
 		}
+	}
+	
+	private final void setDelta(double dx, double dy)
+	{
+		delta.set(dx, dy);
+	}
+	
+	private final void addScrollDelta(double dx, double dy)
+	{
+		scrollDelta.add(dx, dy);
 	}
 	
 	private void addKey(int i)
@@ -152,24 +162,29 @@ public class Input
 		Key key = new Key(keyName, i);
 		keyboardMapping.put(i, key);
 	}
-
+	
 	public void update()
 	{
 		textInput.setLength(0);
 		setDelta(0, 0);
 		setScrollDelta(0, 0);
 		
-		for(Key key : mouseMapping.values())
+		for (Key key : mouseMapping.values())
 		{
 			key.update();
 		}
 		
-		for(Key key : keyboardMapping.values())
+		for (Key key : keyboardMapping.values())
 		{
 			key.update();
 		}
 		
 		glfwPollEvents();
+	}
+	
+	private final void setScrollDelta(double dx, double dy)
+	{
+		scrollDelta.set(dx, dy);
 	}
 	
 	public void setCursorMode(long windowInstance, int mode)
@@ -207,28 +222,14 @@ public class Input
 		return scrollDelta.y;
 	}
 	
-	private final void setDelta(double dx, double dy)
-	{
-		delta.set(dx, dy);
-	}
-	
-	private final void setScrollDelta(double dx, double dy)
-	{
-		scrollDelta.set(dx, dy);
-	}
-	
-	private final void addScrollDelta(double dx, double dy)
-	{
-		scrollDelta.add(dx, dy);
-	}
-	
 	public Key getKey(int keyCode)
 	{
 		return keyboardMapping.get(keyCode);
 	}
-
+	
 	/**
 	 * @param mouseCode
+	 *
 	 * @return
 	 */
 	public Key getMouse(int mouseCode)

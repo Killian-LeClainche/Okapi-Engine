@@ -30,13 +30,13 @@ public class GuiTextField<T extends Settings> extends GuiContent<T>
 	}
 
 	@Override
-	public void render(double delta) 
+	public void render(double delta)
 	{
 		
 	}
 
 	@Override
-	public int mouseClick(int mouseId) 
+	public int mouseClick(int mouseId)
 	{
 		return 1;
 	}

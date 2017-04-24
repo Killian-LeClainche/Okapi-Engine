@@ -1,24 +1,20 @@
 package com.polaris.engine.gui;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import com.polaris.engine.App;
 import com.polaris.engine.options.Input;
 import com.polaris.engine.options.Settings;
 
+import java.util.List;
+
 public abstract class Gui<T extends Settings> implements Runnable
 {
-
-	protected double ticksExisted;
 	
 	protected final Gui<T> parent;
-	
 	protected final App<T> application;
 	protected final Input input;
 	protected final T gameSettings;
-
+	protected double ticksExisted;
+	
 	public Gui(App<T> app)
 	{
 		this(app, null, 0);
@@ -36,9 +32,13 @@ public abstract class Gui<T extends Settings> implements Runnable
 		gameSettings = app.getSettings();
 	}
 	
-	public void init() {}
+	public void init()
+	{
+	}
 	
-	public void createTasks(List<Runnable> service) {}
+	public void createTasks(List<Runnable> service)
+	{
+	}
 	
 	public void run()
 	{
@@ -49,16 +49,23 @@ public abstract class Gui<T extends Settings> implements Runnable
 	{
 		ticksExisted += delta;
 	}
-
+	
 	public void render(double delta)
 	{
 		application.gl2d();
 	}
-
-	public void reinit() {}
-	public void reload() {}
-
-	public void close() {}
+	
+	public void reinit()
+	{
+	}
+	
+	public void reload()
+	{
+	}
+	
+	public void close()
+	{
+	}
 	
 	public Gui<T> getParent()
 	{
@@ -79,5 +86,5 @@ public abstract class Gui<T extends Settings> implements Runnable
 	{
 		return gameSettings;
 	}
-
+	
 }

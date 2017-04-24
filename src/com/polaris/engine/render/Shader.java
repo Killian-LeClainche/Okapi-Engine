@@ -1,14 +1,13 @@
 package com.polaris.engine.render;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 public class Shader
 {
@@ -61,120 +60,38 @@ public class Shader
 		return shaderWrapperId;
 	}*/
 	
-    private static int createShader(File filename, int shaderType) {
-        int shader = 0;
-        try {
-            shader = ARBShaderObjects.glCreateShaderObjectARB(shaderType);
-             
-            if(shader == 0)
-                return 0;
-             
-            ARBShaderObjects.glShaderSourceARB(shader, readFileAsString(filename));
-            ARBShaderObjects.glCompileShaderARB(shader);
-             
-            if (ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL11.GL_FALSE)
-                throw new RuntimeException("Error creating shader: " + getLogInfo(shader));
-             
-            return shader;
-        }
-        catch(Exception exc) {
-            ARBShaderObjects.glDeleteObjectARB(shader);
-            System.out.println(exc.getMessage());
-            return -1;
-        }
-    }
-     
-    private static String getLogInfo(int obj) {
-        return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects.glGetObjectParameteriARB(obj, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
-    }
-     
-    private static String readFileAsString(File file) throws Exception {
-        StringBuilder source = new StringBuilder();
-         
-        FileInputStream in = new FileInputStream(file);
-         
-        Exception exception = null;
-         
-        BufferedReader reader;
-        try{
-            reader = new BufferedReader(new InputStreamReader(in,"UTF-8"));
-             
-            Exception innerExc= null;
-            try {
-                String line;
-                while((line = reader.readLine()) != null)
-                    source.append(line).append('\n');
-            }
-            catch(Exception exc) {
-                exception = exc;
-            }
-            finally {
-                try {
-                    reader.close();
-                }
-                catch(Exception exc) {
-                    if(innerExc == null)
-                        innerExc = exc;
-                    else
-                        exc.printStackTrace();
-                }
-            }
-             
-            if(innerExc != null)
-                throw innerExc;
-        }
-        catch(Exception exc) {
-            exception = exc;
-        }
-        finally {
-            try {
-                in.close();
-            }
-            catch(Exception exc) {
-                if(exception == null)
-                    exception = exc;
-                else
-                    exc.printStackTrace();
-            }
-             
-            if(exception != null)
-                throw exception;
-        }
-         
-        return source.toString();
-    }
-	
 	public static Shader createShader(File vertShaderFile, File fragShaderFile)
 	{
 		vertWrapperId = fragWrapperId = shaderWrapperId = 0;
 		
-			vertWrapperId = createShader(vertShaderFile, GL20.GL_VERTEX_SHADER);
-			fragWrapperId = createShader(fragShaderFile, GL20.GL_FRAGMENT_SHADER);
-			
-			shaderWrapperId = ARBShaderObjects.glCreateProgramObjectARB();
-	         
-	        if(shaderWrapperId == 0)
-	            return null;
-	         
+		vertWrapperId = createShader(vertShaderFile, GL20.GL_VERTEX_SHADER);
+		fragWrapperId = createShader(fragShaderFile, GL20.GL_FRAGMENT_SHADER);
+		
+		shaderWrapperId = ARBShaderObjects.glCreateProgramObjectARB();
+		
+		if (shaderWrapperId == 0) return null;
+		     
 	        /*
 	        * if the vertex and fragment shaders setup sucessfully,
 	        * attach them to the shader program, link the sahder program
 	        * (into the GL context I suppose), and validate
 	        */
-	        ARBShaderObjects.glAttachObjectARB(shaderWrapperId, vertWrapperId);
-	        ARBShaderObjects.glAttachObjectARB(shaderWrapperId, fragWrapperId);
-	         
-	        ARBShaderObjects.glLinkProgramARB(shaderWrapperId);
-	        if (ARBShaderObjects.glGetObjectParameteriARB(shaderWrapperId, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB) == GL11.GL_FALSE) {
-	            System.err.println(getLogInfo(shaderWrapperId));
-	            return null;
-	        }
-	         
-	        ARBShaderObjects.glValidateProgramARB(shaderWrapperId);
-	        if (ARBShaderObjects.glGetObjectParameteriARB(shaderWrapperId, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL11.GL_FALSE) {
-	            System.err.println(getLogInfo(shaderWrapperId));
-	            return null;
-	        }
+		ARBShaderObjects.glAttachObjectARB(shaderWrapperId, vertWrapperId);
+		ARBShaderObjects.glAttachObjectARB(shaderWrapperId, fragWrapperId);
+		
+		ARBShaderObjects.glLinkProgramARB(shaderWrapperId);
+		if (ARBShaderObjects.glGetObjectParameteriARB(shaderWrapperId, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB) == GL11.GL_FALSE)
+		{
+			System.err.println(getLogInfo(shaderWrapperId));
+			return null;
+		}
+		
+		ARBShaderObjects.glValidateProgramARB(shaderWrapperId);
+		if (ARBShaderObjects.glGetObjectParameteriARB(shaderWrapperId, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL11.GL_FALSE)
+		{
+			System.err.println(getLogInfo(shaderWrapperId));
+			return null;
+		}
 			
 			/*shaderWrapperId = GL20.glCreateProgram();
 			GL20.glAttachShader(shaderWrapperId, vertWrapperId);
@@ -189,7 +106,7 @@ public class Shader
 				GL20.glDeleteProgram(shaderWrapperId);
 				throw new AssertionError("Could not link program " + programLog);
 			}*/
-			return new Shader(shaderWrapperId, vertWrapperId, fragWrapperId);
+		return new Shader(shaderWrapperId, vertWrapperId, fragWrapperId);
 		
 		/*if(vertWrapperId != 0)
 		{
@@ -202,6 +119,95 @@ public class Shader
 		//return null;
 	}
 	
+	private static int createShader(File filename, int shaderType)
+	{
+		int shader = 0;
+		try
+		{
+			shader = ARBShaderObjects.glCreateShaderObjectARB(shaderType);
+			
+			if (shader == 0) return 0;
+			
+			ARBShaderObjects.glShaderSourceARB(shader, readFileAsString(filename));
+			ARBShaderObjects.glCompileShaderARB(shader);
+			
+			if (ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL11.GL_FALSE)
+				throw new RuntimeException("Error creating shader: " + getLogInfo(shader));
+			
+			return shader;
+		}
+		catch (Exception exc)
+		{
+			ARBShaderObjects.glDeleteObjectARB(shader);
+			System.out.println(exc.getMessage());
+			return -1;
+		}
+	}
+	
+	private static String getLogInfo(int obj)
+	{
+		return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects.glGetObjectParameteriARB(obj, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
+	}
+	
+	private static String readFileAsString(File file) throws Exception
+	{
+		StringBuilder source = new StringBuilder();
+		
+		FileInputStream in = new FileInputStream(file);
+		
+		Exception exception = null;
+		
+		BufferedReader reader;
+		try
+		{
+			reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+			
+			Exception innerExc = null;
+			try
+			{
+				String line;
+				while ((line = reader.readLine()) != null) source.append(line).append('\n');
+			}
+			catch (Exception exc)
+			{
+				exception = exc;
+			}
+			finally
+			{
+				try
+				{
+					reader.close();
+				}
+				catch (Exception exc)
+				{
+					if (innerExc == null) innerExc = exc;
+					else exc.printStackTrace();
+				}
+			}
+			
+			if (innerExc != null) throw innerExc;
+		}
+		catch (Exception exc)
+		{
+			exception = exc;
+		}
+		finally
+		{
+			try
+			{
+				in.close();
+			}
+			catch (Exception exc)
+			{
+				if (exception == null) exception = exc;
+				else exc.printStackTrace();
+			}
+			
+			if (exception != null) throw exception;
+		}
+		
+		return source.toString();
+	}
 	private int programId;
 	private int vertShaderId;
 	private int fragShaderId;
@@ -224,12 +230,6 @@ public class Shader
 		ARBShaderObjects.glUseProgramObjectARB(programId);
 	}
 	
-	public void unbind()
-	{
-		//GL20.glUseProgram(0);
-		ARBShaderObjects.glUseProgramObjectARB(0);
-	}
-	
 	public void destroy()
 	{
 		unbind();
@@ -239,6 +239,12 @@ public class Shader
 		GL20.glDeleteShader(vertShaderId);
 		GL20.glDeleteShader(fragShaderId);
 		GL20.glDeleteProgram(programId);
+	}
+	
+	public void unbind()
+	{
+		//GL20.glUseProgram(0);
+		ARBShaderObjects.glUseProgramObjectARB(0);
 	}
 	
 	public int getShaderId()

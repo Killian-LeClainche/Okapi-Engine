@@ -1,15 +1,12 @@
 package com.polaris.engine.options;
 
-import static org.lwjgl.glfw.GLFW.GLFW_CONNECTED;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitors;
-import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
-import static org.lwjgl.glfw.GLFW.glfwSetMonitorCallback;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.glfw.GLFWMonitorCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.PointerBuffer;
-import org.lwjgl.glfw.GLFWMonitorCallback;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class Settings implements java.io.Serializable
 {
@@ -20,19 +17,20 @@ public class Settings implements java.io.Serializable
 	
 	public static void staticInit()
 	{
-		if(!staticInitialized)
+		if (!staticInitialized)
 		{
 			monitorList = new ArrayList<Monitor>();
-			glfwSetMonitorCallback(GLFWMonitorCallback.create((monitor, event) -> {
-				if(event == GLFW_CONNECTED)
+			glfwSetMonitorCallback(GLFWMonitorCallback.create((monitor, event) ->
+			{
+				if (event == GLFW_CONNECTED)
 				{
 					monitorList.add(Monitor.createMonitor(monitor));
 				}
 				else
 				{
-					for(int i = 0; i < monitorList.size(); i++)
+					for (int i = 0; i < monitorList.size(); i++)
 					{
-						if(monitorList.get(i).getInstance() == monitor)
+						if (monitorList.get(i).getInstance() == monitor)
 						{
 							monitorList.remove(i);
 							i = monitorList.size();
@@ -42,7 +40,7 @@ public class Settings implements java.io.Serializable
 			}));
 			PointerBuffer buffer = glfwGetMonitors();
 			int i = 0;
-			while(buffer.capacity() > i)
+			while (buffer.capacity() > i)
 			{
 				monitorList.add(Monitor.createMonitor(buffer.get(i)));
 				i++;
@@ -56,25 +54,11 @@ public class Settings implements java.io.Serializable
 		return !monitorList.isEmpty();
 	}
 	
-	public static Monitor getMonitor(long instance)
-	{
-		Monitor monitor;
-		for(int i = 0; i < monitorList.size(); i++)
-		{
-			monitor = monitorList.get(i);
-			if(monitor.getInstance() == instance)
-			{
-				return monitor;
-			}
-		}
-		return null;
-	}
-	
 	public static Monitor getMonitor(int index)
 	{
 		return monitorList.get(index);
 	}
-	
+	protected Input input;
 	private Monitor monitor;
 	
 	private WindowMode defaultWindowMode;
@@ -84,8 +68,6 @@ public class Settings implements java.io.Serializable
 	private int windowPosX, windowPosY;
 	
 	private int windowWidth, windowHeight;
-	
-	protected Input input;
 	
 	public void init(Input i)
 	{
@@ -97,7 +79,21 @@ public class Settings implements java.io.Serializable
 		windowPosX = windowPosY = -1;
 		windowWidth = windowHeight = 0;
 	}
-
+	
+	public static Monitor getMonitor(long instance)
+	{
+		Monitor monitor;
+		for (int i = 0; i < monitorList.size(); i++)
+		{
+			monitor = monitorList.get(i);
+			if (monitor.getInstance() == instance)
+			{
+				return monitor;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * @return
 	 */
@@ -110,14 +106,12 @@ public class Settings implements java.io.Serializable
 	
 	public void changeWindowMode()
 	{
-		if(defaultWindowMode == windowMode)
-			windowMode = WindowMode.FULLSCREEN;
-		else
-			windowMode = defaultWindowMode;
+		if (defaultWindowMode == windowMode) windowMode = WindowMode.FULLSCREEN;
+		else windowMode = defaultWindowMode;
 		
 		updateWindow = true;
 	}
-
+	
 	/**
 	 * @return
 	 */
@@ -125,7 +119,12 @@ public class Settings implements java.io.Serializable
 	{
 		return windowMode;
 	}
-
+	
+	public long getMonitorInstance()
+	{
+		return getMonitor().getInstance();
+	}
+	
 	/**
 	 * @return
 	 */
@@ -134,28 +133,26 @@ public class Settings implements java.io.Serializable
 		return monitor;
 	}
 	
-	public long getMonitorInstance()
-	{
-		return getMonitor().getInstance();
-	}
-	
 	public String getTitle()
 	{
 		return "";
 	}
-
+	
 	public int getWindowXPos(int w)
 	{
-		if(windowPosX == -1)
-			windowPosX = (monitor.getVideoMode().width() - w) / 2;
+		if (windowPosX == -1) windowPosX = (monitor.getVideoMode().width() - w) / 2;
 		return windowPosX;
 	}
 	
 	public int getWindowYPos(int h)
 	{
-		if(windowPosY == -1)
-			windowPosY = (monitor.getVideoMode().height() - h) / 2;
+		if (windowPosY == -1) windowPosY = (monitor.getVideoMode().height() - h) / 2;
 		return windowPosY;
+	}
+	
+	public int getWindowWidth()
+	{
+		return windowWidth;
 	}
 	
 	public void setWindowWidth(int w)
@@ -164,20 +161,15 @@ public class Settings implements java.io.Serializable
 		windowPosX = (monitor.getVideoMode().width() - w) / 2;
 	}
 	
+	public int getWindowHeight()
+	{
+		return windowHeight;
+	}
+	
 	public void setWindowHeight(int h)
 	{
 		windowHeight = h;
 		windowPosY = (monitor.getVideoMode().height() - h) / 2;
-	}
-	
-	public int getWindowWidth()
-	{
-		return windowWidth;
-	}
-	
-	public int getWindowHeight()
-	{
-		return windowHeight;
 	}
 	
 	/**
