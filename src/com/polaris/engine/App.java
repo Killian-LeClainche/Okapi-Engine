@@ -30,13 +30,9 @@ public abstract class App<T extends Settings>
 {
 	
 	/**
-	 * The width that all rendering should be bound to, it will automatically scale things properly.
+	 * The dimensions that all rendering should be bound to, it will automatically scale things properly.
 	 */
-	public static int scaleToWidth = 1920;
-	/**
-	 * The height that all rendering should be bound to, it will automatically scale things properly.
-	 */
-	public static int scaleToHeight = 1080;
+	public static int scaleToWidth = 1920, scaleToHeight = 1080;
 	/**
 	 * In case there are two windows created in one Java run, this prevents reinitializing everything.
 	 */
@@ -155,6 +151,7 @@ public abstract class App<T extends Settings>
 	 */
 	protected App(boolean debug)
 	{
+		// Set up debugging if necessary
 		Configuration.DISABLE_CHECKS.set(!debug);
 		Configuration.DEBUG.set(debug);
 		Configuration.GLFW_CHECK_THREAD0.set(!debug);
@@ -233,7 +230,7 @@ public abstract class App<T extends Settings>
 				packet.handle();
 			}
 			
-			input.update();
+			input.update(delta);
 			
 			currentGui.createTasks(runnableList);
 			
@@ -455,27 +452,25 @@ public abstract class App<T extends Settings>
 	public void gl2d()
 	{
 		glViewport(0, 0, gameSettings.getWindowWidth(), gameSettings.getWindowHeight());
-		/*glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0, 1, 1, 0, -10, 10);
-		glMatrixMode(GL_MODELVIEW);*/
 	}
 	
 	/**
 	 * Call before performing 3d rendering
 	 */
-	public void gl3d(final float fovy, final float zNear, final float zFar)
+	public void gl3d(final float fieldOfViewY, final float zNear, final float zFar)
 	{
 		int windowWidth = gameSettings.getWindowWidth();
 		int windowHeight = gameSettings.getWindowHeight();
+		
+		double maxY = zNear * Math.tan(fieldOfViewY * Math.PI / 360.0);
+		double minY = -maxY;
+		double maxX = maxY * windowWidth / windowHeight;
+		double minX = minY * windowWidth / windowHeight;
+		
 		glViewport(0, 0, windowWidth, windowHeight);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		double ymax = zNear * Math.tan(fovy * Math.PI / 360.0);
-		double ymin = -ymax;
-		double xmin = ymin * windowWidth / windowHeight;
-		double xmax = ymax * windowWidth / windowHeight;
-		glFrustum(xmin, xmax, ymin, ymax, zNear, zFar);
+		glFrustum(minX, maxX, minY, maxY, zNear, zFar);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 	}

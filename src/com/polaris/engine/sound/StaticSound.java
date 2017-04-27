@@ -2,6 +2,7 @@ package com.polaris.engine.sound;
 
 import org.lwjgl.BufferUtils;
 
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 public class StaticSound

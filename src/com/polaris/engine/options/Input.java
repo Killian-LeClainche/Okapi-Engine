@@ -18,8 +18,6 @@ public class Input
 {
 	
 	private final Settings gameSettings;
-	private final BiMap<Integer, Key> keyboardMapping;
-	private final BiMap<Integer, Key> mouseMapping;
 	private Vector2d position;
 	private Vector2d delta;
 	private Vector2d scrollDelta;
@@ -33,8 +31,6 @@ public class Input
 		delta = new Vector2d(0);
 		scrollDelta = new Vector2d(0);
 		
-		keyboardMapping = HashBiMap.create();
-		mouseMapping = HashBiMap.create();
 		textInput = new StringBuilder();
 		
 	}
@@ -54,7 +50,7 @@ public class Input
 		
 		glfwSetMouseButtonCallback(windowInstance, GLFWMouseButtonCallback.create((window, button, action, mods) ->
 		{
-			Key mouseKey = mouseMapping.get(button);
+			Key mouseKey = gameSettings.getMouseKey(button);
 			
 			if (mouseKey == null) return;
 			
@@ -77,7 +73,7 @@ public class Input
 		{
 			if (key != -1)
 			{
-				Key keyboardKey = keyboardMapping.get(key);
+				Key keyboardKey = gameSettings.getKey(key);
 				
 				if (keyboardKey == null) return;
 				
@@ -96,49 +92,6 @@ public class Input
 		{
 			textInput.append((char) codepoint);
 		}));
-		
-		addKey(GLFW.GLFW_KEY_APOSTROPHE);
-		addKey(GLFW.GLFW_KEY_TAB, "Tab");
-		addKey(GLFW.GLFW_KEY_LEFT_SHIFT, "Left Shift");
-		addKey(GLFW.GLFW_KEY_LEFT, "Left Arrow");
-		addKey(GLFW.GLFW_KEY_LEFT_ALT, "Left Alt");
-		addKey(GLFW.GLFW_KEY_LEFT_BRACKET);
-		addKey(GLFW.GLFW_KEY_LEFT_CONTROL, "Left Control");
-		addKey(GLFW.GLFW_KEY_SPACE, "Spacebar");
-		addKey(GLFW.GLFW_KEY_DELETE, "Delete");
-		addKey(GLFW.GLFW_KEY_RIGHT, "Right Arrow");
-		addKey(GLFW.GLFW_KEY_RIGHT_ALT, "Right Alt");
-		addKey(GLFW.GLFW_KEY_RIGHT_BRACKET);
-		addKey(GLFW.GLFW_KEY_RIGHT_CONTROL, "Right Control");
-		addKey(GLFW.GLFW_KEY_RIGHT_SHIFT, "Right Shift");
-		addKey(GLFW.GLFW_KEY_UP, "Up Arrow");
-		addKey(GLFW.GLFW_KEY_DOWN, "Down Arrow");
-		addKey(GLFW.GLFW_KEY_COMMA);
-		addKey(GLFW.GLFW_KEY_PERIOD);
-		addKey(GLFW.GLFW_KEY_SLASH);
-		addKey(GLFW.GLFW_KEY_BACKSLASH);
-		addKey(GLFW.GLFW_KEY_BACKSPACE, "Backspace");
-		addKey(GLFW.GLFW_KEY_EQUAL);
-		addKey(GLFW.GLFW_KEY_ESCAPE, "Escape");
-		addKey(GLFW.GLFW_KEY_GRAVE_ACCENT);
-		addKey(GLFW.GLFW_KEY_MINUS);
-		addKey(GLFW.GLFW_KEY_ENTER, "Enter");
-		
-		for (int i = GLFW.GLFW_KEY_0; i <= GLFW.GLFW_KEY_9; i++)
-		{
-			addKey(i);
-		}
-		
-		for (int i = GLFW.GLFW_KEY_A; i <= GLFW.GLFW_KEY_Z; i++)
-		{
-			addKey(i);
-		}
-		
-		for (int i = 0; i <= 7; i++)
-		{
-			Key key = new Key("MOUSE" + i, i);
-			mouseMapping.put(i, key);
-		}
 	}
 	
 	private final void setDelta(double dx, double dy)
@@ -151,33 +104,13 @@ public class Input
 		scrollDelta.add(dx, dy);
 	}
 	
-	private void addKey(int i)
-	{
-		Key key = new Key(GLFW.glfwGetKeyName(i, 0), i);
-		keyboardMapping.put(i, key);
-	}
-	
-	private void addKey(int i, String keyName)
-	{
-		Key key = new Key(keyName, i);
-		keyboardMapping.put(i, key);
-	}
-	
-	public void update()
+	public void update(double delta)
 	{
 		textInput.setLength(0);
 		setDelta(0, 0);
 		setScrollDelta(0, 0);
 		
-		for (Key key : mouseMapping.values())
-		{
-			key.update();
-		}
-		
-		for (Key key : keyboardMapping.values())
-		{
-			key.update();
-		}
+		gameSettings.update(delta);
 		
 		glfwPollEvents();
 	}
@@ -222,19 +155,9 @@ public class Input
 		return scrollDelta.y;
 	}
 	
-	public Key getKey(int keyCode)
+	public final String getInputText()
 	{
-		return keyboardMapping.get(keyCode);
-	}
-	
-	/**
-	 * @param mouseCode
-	 *
-	 * @return
-	 */
-	public Key getMouse(int mouseCode)
-	{
-		return mouseMapping.get(mouseCode);
+		return textInput.toString();
 	}
 	
 }

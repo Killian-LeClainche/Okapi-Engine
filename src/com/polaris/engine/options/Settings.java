@@ -2,6 +2,7 @@ package com.polaris.engine.options;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWMonitorCallback;
+import org.lwjgl.openal.ALC10;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +59,7 @@ public class Settings implements java.io.Serializable
 	{
 		return monitorList.get(index);
 	}
+	
 	protected Input input;
 	private Monitor monitor;
 	
@@ -78,6 +80,21 @@ public class Settings implements java.io.Serializable
 		defaultWindowMode = windowMode;
 		windowPosX = windowPosY = -1;
 		windowWidth = windowHeight = 0;
+	}
+	
+	public void update(double delta)
+	{
+	
+	}
+	
+	public static Key getMouseKey(int button)
+	{
+	
+	}
+	
+	public static getKey(int keyCode)
+	{
+	
 	}
 	
 	public static Monitor getMonitor(long instance)
@@ -178,6 +195,16 @@ public class Settings implements java.io.Serializable
 	public int vsyncMode()
 	{
 		return 1;
+	}
+	
+	public int getAlcRefreshRate()
+	{
+		return 60;
+	}
+	
+	public int getAlcSync()
+	{
+		return ALC10.ALC_FALSE;
 	}
 	
 }
