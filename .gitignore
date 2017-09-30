@@ -1,7 +1,4 @@
 /bin/
 /target/
-.classpath
-.project
-.settings
 .idea
 Java-Base-Application-Engine.iml
