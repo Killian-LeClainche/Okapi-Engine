@@ -227,7 +227,7 @@ public abstract class App<T extends Settings>
 			{
 				packet = polledPackets.next();
 				polledPackets.remove();
-				packet.handle();
+				packet.handle(null);
 			}
 			
 			input.update(delta);

@@ -73,14 +73,13 @@ public abstract class Packet
 	
 	public abstract void writeData(DataOutputStream output) throws IOException;
 	
-	public abstract void handle();
+	public abstract void handle(Network network);
 	
 	public final int getHeader()
 	{
 		return packetHeader;
 	}
 	
-	public abstract int getWeight();
 	
 	/**
 	 * @return
