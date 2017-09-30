@@ -39,9 +39,9 @@ public abstract class GuiScreen<T extends Settings> extends Gui<T>
 		double mouseX = input.getMouseX();
 		double mouseY = input.getMouseY();
 		
-		if (input.getKey(GLFW_KEY_ESCAPE).isPressed())
+		if (gameSettings.getKey(GLFW_KEY_ESCAPE).isPressed())
 		{
-			if (input.getKey(GLFW.GLFW_KEY_LEFT_SHIFT).isPressed())
+			if (gameSettings.getKey(GLFW.GLFW_KEY_LEFT_SHIFT).isPressed())
 			{
 				gameSettings.changeWindowMode();
 			}

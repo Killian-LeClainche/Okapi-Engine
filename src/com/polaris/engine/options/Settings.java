@@ -87,14 +87,14 @@ public class Settings implements java.io.Serializable
 	
 	}
 	
-	public static Key getMouseKey(int button)
+	public Key getMouseKey(int button)
 	{
-	
+		return null;
 	}
 	
-	public static getKey(int keyCode)
+	public Key getKey(int keyCode)
 	{
-	
+		return null;
 	}
 	
 	public static Monitor getMonitor(long instance)
