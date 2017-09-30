@@ -1,10 +1,12 @@
 package com.polaris.engine.options;
 
 import org.lwjgl.PointerBuffer;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWMonitorCallback;
 import org.lwjgl.openal.ALC10;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -15,6 +17,10 @@ public class Settings implements java.io.Serializable
 	
 	private static boolean staticInitialized = false;
 	private static List<Monitor> monitorList;
+	
+	private static final HashMap<Integer, Key> keyboardMapping = new HashMap<>();
+	private static final HashMap<Integer, Key> mouseMapping = new HashMap<>();
+	private static final HashMap<String, Key> nameMapping = new HashMap<>();
 	
 	public static void staticInit()
 	{
@@ -46,8 +52,61 @@ public class Settings implements java.io.Serializable
 				monitorList.add(Monitor.createMonitor(buffer.get(i)));
 				i++;
 			}
+			
+			addKey(GLFW.GLFW_KEY_APOSTROPHE);
+			addKey(GLFW.GLFW_KEY_TAB);
+			addKey(GLFW.GLFW_KEY_LEFT_SHIFT);
+			addKey(GLFW.GLFW_KEY_LEFT);
+			addKey(GLFW.GLFW_KEY_LEFT_ALT);
+			addKey(GLFW.GLFW_KEY_LEFT_BRACKET);
+			addKey(GLFW.GLFW_KEY_LEFT_CONTROL);
+			addKey(GLFW.GLFW_KEY_LEFT_SHIFT);
+			addKey(GLFW.GLFW_KEY_SPACE);
+			addKey(GLFW.GLFW_KEY_DELETE);
+			addKey(GLFW.GLFW_KEY_RIGHT);
+			addKey(GLFW.GLFW_KEY_RIGHT_ALT);
+			addKey(GLFW.GLFW_KEY_RIGHT_BRACKET);
+			addKey(GLFW.GLFW_KEY_RIGHT_CONTROL);
+			addKey(GLFW.GLFW_KEY_RIGHT_SHIFT);
+			addKey(GLFW.GLFW_KEY_UP);
+			addKey(GLFW.GLFW_KEY_DOWN);
+			addKey(GLFW.GLFW_KEY_COMMA);
+			addKey(GLFW.GLFW_KEY_PERIOD);
+			addKey(GLFW.GLFW_KEY_SLASH);
+			addKey(GLFW.GLFW_KEY_BACKSLASH);
+			addKey(GLFW.GLFW_KEY_BACKSLASH);
+			addKey(GLFW.GLFW_KEY_EQUAL);
+			addKey(GLFW.GLFW_KEY_ESCAPE);
+			addKey(GLFW.GLFW_KEY_GRAVE_ACCENT);
+			addKey(GLFW.GLFW_KEY_MINUS);
+			addKey(GLFW.GLFW_KEY_ENTER);
+			
+			for(i = GLFW.GLFW_KEY_0; i <= GLFW.GLFW_KEY_9; i++)
+			{
+				addKey(i);
+			}
+			
+			for(i = GLFW.GLFW_KEY_A; i <= org.lwjgl.glfw.GLFW.GLFW_KEY_Z; i++)
+			{
+				addKey(i);
+			}
+			
+			for(i = 0; i <= 7; i++)
+			{
+				Key key = new Key("MOUSE" + i, i);
+				mouseMapping.put(i, key);
+				nameMapping.put(key.getName(), key);
+			}
+			
 			staticInitialized = true;
 		}
+	}
+	
+	private static void addKey(int i)
+	{
+		Key key = new Key(GLFW.glfwGetKeyName(i, 0), i);
+		keyboardMapping.put(i, key);
+		nameMapping.put(key.getName(), key);
 	}
 	
 	public static boolean hasMonitors()
@@ -87,14 +146,14 @@ public class Settings implements java.io.Serializable
 	
 	}
 	
-	public Key getMouseKey(int button)
+	public static Key getMouseKey(int button)
 	{
-		return null;
+		return mouseMapping.get(button);
 	}
 	
-	public Key getKey(int keyCode)
+	public static Key getKey(int keyCode)
 	{
-		return null;
+		return keyboardMapping.get(keyCode);
 	}
 	
 	public static Monitor getMonitor(long instance)
