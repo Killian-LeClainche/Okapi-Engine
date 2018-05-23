@@ -6,6 +6,7 @@ import polaris.okapi.options.*
 import polaris.okapi.tests.starship.gui.UIScreen
 import polaris.okapi.tests.teamdefense.gui.TTDUI
 import polaris.okapi.tests.teamdefense.world.TTDWorld
+import polaris.okapi.util.random
 
 /**
  * Created by Killian Le Clainche on 4/4/2018.
@@ -23,7 +24,7 @@ class TeamDefense : App(true, true) {
 
     override fun init(): Boolean {
         if(super.init()) {
-            currentWorld = TTDWorld(this)
+            currentWorld = TTDWorld(this, 128, 1234)
             initGui(TTDUI(this, (currentWorld as TTDWorld)))
             return true
         }
@@ -34,7 +35,7 @@ class TeamDefense : App(true, true) {
         val settings = Settings()
 
         //render settings
-        settings["mipmap"] = IntSetting(0)
+        settings["mipmap"] = IntSetting(2)
         settings["oversample"] = IntSetting(1)
 
         //game icon
@@ -67,12 +68,14 @@ class TeamDefense : App(true, true) {
         //control groups
         settings["action:grouper"] = Key(GLFW.GLFW_KEY_LEFT_CONTROL)
 
-        for (i in 1 .. 10) {
-            settings["action:group-$i"] = Key(GLFW.GLFW_KEY_1)
+        for (i in 1 .. 9) {
+            settings["action:group-$i"] = Key(GLFW.GLFW_KEY_0 + i)
         }
 
         //task management
         settings["action:task-queue"] = Key(GLFW.GLFW_KEY_LEFT_SHIFT)
+
+        settings["scroll-speed"] = DoubleSetting(.5)
 
         //OPTIONAL, IN MOST CASES IT'S BEST TO LET DEFAULT BEHAVIOR PERSIST TO HAVE SAVED STATES
         settings.windowMode = WindowMode.WINDOWED

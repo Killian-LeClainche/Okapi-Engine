@@ -192,7 +192,21 @@ class TextureManager(val settings: Settings) {
             texture = Texture(textureName, width[0], height[0], comp[0], mipmapMaxLevel, data)
 
             genTexture(texture!!)
+
+            textures.put(textureName, texture!!)
         }
+
+        return texture
+    }
+
+    @JvmOverloads
+    fun genTexture(textureName: String, width : Int, height : Int, comp : Int, data : ByteBuffer, mipmapMaxLevel: Int = 1) : Texture {
+        val texture = Texture(textureName, width, height, comp, mipmapMaxLevel, data)
+
+        genTexture(texture)
+
+        textures.put(textureName, texture)
+
         return texture
     }
 

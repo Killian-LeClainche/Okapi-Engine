@@ -124,6 +124,11 @@ fun clamp(min: Double, max: Double, value: Double): Double {
     return if (max < value) max else value
 }
 
+fun clamp(min: Int, max: Int, value: Int) : Int {
+    if(min > value) return min
+    return if (max < value) max else value
+}
+
 fun log2(value: Double): Double {
     return FastMath.logQuick(value) * log2
 }
