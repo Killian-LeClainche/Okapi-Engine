@@ -3,10 +3,8 @@ package polaris.okapi.tests.teamdefense
 import org.lwjgl.glfw.GLFW
 import polaris.okapi.App
 import polaris.okapi.options.*
-import polaris.okapi.tests.starship.gui.UIScreen
 import polaris.okapi.tests.teamdefense.gui.TTDUI
 import polaris.okapi.tests.teamdefense.world.TTDWorld
-import polaris.okapi.util.random
 
 /**
  * Created by Killian Le Clainche on 4/4/2018.
@@ -20,12 +18,12 @@ fun main(args: Array<String>) {
     app.run()
 }
 
-class TeamDefense : App(true, true) {
+class TeamDefense : App(true) {
 
     override fun init(): Boolean {
         if(super.init()) {
             currentWorld = TTDWorld(this, 128, 1234)
-            initGui(TTDUI(this, (currentWorld as TTDWorld)))
+            currentScreen = TTDUI(this, (currentWorld as TTDWorld))
             return true
         }
         return false

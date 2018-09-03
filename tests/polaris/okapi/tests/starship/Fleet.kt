@@ -2,8 +2,9 @@ package polaris.okapi.tests.starship
 
 import org.lwjgl.glfw.GLFW
 import polaris.okapi.App
-import polaris.okapi.options.*
-import polaris.okapi.tests.example1.ExampleGui
+import polaris.okapi.options.Key
+import polaris.okapi.options.Settings
+import polaris.okapi.options.WindowMode
 import polaris.okapi.tests.starship.gui.UIScreen
 import polaris.okapi.tests.starship.world.StarshipWorld
 
@@ -21,11 +22,11 @@ fun main(args: Array<String>) {
     app.run()
 }
 
-class StarshipFighter : App(true, true) {
+class StarshipFighter : App(true) {
 
     override fun init(): Boolean {
         if(super.init()) {
-            initGui(UIScreen(this))
+            currentScreen = UIScreen(this)
             currentWorld = StarshipWorld(this)
             return true
         }
@@ -35,9 +36,9 @@ class StarshipFighter : App(true, true) {
     override fun loadSettings(): Settings {
         val settings = Settings()
 
-        settings["mipmap"] = IntSetting(0)
-        settings["oversample"] = IntSetting(1)
-        settings["icon"] = StringSetting("resources/starship/ships/purple1.png")
+        settings["mipmap"] = 0
+        settings["oversample"] = 1
+        settings["icon"] = "resources/starship/ships/purple1.png"
         settings["action:move"] = Key(GLFW.GLFW_MOUSE_BUTTON_1)
 
         //OPTIONAL, IN MOST CASES IT'S BEST TO LET DEFAULT BEHAVIOR PERSIST TO HAVE SAVED STATES

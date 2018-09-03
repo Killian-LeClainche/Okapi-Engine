@@ -223,6 +223,58 @@ fun ioResourceToByteBuffer(resource: String, bufferSize: Int): ByteBuffer {
     return buffer
 }
 
+@Throws(Exception::class)
+fun readFileAsString(file: File): String {
+    val source = StringBuilder()
+
+    val `in` = FileInputStream(file)
+
+    var exception: Exception? = null
+
+    val reader: BufferedReader
+    try {
+        reader = BufferedReader(InputStreamReader(`in`, "UTF-8"))
+
+        var innerExc: Exception? = null
+        try {
+            var line: String? = reader.readLine()
+            while (line != null) {
+                source.append(line).append('\n')
+                line = reader.readLine()
+            }
+        } catch (exc: Exception) {
+            exception = exc
+        } finally {
+            try {
+                reader.close()
+            } catch (exc: Exception) {
+                if (innerExc == null)
+                    innerExc = exc
+                else
+                    exc.printStackTrace()
+            }
+
+        }
+
+        if (innerExc != null) throw innerExc
+    } catch (exc: Exception) {
+        exception = exc
+    } finally {
+        try {
+            `in`.close()
+        } catch (exc: Exception) {
+            if (exception == null)
+                exception = exc
+            else
+                exc.printStackTrace()
+        }
+
+        if (exception != null) throw exception
+    }
+
+    return source.toString()
+}
+
 fun resizeBuffer(buffer: ByteBuffer, newCapacity: Int): ByteBuffer {
     val newBuffer = BufferUtils.createByteBuffer(newCapacity)
     buffer.flip()

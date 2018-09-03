@@ -1,24 +1,46 @@
 package polaris.okapi.render
 
+import org.lwjgl.opengl.ARBShaderObjects
+import org.lwjgl.opengl.GL20C.*
 import polaris.okapi.options.Settings
-import org.lwjgl.stb.STBTTAlignedQuad
-import polaris.okapi.util.scale
-import org.lwjgl.stb.STBTruetype.*
-import org.lwjgl.system.MemoryStack.stackPush
-
-const val QUAD_POINTS = 6
-const val COORDS_UV = 5
+import polaris.okapi.util.readFileAsString
+import java.io.File
 
 /**
  * Created by Killian Le Clainche on 12/12/2017.
  */
 
-class RenderManager(private val settings: Settings) {
+const val QUAD_POINTS = 6
+const val COORDS_UV = 5
 
-    @JvmOverloads
+class RenderManager(val settings: Settings) {
+
+    //public static final Shader POS;
+    //public static final Shader POS_COLOR;
+    //public static final Shader POS_TEXTURE;
+    //public static final Shader POS_COLOR_TEXTURE;
+
+    val posShader: Shader = Shader()
+    val posColorShader: Shader = Shader()
+    val posTextureShader: Shader = Shader()
+    val posColorTextureShader: Shader = Shader()
+
+    init {
+        posShader.vertexShaderId = loadShader(File("resources/shaders/pos.vert"), GL_VERTEX_SHADER)
+        posShader.fragmentShaderId = loadShader(File("resources/shaders/pos.frag"), GL_FRAGMENT_SHADER)
+
+        posShader.link()
+
+        posColorShader.vertexShaderId = loadShader(File("resources/shaders/pos_color.vert"), GL_VERTEX_SHADER)
+        posColorShader.fragmentShaderId = loadShader(File("resources/shaders/pos_color.frag"), GL_FRAGMENT_SHADER)
+
+        posColorShader.link()
+    }
+
+    /*@JvmOverloads
     fun print(font: Font, text: String, x: Float, y: Float, z: Float = 0.0f, height: Float): VBO? {
         val scale = stbtt_ScaleForPixelHeight(font.info, height)
-        val vboBuffer = VBOBuffer(text.length * QUAD_POINTS * COORDS_UV)
+        val vboBuffer = VBOBuffer((text.length * QUAD_POINTS * COORDS_UV).toLong())
 
         stackPush().use {
             val nextX = it.floats(x)
@@ -53,6 +75,35 @@ class RenderManager(private val settings: Settings) {
         }
 
         return null
+    }*/
+
+    fun loadShader(filename: File, shaderType: Int): Int {
+        var shader = 0
+        try {
+            shader = glCreateShader(shaderType)
+
+            if (shader == 0) return 0
+
+            glShaderSource(shader, readFileAsString(filename))
+
+            glCompileShader(shader)
+
+            if (glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE)
+                throw RuntimeException("Error creating shader: " + getLogInfo(shader))
+
+            return shader
+        } catch (exc: Exception) {
+            if(shader != 0)
+                glDeleteShader(shader)
+
+            println(exc.message)
+            return -1
+        }
+
+    }
+
+    private fun getLogInfo(obj: Int): String {
+        return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects.glGetObjectParameteriARB(obj, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB))
     }
 
 }

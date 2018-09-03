@@ -148,8 +148,8 @@ class TTDWorld(application: App, val size : Int, seed : Int) : World(application
 
         val position = Vector2d(1.0)
         val toSize = size - 1
-        val xRange = clamp(0.0, toSize.toDouble(), floor(projection.topRight.y)).toInt() .. clamp(0.0, toSize.toDouble(), ceil(projection.bottomLeft.y)).toInt()
-        val yRange = clamp(0.0, toSize.toDouble(), floor(projection.topLeft.x)).toInt() .. clamp(0.0, toSize.toDouble(), ceil(projection.bottomRight.x)).toInt()
+        val xRange = clamp(toSize.toDouble(), floor(projection.topRight.y)).toInt() .. clamp(0.0, toSize.toDouble(), ceil(projection.bottomLeft.y)).toInt()
+        val yRange = clamp(toSize.toDouble(), floor(projection.topLeft.x)).toInt() .. clamp(0.0, toSize.toDouble(), ceil(projection.bottomRight.x)).toInt()
 
         for(i in xRange) {
             for(j in yRange) {

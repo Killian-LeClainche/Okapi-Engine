@@ -119,6 +119,16 @@ fun random(minValue: Double, maxValue: Double): Double {
     return Math.random() * (maxValue - minValue) + maxValue
 }
 
+fun clamp(max: Double, value: Double): Double {
+    if(0.0 > value) return 0.0
+    return if(max < value) max else value
+}
+
+fun clamp(max: Int, value: Int): Int {
+    if(0 > value) return 0
+    return if(max < value) max else value
+}
+
 fun clamp(min: Double, max: Double, value: Double): Double {
     if (min > value) return min
     return if (max < value) max else value

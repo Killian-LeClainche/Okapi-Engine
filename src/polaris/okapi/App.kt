@@ -1,24 +1,24 @@
 package polaris.okapi
 
-import polaris.okapi.gui.Gui
-import polaris.okapi.options.Settings
-import polaris.okapi.options.WindowMode
-import polaris.okapi.sound.OpenAL
-import polaris.okapi.world.World
+import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
+import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWVidMode
 import org.lwjgl.opengl.GL
-import org.lwjgl.system.Configuration
-
-import java.util.concurrent.*
-
-import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11.*
-import kotlin.concurrent.thread
-import polaris.okapi.options.GameTimer
-import polaris.okapi.render.*
-import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
-import org.lwjgl.opengl.GL11
+import org.lwjgl.system.Configuration
 import org.lwjgl.system.rpmalloc.RPmalloc.*
+import polaris.okapi.gui.Gui
+import polaris.okapi.options.GameTimer
+import polaris.okapi.options.Settings
+import polaris.okapi.options.WindowMode
+import polaris.okapi.render.FontManager
+import polaris.okapi.render.ModelManager
+import polaris.okapi.render.RenderManager
+import polaris.okapi.render.TextureManager
+import polaris.okapi.sound.OpenAL
+import polaris.okapi.world.World
+import java.util.concurrent.ExecutionException
+import kotlin.concurrent.thread
 
 /**
  * The dimensions that all rendering should be bound to, it will automatically scale things properly.
@@ -45,7 +45,7 @@ abstract class App
  * @param debug     Called from children constructors to determine whether the application should be debugging or
  * not in the console.
  */
-protected constructor(debug: Boolean, private val reuseThread: Boolean) {
+protected constructor(debug: Boolean) {
 
     /**
      * Instance of application's sound system.
@@ -75,8 +75,6 @@ protected constructor(debug: Boolean, private val reuseThread: Boolean) {
     lateinit var modelManager: ModelManager
         protected set
 
-    lateinit var shaderManager: ShaderManager
-        protected set
 
     lateinit var fontManager: FontManager
         protected set
@@ -93,7 +91,13 @@ protected constructor(debug: Boolean, private val reuseThread: Boolean) {
      * Instance of current gui being displayed.
      */
     var currentScreen: Gui? = null
-        protected set
+        @Synchronized set(value) {
+            field?.close()
+
+            value?.init()
+
+            field = value
+        }
 
     /**
      * Instance of current world being rendered.
@@ -159,12 +163,6 @@ protected constructor(debug: Boolean, private val reuseThread: Boolean) {
         settings.load()
         settings.save()
 
-        textureManager = TextureManager(settings)
-        modelManager = ModelManager(settings)
-        fontManager = FontManager(settings)
-        shaderManager = ShaderManager(settings)
-        renderManager = RenderManager(settings)
-
         if (!create()) {
             System.err.println("Failed to initialize application!")
             System.err.println("setup() method caused crash.")
@@ -179,6 +177,11 @@ protected constructor(debug: Boolean, private val reuseThread: Boolean) {
 
         //TODO Integrate Capabilities into rendering system
         GL.createCapabilities()
+
+        textureManager = TextureManager(settings)
+        modelManager = ModelManager(settings)
+        fontManager = FontManager(settings)
+        renderManager = RenderManager(settings)
 
         return true
     }
@@ -204,22 +207,14 @@ protected constructor(debug: Boolean, private val reuseThread: Boolean) {
             rpmalloc_thread_finalize()
         }
 
-        if(!reuseThread) {
-            thread(true, true, null, "Render Thread", -1, {
-                rpmalloc_thread_initialize()
-                renderTick()
-                rpmalloc_thread_finalize()
-            })
-        }
-        else
-            renderTick()
+        renderTick()
     }
 
     protected open fun renderTick() {
         glfwSetTime(0.0)
+        glfwMakeContextCurrent(window)
 
         while(!glfwWindowShouldClose(window) && isRunning) {
-            glfwMakeContextCurrent(window)
 
             tickDelta = glfwGetTime()
 
@@ -236,7 +231,7 @@ protected constructor(debug: Boolean, private val reuseThread: Boolean) {
             glfwSwapBuffers(window)
         }
 
-       isRunning = false
+        isRunning = false
 
         while(!closedUpdateThread) {
             try {
@@ -414,6 +409,7 @@ protected constructor(debug: Boolean, private val reuseThread: Boolean) {
 
     protected open fun updateWindow(): Boolean {
         if (settings.updateWindow) {
+            System.out.println("Update " + settings.updateWindow);
             val textureData = textureManager.textures
 
             textureData.forEach {
@@ -431,28 +427,14 @@ protected constructor(debug: Boolean, private val reuseThread: Boolean) {
         return false
     }
 
-    @Synchronized open fun initGui(newGui: Gui) {
-        currentScreen?.close()
-
-        newGui.init()
-
-        currentScreen = newGui
-    }
-
-    @Synchronized open fun reinitGui(newGui: Gui) {
-        currentScreen?.close()
-        newGui.reinit()
-        currentScreen = newGui
-    }
-
     /**
      * Call before performing 2d rendering
      */
     open fun gl2d(){
-        glMatrixMode(GL_PROJECTION)
+        /*glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         glOrtho(0.0, SCALE_TO_WIDTH, SCALE_TO_HEIGHT, 0.0, 0.0, 10.0)
-        glMatrixMode(GL_MODELVIEW)
+        glMatrixMode(GL_MODELVIEW)*/
         glViewport(0, 0, settings.windowWidth, settings.windowHeight)
     }
 

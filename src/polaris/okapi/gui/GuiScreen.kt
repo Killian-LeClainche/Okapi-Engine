@@ -101,7 +101,7 @@ abstract class GuiScreen : Gui {
             } else {
                 if (parent != null) {
                     parent.reinit()
-                    application.reinitGui(parent)
+                    application.currentScreen = parent
                     return 0
                 } else {
                     application.isRunning = false

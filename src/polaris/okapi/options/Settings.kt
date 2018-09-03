@@ -1,19 +1,17 @@
 package polaris.okapi.options
 
-import polaris.okapi.SCALE_TO_HEIGHT
-import polaris.okapi.SCALE_TO_WIDTH
 import org.joml.Vector2d
 import org.lwjgl.glfw.*
 import org.lwjgl.glfw.GLFW.*
-import org.lwjgl.stb.STBImage
-import org.lwjgl.stb.STBImage.*
+import org.lwjgl.stb.STBImage.stbi_failure_reason
+import org.lwjgl.stb.STBImage.stbi_load
 import org.lwjgl.system.MemoryStack.stackPush
+import polaris.okapi.SCALE_TO_HEIGHT
+import polaris.okapi.SCALE_TO_WIDTH
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
-import java.util.concurrent.atomic.AtomicReference
-import java.util.function.UnaryOperator
 
 /**
  * Created by Killian Le Clainche on 12/10/2017.
@@ -116,6 +114,18 @@ class Settings {
 
         }
         settings[property] = value
+    }
+
+    operator fun set(property : String, value : String) {
+        settings[property] = StringSetting(value)
+    }
+
+    operator fun set(property : String, value : Int) {
+        settings[property] = IntSetting(value)
+    }
+
+    operator fun set(property : String, value : Double) {
+        settings[property] = DoubleSetting(value)
     }
 
     fun load() {

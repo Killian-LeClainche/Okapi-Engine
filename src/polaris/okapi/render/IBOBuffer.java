@@ -3,22 +3,13 @@
  */
 package polaris.okapi.render;
 
-import org.lwjgl.BufferUtils;
-import polaris.okapi.util.MathHelperKt;
-
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * @author Killian Le Clainche
  */
 public class IBOBuffer
 {
 	
-	private IntBuffer iboBuffer;
+	/*private IntBuffer iboBuffer;
 	
 	public IBOBuffer(int bufferSize)
 	{
@@ -112,9 +103,9 @@ public class IBOBuffer
 	/**
 	 * @return
 	 */
-	public IntBuffer getBuffer()
+	/*public IntBuffer getBuffer()
 	{
 		return iboBuffer;
-	}
+	}*/
 	
 }

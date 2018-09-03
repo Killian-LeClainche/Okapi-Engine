@@ -10,9 +10,9 @@ import static org.lwjgl.opengl.GL15.*;
 /**
  * @author Killian Le Clainche
  */
-public class IBO implements IRenderObject
+public class IBO// implements IRenderObject
 {
-	private static int iboIdWrapper = 0;
+	/*private static int iboIdWrapper = 0;
 	
 	public static IBO createIBO(VBO vbo, IBOBuffer iboBuffer)
 	{
@@ -87,6 +87,6 @@ public class IBO implements IRenderObject
 	public VBO getVBO()
 	{
 		return vbo;
-	}
+	}*/
 	
 }
