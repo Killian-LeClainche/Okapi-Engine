@@ -15,7 +15,7 @@ public class Item {
         public final static int GUN = 2;
     }
 
-    public Item(int xpos, int ypos, float xsize, float ysize, int itemType) {
+    public Item(int xpos, int ypos, int xsize, int ysize, int itemType) {
         this.position = new Vector(xpos, ypos);
         this.size = new Vector(xsize, ysize);
         this.itemType = itemType;
@@ -23,7 +23,7 @@ public class Item {
 
     public Item(int xpos, int ypos, int itemType) {
         this.position = new Vector(xpos, ypos);
-        this.size = new Vector(19.2, 10.8);
+        this.size = new Vector(16, 9);
         this.itemType = itemType;
     }
 

@@ -13,7 +13,7 @@ public class Grave {
 	private final Item reward;
 
 
-	public Grave(int xpos, int ypos, float xsize, float ysize, int digTime, Item reward) {
+	public Grave(int xpos, int ypos, int xsize, int ysize, int digTime, Item reward) {
 	    this.position = new Vector(xpos, ypos);
 	    this.size = new Vector(xsize, ysize);
 	    this.digTime = digTime;
@@ -23,7 +23,7 @@ public class Grave {
 
     public Grave(int xpos, int ypos, int digTime, Item reward) {
         this.position = new Vector(xpos, ypos);
-        this.size = new Vector(19.2, 10.8)
+        this.size = new Vector(16, 9);
         this.digTime = digTime;
         this.reward = reward;
         this.digTick = 1;

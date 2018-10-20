@@ -10,14 +10,14 @@ public class Terrain {
     private final Vector position;
     private final Vector size;
 
-    public Terrain(int xpos, int ypos, float xsize, float ysize) {
+    public Terrain(int xpos, int ypos, int xsize, int ysize) {
         this.position = new Vector(xpos, ypos);
         this.size = new Vector(xsize, ysize);
     }
 
     public Terrain(int xpos, int ypos) {
         this.position = new Vector(xpos, ypos);
-        this.size = new Vector(19.2, 10.8);
+        this.size = new Vector(16, 9);
     }
 
 }
