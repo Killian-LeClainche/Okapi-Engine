@@ -139,6 +139,14 @@ public class Player extends Block {
 		this.velocity.y += 2*acceleration.y;
 	}
 
+	public void stopX() {
+		this.velocity.x = 0;
+	}
+
+	public void stopY() {
+		this.velocity.y = 0;
+	}
+
 	public HitBox useItem() {
 	    switch(this.item) {
 			default: break;
