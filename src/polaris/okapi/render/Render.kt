@@ -65,7 +65,7 @@ class DrawArray(private val glMode: Int, private val vboDrawMode: Int, floatArra
     val vaoId: Int = glGenVertexArrays()
     val vboId: Int = glGenBuffers()
 
-    var buffer: FloatBuffer = RPmalloc.rpmalloc((verticeCount * VertexAttributes.POS_COLOR.strideLength).toLong())!!.asFloatBuffer()
+    var buffer: FloatBuffer = RPmalloc.rpmalloc((verticeCount * attributes.strideLength).toLong())!!.asFloatBuffer()
 
     var array: FloatArray = floatArray
         set(value) {

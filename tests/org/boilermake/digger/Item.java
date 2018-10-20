@@ -12,6 +12,7 @@ public class Item extends Block {
     private int itemType;
 
     public static class ItemType{
+        public final static int NOTHING = 0;
         public final static int SWORD = 1;
         public final static int GUN = 2;
     }
@@ -42,20 +43,20 @@ public class Item extends Block {
         this.velocity.y -= this.acceleration.y;
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
-        if(this.position.x < 0) {
-            this.position.x = 0;
+        if(this.position.x - this.size.x/2 < 0) {
+            this.position.x = this.size.x/2;
             this.velocity.x = 0;
         }
-        else if(this.position.x + this.size.x > screen.x) {
-            this.position.x = screen.x - this.size.x;
+        else if(this.position.x + this.size.x/2 > screen.x) {
+            this.position.x = screen.x - this.size.x/2;
             this.velocity.x = 0;
         }
-        if(this.position.y < 0) {
-            this.position.y = 0;
+        if(this.position.y - this.size.y/2 < 0) {
+            this.position.y = this.size.y/2;
             this.velocity.y = 0;
         }
-        else if(this.position.y + this.size.y > screen.y) {
-            this.position.y = screen.y - this.size.y;
+        else if(this.position.y + this.size.y/2 > screen.y) {
+            this.position.y = screen.y - this.size.y/2;
             this.velocity.y = 0;
         }
     }
