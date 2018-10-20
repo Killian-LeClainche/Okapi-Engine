@@ -11,18 +11,21 @@ public class Player extends Block {
 	public Vector2f velocity;
 	private int jumps;
 	private boolean isJumping;
+	private long jumpTime;
+	private boolean isDoubleJumping;
 	private boolean isGrounded;
 	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
 	private final Vector2f terminalVelocity = new Vector2f(20, 0);
-	private final int jumpVel = 65;
+	private final int jumpVel = 50;
 	private final Vector2f max = new Vector2f(1650, 1000);
-	private final Vector2f min = new Vector2f(35, 35);
+	private final Vector2f min = new Vector2f(35, 50);
 
 	public Player(Vector2f position) {
 		this.position = position;
 		this.velocity = new Vector2f(0, 0);
 		this.jumps = 2;
 		this.isJumping = false;
+		this.isDoubleJumping = false;
 		this.isGrounded = false;
 	}
 
@@ -57,7 +60,7 @@ public class Player extends Block {
 	}
 
 	public void resetJumps() {
-		this.jumps = 1;
+		this.jumps = 2;
 	}
 
 	public void update() {
@@ -72,6 +75,7 @@ public class Player extends Block {
 			if(!this.isGrounded) {
 				resetJumps();
 				this.isJumping = false;
+				this.isDoubleJumping = false;
 				this.velocity.y = 0;
 				this.isGrounded = true;
 			}
@@ -110,11 +114,16 @@ public class Player extends Block {
 
 	public void moveUp() {
 		if(hasJumps()) {
-			this.velocity.y = jumpVel;
 			this.isGrounded = false;
 			if(!this.isJumping) {
+				this.velocity.y = jumpVel;
 				this.jumps--;
 				this.isJumping = true;
+				this.jumpTime = System.currentTimeMillis();
+			} else if(System.currentTimeMillis() - this.jumpTime > 250 && !this.isDoubleJumping) {
+				this.velocity.y = jumpVel;
+				this.jumps--;
+				this.isDoubleJumping = true;
 			}
 		}
 	}
