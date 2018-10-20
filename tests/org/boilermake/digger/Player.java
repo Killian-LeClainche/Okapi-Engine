@@ -81,4 +81,7 @@ public class Player extends Block {
 
 	}
 
+	public HitBox useItem() {
+	    return null;
+    }
 }

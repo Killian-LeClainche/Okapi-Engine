@@ -31,10 +31,6 @@ public class Grave extends Block {
 	    this.digTime -= digTick;
     }
 
-    public Vector2f getPosition() {
-	    return position;
-    }
-
     public Item getReward() {
 	    return reward;
     }
