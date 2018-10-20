@@ -34,12 +34,15 @@ public class DiggerWorld extends World {
 	
 	@Override
 	public void init() {
-
+		player2 = (Controller)getSettings().get("p2");
 		inputMap.put("rightP1", (Key)getSettings().get("p1:right"));
 		inputMap.put("leftP1", (Key)getSettings().get("p1:left"));
 		inputMap.put("downP1", (Key)getSettings().get("p1:down"));
 		inputMap.put("upP1", (Key)getSettings().get("p1:up"));
-		player2 = (Controller)getSettings().get("p2");
+		inputMap.put("rightP2", player2.getKeyDPadRight());
+		inputMap.put("leftP2", player2.getKeyDPadLeft());
+		inputMap.put("downP2", player2.getKeyDPadDown());
+		inputMap.put("upP2", player2.getKeyA());
 
 		//terrainList.add(new Terrain());
 		graveList.add(new Grave(0, 0, 10, null));
@@ -71,21 +74,21 @@ public class DiggerWorld extends World {
 	}
 
 	private void checkKeysP2() {
-		if(player2.getKeyDPadRight().isPressed()) {
+		if(inputMap.get("rightP2").isPressed()) {
 			playerList.get(1).moveRight();
 		}
-		if(player2.getKeyDPadLeft().isPressed()) {
+		if(inputMap.get("leftP2").isPressed()) {
 			playerList.get(1).moveLeft();
 		}
-		if(player2.getKeyDPadUp().isPressed() || player2.getKeyA().isPressed()) {
+		if(inputMap.get("upP2").isPressed()) {
 			playerList.get(1).moveUp();
 		}
-		if(player2.getKeyDPadDown().isPressed()) {
+		if(inputMap.get("downP2").isPressed()) {
 			playerList.get(1).moveDown();
 		}
 
-		if(!player2.getKeyDPadRight().isPressed() && !player2.getKeyDPadLeft().isPressed()) {
-			playerList.get(0).slow();
+		if(!inputMap.get("rightP2").isPressed() && !inputMap.get("leftP2").isPressed()) {
+			playerList.get(1).slow();
 		}
 	}
 
