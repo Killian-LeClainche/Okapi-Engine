@@ -3,6 +3,7 @@ package org.boilermake.digger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import polaris.okapi.App;
+import polaris.okapi.world.Vector;
 import polaris.okapi.world.World;
 
 import java.util.ArrayList;
@@ -26,14 +27,14 @@ public class DiggerWorld extends World {
 	public void init() {
 		terrainList.add(new Terrain());
 		graveList.add(new Grave());
-		playerList.add(new Player());
+		playerList.add(new Player(new Vector(300, 200, 30)));
 		
 		renderer.init();
 	}
 	
 	@Override
 	public void update() {
-	
+
 	}
 	
 	@Override
