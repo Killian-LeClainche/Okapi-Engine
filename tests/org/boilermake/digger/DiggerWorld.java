@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import polaris.okapi.App;
 import polaris.okapi.options.Key;
+import polaris.okapi.render.Texture;
 import polaris.okapi.world.Vector;
 import polaris.okapi.world.World;
 
@@ -33,17 +34,19 @@ public class DiggerWorld extends World {
 		inputMap.put("leftP1", (Key)getSettings().get("p1:action:left"));
 		inputMap.put("downP1", (Key)getSettings().get("p1:action:down"));
 		inputMap.put("upP1", (Key)getSettings().get("p1:action:up"));
+		inputMap.put("jumpP1", (Key)getSettings().get("p1:action:jump"));
 		inputMap.put("rightP2", (Key)getSettings().get("p2:action:right"));
 		inputMap.put("leftP2", (Key)getSettings().get("p2:action:left"));
 		inputMap.put("downP2", (Key)getSettings().get("p2:action:down"));
 		inputMap.put("upP2", (Key)getSettings().get("p2:action:up"));
+		inputMap.put("jumpP2", (Key)getSettings().get("p2:action:jump"));
 
-		terrainList.add(new Terrain());
-		graveList.add(new Grave());
+		terrainList.add(new Terrain(0, 0));
+		graveList.add(new Grave(0, 0, 10, null));
 		playerList.add(new Player(new Vector(300, 200, 30)));
 		
 		renderer.init();
-		
+
 	}
 	
 	@Override
