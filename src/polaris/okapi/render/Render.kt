@@ -123,7 +123,7 @@ class DrawElement(private val glMode: Int, private val vboDrawMode: Int, private
     val vaoId: Int = glGenVertexArrays()
     val vboId: Int = glGenBuffers()
     val iboId: Int = glGenBuffers()
-    var buffer: FloatBuffer = RPmalloc.rpmalloc((verticeCount * VertexAttributes.POS_COLOR.strideLength).toLong())!!.asFloatBuffer()
+    var buffer: FloatBuffer = RPmalloc.rpmalloc((verticeCount * attributes.strideLength).toLong())!!.asFloatBuffer()
 
     constructor(glMode: Int, vboDrawMode: Int, array: FloatArray, verticeCount: Int, attributes: VertexAttributes) : this(glMode, vboDrawMode, verticeCount, attributes) {
         buffer.put(array)
@@ -195,7 +195,7 @@ class Shader {
 
         glLinkProgram(shaderId)
         if(glGetProgrami(shaderId, GL_LINK_STATUS) == GL_FALSE)
-            throw RuntimeException("Unable to link shader program:")
+            throw RuntimeException("Unable to link shader program:" + GL20C.glGetProgramInfoLog(shaderId))
 
     }
 
