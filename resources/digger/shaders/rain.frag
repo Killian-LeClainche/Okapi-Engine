@@ -166,9 +166,9 @@ float randomStart(vec2 co){return 0.8+0.2*hash(dot(co,vec2(123.42,117.853))*412.
 // main
 
 float rain(vec2 q, vec2 p, float s) {
-        vec2 st = 256. * ( p* vec2(1, s)+vec2(time*.13-q.y*.2, time*.2) );
+        vec2 st = 256. * ( p* vec2(2, s)+vec2(time*.13-q.y*.2, time*.2) );
         float f = noise( st ) * noise( st*0.773) * 1.55;
-        f = clamp(pow(abs(f), 40.0) * 13.0, 0.0, q.y*.14);
+        f = clamp(pow(abs(f), 40.0) * 13.0, 0.0, q.y*.16);
         return f;
 }
 
