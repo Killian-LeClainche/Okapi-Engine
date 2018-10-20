@@ -64,7 +64,6 @@ public class Player extends Block {
 	}
 
 	public void update() {
-		System.out.println(this);
 		this.velocity.y += acceleration.y;
 		if(this.velocity.x > terminalVelocity.x) this.velocity.x = terminalVelocity.x;
 		if(this.velocity.x < -terminalVelocity.x) this.velocity.x = -terminalVelocity.x;
