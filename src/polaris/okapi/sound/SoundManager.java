@@ -12,7 +12,7 @@ import static org.lwjgl.openal.EXTEfx.ALC_MAX_AUXILIARY_SENDS;
 /**
  * @author lec50
  */
-public class OpenAL
+public class SoundManager
 {
 	
 	protected final Settings gameSettings;
@@ -24,7 +24,7 @@ public class OpenAL
 	protected float[] listenerVelocity;
 	protected float[] listenerOrientation;
 	
-	public OpenAL(Settings settings)
+	public SoundManager(Settings settings)
 	{
 		gameSettings = settings;
 	}

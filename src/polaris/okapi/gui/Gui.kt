@@ -19,7 +19,7 @@ abstract class Gui @JvmOverloads constructor(protected val application: App, val
     open fun init() {}
 
     open fun render(delta: Double) {
-        application.gl2d()
+        application.updateView()
         ticksExisted += delta
     }
 

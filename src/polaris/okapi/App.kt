@@ -15,7 +15,7 @@ import polaris.okapi.render.FontManager
 import polaris.okapi.render.ModelManager
 import polaris.okapi.render.RenderManager
 import polaris.okapi.render.TextureManager
-import polaris.okapi.sound.OpenAL
+import polaris.okapi.sound.SoundManager
 import polaris.okapi.world.World
 import java.util.concurrent.ExecutionException
 import kotlin.concurrent.thread
@@ -50,7 +50,7 @@ protected constructor(debug: Boolean) {
     /**
      * Instance of application's sound system.
      */
-    lateinit var soundSystem: OpenAL
+    lateinit var soundSystem: SoundManager
         protected set
 
     /**
@@ -158,7 +158,7 @@ protected constructor(debug: Boolean) {
 
         settings = loadSettings()
 
-        soundSystem = OpenAL(settings)
+        soundSystem = SoundManager(settings)
 
         settings.load()
         settings.save()
@@ -282,15 +282,6 @@ protected constructor(debug: Boolean) {
     protected open fun setupGL() {
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
-        glClearDepth(1.0)
-        glClearStencil(0)
-        glEnable(GL_ALPHA_TEST)
-        glAlphaFunc(GL_GREATER, .05f)
-        glEnable(GL_DEPTH_TEST)
-        glDepthFunc(GL_LEQUAL)
-        glDisable(GL_DITHER)
-
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
     }
@@ -430,31 +421,8 @@ protected constructor(debug: Boolean) {
     /**
      * Call before performing 2d rendering
      */
-    open fun gl2d(){
-        /*glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0.0, SCALE_TO_WIDTH, SCALE_TO_HEIGHT, 0.0, 0.0, 10.0)
-        glMatrixMode(GL_MODELVIEW)*/
+    open fun updateView(){
         glViewport(0, 0, settings.windowWidth, settings.windowHeight)
-    }
-
-    /**
-     * Call before performing 3d rendering
-     */
-    open fun gl3d(fieldOfViewY: Float, zNear: Float, zFar: Float) {
-        val ratio = settings.windowWidth / settings.windowHeight.toDouble()
-
-        val maxY = zNear * Math.tan(fieldOfViewY * Math.PI / 360.0)
-        val minY = -maxY
-        val maxX = maxY * ratio
-        val minX = minY * ratio
-
-        glViewport(0, 0, settings.windowWidth, settings.windowHeight)
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glFrustum(minX, maxX, minY, maxY, zNear.toDouble(), zFar.toDouble())
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
     }
 
 }

@@ -43,7 +43,7 @@ abstract class World @JvmOverloads constructor(val application: App, val parent:
     }
 
     open fun render(delta: Double) {
-        application.gl2d()
+        application.updateView()
     }
 
     open fun reinit() {}

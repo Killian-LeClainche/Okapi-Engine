@@ -9,7 +9,7 @@
         <lwjgl.version>3.2.0</lwjgl.version>
         <joml.version>1.9.11</joml.version>
         <jafama.version>2.3.1</jafama.version>
-        <kotlin.version>1.2.61</kotlin.version>
+        <kotlin.version>1.2.30</kotlin.version>
     </properties>
     <profiles>
         <profile>
@@ -114,6 +114,12 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src</source>
+                                <source>tests</source>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>test-compile</id>
@@ -279,6 +285,11 @@
             <artifactId>kotlin-test</artifactId>
             <version>${kotlin.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
         </dependency>
     </dependencies>
 </project>
