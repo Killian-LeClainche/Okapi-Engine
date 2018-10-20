@@ -11,6 +11,8 @@ public class Player extends Block {
 	public Vector2f velocity;
 	public final Vector2f acceleration = new Vector2f(0.5f, -1);
 	private final Vector2f terminalVelocity = new Vector2f(10, 10);
+	private final int jumpVel = 3;
+	private final int maxY = 1970;
 
 	public Player(Vector2f position) {
 		this.position = position;
@@ -49,7 +51,11 @@ public class Player extends Block {
 		if(getVelocity().y < -terminalVelocity.y) getVelocity().y = -terminalVelocity.y;
 		if(getVelocity().x > terminalVelocity.x) getVelocity().x = terminalVelocity.x;
 		if(getVelocity().x < -terminalVelocity.x) getVelocity().x = -terminalVelocity.x;
+		
 		setPosition(getPosition().x + getVelocity().x, getPosition().y + getVelocity().y);
+		if(getPosition().y > maxY) {
+			getPosition().y = maxY;
+		}
 		System.out.println(this.position);
 	}
 
@@ -62,6 +68,8 @@ public class Player extends Block {
 			getVelocity().x += acceleration.x;
 		} else if(direction == 1) { //left
 			getVelocity().x += -acceleration.x;
+		} else if(direction == 2) { //up
+			getVelocity().y += jumpVel;
 		}
 	}
 
