@@ -16,7 +16,7 @@ public class Player extends Block {
 	private boolean isGrounded;
 	private boolean isFacingLeft;
 	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
-	private final Vector2f terminalVelocity = new Vector2f(20, 0);
+	private final Vector2f terminalVelocity = new Vector2f(20, 48);
 	private final int jumpVel = 50;
 	private final Vector2f screen = new Vector2f(1720, 1080);
 	private int item;
@@ -67,6 +67,9 @@ public class Player extends Block {
 	}
 
 	public void resetJumps() {
+		this.isGrounded = true;
+		this.isJumping = false;
+		this.isDoubleJumping = false;
 		this.jumps = 2;
 	}
 
@@ -74,6 +77,7 @@ public class Player extends Block {
 		this.velocity.y += acceleration.y;
 		if(this.velocity.x > terminalVelocity.x) this.velocity.x = terminalVelocity.x;
 		if(this.velocity.x < -terminalVelocity.x) this.velocity.x = -terminalVelocity.x;
+		if(this.velocity.y < -terminalVelocity.y) this.velocity.y = -terminalVelocity.y;
 
 		this.position.x += this.velocity.x;
 		this.position.y += this.velocity.y;
@@ -82,10 +86,7 @@ public class Player extends Block {
 			this.velocity.y = 0;
 			if(!this.isGrounded) {
 				resetJumps();
-				this.isJumping = false;
-				this.isDoubleJumping = false;
 				this.velocity.y = 0;
-				this.isGrounded = true;
 			}
 		} else if(this.position.y + this.size.y/2 > screen.y){
 			this.position.y = screen.y - this.size.y/2;

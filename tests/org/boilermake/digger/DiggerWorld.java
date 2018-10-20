@@ -204,6 +204,33 @@ public class DiggerWorld extends World {
 			p.update();
 		}
 
+	for(Player p : playerList) {
+			for(Terrain t : terrainList) {
+				if(!p.equals(t) && Helper.isColliding(p, t) ) {
+					//x-axis collisions
+					if (p.getPosition().x < t.getPosition().x - t.getSize().x/2 && p.getVelocity().x > 0) { // p1 -> p2
+						p.setPosition(t.getPosition().x - t.getSize().x/2 - p.getSize().x/2, p.getPosition().y);
+						p.stopX();
+					} else if (p.getPosition().x > t.getPosition().x + t.getSize().x/2 && p.getVelocity().x < 0) { // p2 <- p1
+						p.setPosition(t.getPosition().x + t.getSize().x/2 + p.getSize().x/2, p.getPosition().y);
+						p.stopX();
+					}
+
+					//y-axis collisions             											 				p2
+					if (p.getPosition().y < t.getPosition().y - t.getSize().y/2 && p.getVelocity().y > 0) { // p1
+						p.setPosition(p.getPosition().x, t.getPosition().y - t.getSize().y/2 - p.getSize().y/2);
+						p.stopY();
+					} else if (p.getPosition().y > t.getPosition().y + t.getSize().y/2 && p.getVelocity().y < 0) { // p1
+						p.setPosition(p.getPosition().x, t.getPosition().y + t.getSize().y/2 + p.getSize().y/2);// p2
+						p.stopY();
+						p.resetJumps();
+					}
+				}
+			}
+		}
+
+
+		//Player collisions
 		for(Player p1 : playerList) {
 			for(Player p2 : playerList) {
 				if(!p1.equals(p2) && Helper.isColliding(p1, p2) ) {
@@ -216,6 +243,7 @@ public class DiggerWorld extends World {
 						p1.setPosition(p2.getPosition().x + p2.getSize().x, p1.getPosition().y);
 						p1.stopX();
 						p2.stopX();
+
 					}
 
 					//y-axis collisions             											 p2
@@ -227,6 +255,7 @@ public class DiggerWorld extends World {
 						p1.setPosition(p1.getPosition().x, p2.getPosition().y + p2.getSize().y);// p2
 						p1.stopY();
 						p2.stopY();
+						p1.resetJumps();
 					}
 				}
 			}
