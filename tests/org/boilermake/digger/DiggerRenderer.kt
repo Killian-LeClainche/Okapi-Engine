@@ -25,14 +25,14 @@ class DiggerRenderer(private val world: DiggerWorld) {
 
     val rainShader: Shader = Shader()
     val rainQuad: DrawArray = DrawArray(GL20C.GL_TRIANGLES, GL20C.GL_STATIC_DRAW, floatArrayOf(
-            0f, 0f, 0f,
-            1920f, 0f, 0f,
-            1920f, 1080f, 0f,
+            0f, 0f, 0f,     0f, 0f, 0f, 0f,     0f, 0f,
+            1920f, 0f, 0f,     0f, 0f, 0f, 0f,     0f, 0f,
+            1920f, 1080f, 0f,     0f, 0f, 0f, 0f,     0f, 0f,
 
-            1920f, 1080f, 0f,
-            0f, 0f, 0f,
-            0f, 1080f, 0f
-    ), 6, VertexAttributes.POS)
+            1920f, 1080f, 0f,     0f, 0f, 0f, 0f,     0f, 0f,
+            0f, 0f, 0f,     0f, 0f, 0f, 0f,     0f, 0f,
+            0f, 1080f, 0f,     0f, 0f, 0f, 0f,     0f, 0f
+    ), 6, VertexAttributes.POS_COLOR_TEXTURE)
 
     fun init() {
 
@@ -44,10 +44,10 @@ class DiggerRenderer(private val world: DiggerWorld) {
             terrainRenders.add(BlockRender(i))
         }
 
-        //rainShader.vertexShaderId = world.application.renderManager.loadShader(File("resources/digger/shaders/rain.vert"), GL20C.GL_VERTEX_SHADER)
-        //rainShader.fragmentShaderId = world.application.renderManager.loadShader(File("resources/digger/shaders/rain.frag"), GL20C.GL_FRAGMENT_SHADER)
+        rainShader.vertexShaderId = world.application.renderManager.loadShader(File("resources/digger/shaders/rain.vert"), GL20C.GL_VERTEX_SHADER)
+        rainShader.fragmentShaderId = world.application.renderManager.loadShader(File("resources/digger/shaders/rain.frag"), GL20C.GL_FRAGMENT_SHADER)
 
-        //rainShader.link()
+        rainShader.link()
 
         world["player"] = "resources/digger/character.png"
         world["ground"] = "resources/digger/ground.png"
@@ -61,23 +61,19 @@ class DiggerRenderer(private val world: DiggerWorld) {
         timeExisted += delta
         world.application.updateView()
 
-        /*rainShader.bind()
+        rainShader.bind()
 
-        GL30C.glUniform1f(rainShader["time"], (System.currentTimeMillis() % 10000000) / 100f)
+        GL30C.glUniform1f(rainShader["time"], (System.currentTimeMillis() % 10000000) / 1000f)
         GL30C.glUniform2f(rainShader["resolution"], world.settings.windowWidth.toFloat(), world.settings.windowHeight.toFloat())
-        GL30C.glUniform1f(rainShader["hue"], .5f)
-        GL30C.glUniform1f(rainShader["fade"], 1f)
-        GL30C.glUniform1f(rainShader["slow"], 10f)
-        GL30C.glUniform1f(rainShader["gray"], .3f)
+        GL30C.glUniform1f(rainShader["size"], .075f)
 
-        VertexAttributes.POS.enable()
+        VertexAttributes.POS_COLOR_TEXTURE.enable()
         Texture.disable()
         rainQuad.bind()
-        rainQuad.draw()*/
+        rainQuad.draw()
 
         world.application.renderManager.posColorTextureShader.bind()
 
-        VertexAttributes.POS_COLOR_TEXTURE.enable()
 
         Texture.enable()
 

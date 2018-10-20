@@ -4,15 +4,23 @@ import org.joml.Vector2f;
 
 public class HitBox extends Block {
     private Vector2f velocity;
-    private int damage;
     private int time;
+    private Player owner;
+    private int boxType;
 
-    public HitBox(int xpos, int ypos, int xsize, int ysize, int xvel, int yvel, int damage, int time) {
+    public static class HitBoxTypes {
+        public static final int SWORD = 1;
+        public static final int GUN = 2;
+        public static final int FIST = 3;
+    }
+
+    public HitBox(int xpos, int ypos, int xsize, int ysize, int xvel, int yvel, int time, Player owner, int boxType) {
         this.position = new Vector2f(xpos, ypos);
         this.size = new Vector2f(xsize, ysize);
         this.velocity = new Vector2f(xvel, yvel);
-        this.damage = damage;
         this.time = time;
+        this.owner = owner;
+        this.boxType = boxType;
     }
 
     public void update() {
