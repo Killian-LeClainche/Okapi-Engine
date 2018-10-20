@@ -24,7 +24,9 @@ public class DiggerWorld extends World {
 	
 	@Override
 	public void init() {
-	
+		terrainList.add(new Terrain());
+		graveList.add(new Grave());
+		playerList.add(new Player());
 	}
 	
 	@Override
