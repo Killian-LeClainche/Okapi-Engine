@@ -54,6 +54,7 @@ public class DiggerWorld extends World {
 		for(Key k : inputMap.values()) {
 			k.update();
 		}
+
 	}
 	
 	@Override

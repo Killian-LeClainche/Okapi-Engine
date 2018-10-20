@@ -1,29 +1,30 @@
 package org.boilermake.digger;
 
+import org.joml.Vector2f;
 import polaris.okapi.world.Vector;
 
 /**
  * Created by Killian Le Clainche on 10/20/2018.
  */
 public class Grave {
-	private final Vector position;
-	private final Vector size;
+	private final Vector2f position;
+	private final Vector2f size;
     private int digTime;
     private final int digTick;
 	private final Item reward;
 
 
 	public Grave(int xpos, int ypos, int xsize, int ysize, int digTime, Item reward) {
-	    this.position = new Vector(xpos, ypos);
-	    this.size = new Vector(xsize, ysize);
+	    this.position = new Vector2f(xpos, ypos);
+	    this.size = new Vector2f(xsize, ysize);
 	    this.digTime = digTime;
 	    this.reward = reward;
 	    this.digTick = 1;
     }
 
     public Grave(int xpos, int ypos, int digTime, Item reward) {
-        this.position = new Vector(xpos, ypos);
-        this.size = new Vector(16, 9);
+        this.position = new Vector2f(xpos, ypos);
+        this.size = new Vector2f(16, 9);
         this.digTime = digTime;
         this.reward = reward;
         this.digTick = 1;
@@ -33,7 +34,7 @@ public class Grave {
 	    this.digTime -= digTick;
     }
 
-    public Vector getPosition() {
+    public Vector2f getPosition() {
 	    return position;
     }
 
