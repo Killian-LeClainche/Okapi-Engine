@@ -67,7 +67,6 @@ public class DiggerWorld extends World {
 
 			if(terrainList.isEmpty() == false) {
                 for (Terrain t : terrainList) {
-
                     if(Helper.equals(t, toAdd) == false) {
                         if (Helper.isColliding(t, toAdd) == true) {
                             overlap = true;
