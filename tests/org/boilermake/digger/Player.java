@@ -14,6 +14,7 @@ public class Player extends Block {
 	private long jumpTime;
 	private boolean isDoubleJumping;
 	private boolean isGrounded;
+	private boolean isFacingLeft;
 	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
 	private final Vector2f terminalVelocity = new Vector2f(20, 0);
 	private final int jumpVel = 50;
@@ -113,10 +114,12 @@ public class Player extends Block {
 
 	public void moveRight() {
 		this.velocity.x += acceleration.x;
+		this.isFacingLeft = false;
 	}
 
 	public void moveLeft() {
 		this.velocity.x += -acceleration.x;
+		this.isFacingLeft = true;
 	}
 
 	public void moveUp() {
@@ -141,8 +144,108 @@ public class Player extends Block {
 
 	public HitBox useItem() {
 	    switch(this.item) {
-			default: break;
+            case Item.ItemType.DAGGER : return createDaggerHitBox();
+            case Item.ItemType.SWORD : return createSwordHitBox();
+            case Item.ItemType.CLAYMORE : return createClaymoreHitBox();
+            case Item.ItemType.HALBERD : return createHalberdHitBox();
+            case Item.ItemType.SNIPER : return createSniperHitBox();
+            case Item.ItemType.SHOTGUN : return createShotgunHitBox();
+            case Item.ItemType.PISTOL : return createPistolHitBox();
+            case Item.ItemType.RIFLE : return createRifleHitBox();
+            case Item.ItemType.GOD_FIST : return createGodFistHitBox();
+			default: return null;
 		}
-		return null;
+    }
+
+    public HitBox createDaggerHitBox() {
+	    if(this.isFacingLeft) {
+            return new HitBox((int)(this.position.x - this.size.x/2 - 8), (int)this.position.y, 16, 8, 0, 0, 15, this, HitBox.HitBoxTypes.SWORD);
+        }
+        else {
+            return new HitBox((int)(this.position.x + this.size.x/2 + 8), (int)this.position.y, 16, 8, 0, 0, 15, this, HitBox.HitBoxTypes.SWORD);
+        }
+    }
+
+    public HitBox createSwordHitBox() {
+        if(this.isFacingLeft) {
+            return new HitBox((int)(this.position.x - this.size.x/2 - 16), (int)this.position.y, 32, 16, 0, 0, 30, this, HitBox.HitBoxTypes.SWORD);
+        }
+        else {
+            return new HitBox((int)(this.position.x + this.size.x/2 + 16), (int)this.position.y, 32, 16, 0, 0, 30, this, HitBox.HitBoxTypes.SWORD);
+        }
+    }
+
+    public HitBox createClaymoreHitBox() {
+        if(this.isFacingLeft) {
+            return new HitBox((int)(this.position.x - this.size.x/2 - 32), (int)this.position.y, 64, 16, 0, 0, 60, this, HitBox.HitBoxTypes.SWORD);
+        }
+        else {
+            return new HitBox((int)(this.position.x + this.size.x/2 + 32), (int)this.position.y, 64, 16, 0, 0, 60, this, HitBox.HitBoxTypes.SWORD);
+        }
+    }
+
+    public HitBox createHalberdHitBox() {
+        if(this.isFacingLeft) {
+            return new HitBox((int)(this.position.x - this.size.x/2 - 48), (int)this.position.y, 96, 32, 0, 0, 90, this, HitBox.HitBoxTypes.SWORD);
+        }
+        else {
+            return new HitBox((int)(this.position.x + this.size.x/2 + 48), (int)this.position.y, 96, 32, 0, 0, 90, this, HitBox.HitBoxTypes.SWORD);
+        }
+    }
+
+    public HitBox createSniperHitBox() {
+        if(this.isFacingLeft) {
+            int xsize = (int)(this.position.x - this.size.x/2);
+            int xpos = (int)(this.position.x - this.size.x/2 - xsize/2.0);
+            return new HitBox(xpos, (int)this.position.y, xsize, 8, 0, 0, 5, this, HitBox.HitBoxTypes.GUN);
+        }
+        else {
+            int xsize = (int)(screen.x - this.position.x + this.size.x/2);
+            int xpos = (int)(this.position.x + this.size.x/2 + xsize/2.0);
+            return new HitBox(xpos, (int)this.position.y, xsize, 8, 0, 0, 5, this, HitBox.HitBoxTypes.GUN);
+        }
+    }
+
+    public HitBox createShotgunHitBox() {
+        if(this.isFacingLeft) {
+            int xsize = 64;
+            int xpos = (int)(this.position.x - this.size.x/2 - xsize/2.0);
+            return new HitBox(xpos, (int)this.position.y, xsize, 96, 0, 0, 10, this, HitBox.HitBoxTypes.GUN);
+        }
+        else {
+            int xsize = 64;
+            int xpos = (int)(this.position.x + this.size.x/2 + xsize/2.0);
+            return new HitBox(xpos, (int)this.position.y, xsize, 8, 0, 0, 10, this, HitBox.HitBoxTypes.GUN);
+        }
+    }
+
+    public HitBox createPistolHitBox() {
+        if(this.isFacingLeft) {
+            int xsize = 16;
+            int xpos = (int)(this.position.x - this.size.x/2 - xsize/2.0);
+            return new HitBox(xpos, (int)this.position.y, xsize, 8, (int)(-screen.x/10), 0, 10, this, HitBox.HitBoxTypes.GUN);
+        }
+        else {
+            int xsize = 16;
+            int xpos = (int)(this.position.x + this.size.x/2 + xsize/2.0);
+            return new HitBox(xpos, (int)this.position.y, xsize, 8, (int)(screen.x/10), 0, 10, this, HitBox.HitBoxTypes.GUN);
+        }
+    }
+
+    public HitBox createRifleHitBox() {
+        if(this.isFacingLeft) {
+            int xsize = 24;
+            int xpos = (int)(this.position.x - this.size.x/2 - xsize/2.0);
+            return new HitBox(xpos, (int)this.position.y, xsize, 8, (int)(-screen.x/10), 0, 10, this, HitBox.HitBoxTypes.GUN);
+        }
+        else {
+            int xsize = 24;
+            int xpos = (int)(this.position.x + this.size.x/2 + xsize/2.0);
+            return new HitBox(xpos, (int)this.position.y, xsize, 8, (int)(screen.x/10), 0, 10, this, HitBox.HitBoxTypes.GUN);
+        }
+    }
+
+    public HitBox createGodFistHitBox() {
+        return new HitBox((int)this.position.x, (int)this.position.y, 128, 128, 0, 0, 1, this, HitBox.HitBoxTypes.FIST);
     }
 }
