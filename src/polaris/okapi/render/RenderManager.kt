@@ -35,6 +35,11 @@ class RenderManager(val settings: Settings) {
         posColorShader.fragmentShaderId = loadShader(File("resources/shaders/pos_color.frag"), GL_FRAGMENT_SHADER)
 
         posColorShader.link()
+
+        posColorTextureShader.vertexShaderId = loadShader(File("resources/shaders/pos_color_texture.vert"), GL_VERTEX_SHADER)
+        posColorTextureShader.fragmentShaderId = loadShader(File("resources/shaders/pos_color_texture.frag"), GL_FRAGMENT_SHADER)
+
+        posColorTextureShader.link()
     }
 
     /*@JvmOverloads

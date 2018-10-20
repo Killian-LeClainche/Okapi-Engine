@@ -9,12 +9,24 @@ import org.joml.Vector2f;
 public class Player extends Block {
 
 	public Vector2f velocity;
-	public final Vector2f acceleration = new Vector2f(0.5f, -1);
-	private final Vector2f terminalVelocity = new Vector2f(10, 10);
+	private int jumps;
+	private boolean isJumping;
+	private long jumpTime;
+	private boolean isDoubleJumping;
+	private boolean isGrounded;
+	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
+	private final Vector2f terminalVelocity = new Vector2f(20, 0);
+	private final int jumpVel = 50;
+	private final Vector2f max = new Vector2f(1650, 1000);
+	private final Vector2f min = new Vector2f(35, 50);
 
 	public Player(Vector2f position) {
 		this.position = position;
 		this.velocity = new Vector2f(0, 0);
+		this.jumps = 2;
+		this.isJumping = false;
+		this.isDoubleJumping = false;
+		this.isGrounded = false;
 	}
 
 	public Vector2f getVelocity() {
@@ -43,38 +55,77 @@ public class Player extends Block {
 		this.position.y = y;
 	}
 
+	public boolean hasJumps() {
+		return this.jumps != 0;
+	}
+
+	public void resetJumps() {
+		this.jumps = 2;
+	}
+
 	public void update() {
-		getVelocity().y += acceleration.y;
-		if(getVelocity().y > terminalVelocity.y) getVelocity().y = terminalVelocity.y;
-		if(getVelocity().y < -terminalVelocity.y) getVelocity().y = -terminalVelocity.y;
-		if(getVelocity().x > terminalVelocity.x) getVelocity().x = terminalVelocity.x;
-		if(getVelocity().x < -terminalVelocity.x) getVelocity().x = -terminalVelocity.x;
-		setPosition(getPosition().x + getVelocity().x, getPosition().y + getVelocity().y);
-		System.out.println(this.position);
-	}
+		this.velocity.y += acceleration.y;
+		if(this.velocity.x > terminalVelocity.x) this.velocity.x = terminalVelocity.x;
+		if(this.velocity.x < -terminalVelocity.x) this.velocity.x = -terminalVelocity.x;
 
-	public void slow() {
-		setVelocity(0, 0);
-	}
+		this.position.x += this.velocity.x;
+		this.position.y += this.velocity.y;
+		if(this.position.y < min.y) {
+			this.position.y = min.y;
+			if(!this.isGrounded) {
+				resetJumps();
+				this.isJumping = false;
+				this.isDoubleJumping = false;
+				this.velocity.y = 0;
+				this.isGrounded = true;
+			}
+		} else if(this.position.y > max.y){
+			this.position.y = max.y;
+			this.velocity.y = 0;
+		}
 
-	private void move(int direction) {
-		if(direction == 0) { //right
-			getVelocity().x += acceleration.x;
-		} else if(direction == 1) { //left
-			getVelocity().x += -acceleration.x;
+		if(this.position.x < min.x) {
+			this.position.x = min.x;
+			this.velocity.x = 0;
+		} else if(this.position.x > max.x){
+			this.position.x = max.x;
+			this.velocity.x = 0;
 		}
 	}
 
+	public void slow() {
+		if(this.velocity.x >= this.acceleration.x/2 + 0.1) {
+			this.velocity.x -= 2*acceleration.x;
+		} else if(this.velocity.x <= -this.acceleration.x/2 - 0.1) {
+			this.velocity.x += 2*acceleration.x;
+		} else {
+			this.velocity.x = 0;
+		}
+
+	}
+
 	public void moveRight() {
-		move(0);
+		this.velocity.x += acceleration.x;
 	}
 
 	public void moveLeft() {
-		move(1);
+		this.velocity.x += -acceleration.x;
 	}
 
 	public void moveUp() {
-
+		if(hasJumps()) {
+			this.isGrounded = false;
+			if(!this.isJumping) {
+				this.velocity.y = jumpVel;
+				this.jumps--;
+				this.isJumping = true;
+				this.jumpTime = System.currentTimeMillis();
+			} else if(System.currentTimeMillis() - this.jumpTime > 250 && !this.isDoubleJumping) {
+				this.velocity.y = jumpVel;
+				this.jumps--;
+				this.isDoubleJumping = true;
+			}
+		}
 	}
 
 	public void moveDown() {

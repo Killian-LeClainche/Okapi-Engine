@@ -52,18 +52,21 @@ public class DiggerWorld extends World {
 			k.update();
 		}
 
-		for(Player p : playerList) {
-			p.update();
-		}
-
 		if(inputMap.get("rightP1").isPressed()) {
 			playerList.get(0).moveRight();
 		}
 		if(inputMap.get("leftP1").isPressed()) {
 			playerList.get(0).moveLeft();
 		}
+		if(inputMap.get("upP1").isPressed()) {
+			playerList.get(0).moveUp();
+		}
 		if(!inputMap.get("rightP1").isPressed() && !inputMap.get("leftP1").isPressed()) {
 			playerList.get(0).slow();
+		}
+
+		for(Player p : playerList) {
+			p.update();
 		}
 	}
 	
