@@ -43,6 +43,7 @@ public class DiggerWorld extends World {
 		playerList.add(new Player(new Vector(300, 200, 30)));
 		
 		renderer.init();
+		
 	}
 	
 	@Override
