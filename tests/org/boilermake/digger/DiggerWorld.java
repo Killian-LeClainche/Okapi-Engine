@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
 import polaris.okapi.App;
+import polaris.okapi.options.Controller;
 import polaris.okapi.options.Key;
 import polaris.okapi.render.Texture;
 import polaris.okapi.world.World;
@@ -23,6 +24,9 @@ public class DiggerWorld extends World {
 	public List<Grave> graveList = new ArrayList<>();
 	public List<Player> playerList = new ArrayList<>();
 	public Map<String, Key> inputMap = new TreeMap<>();
+	public Controller player2;
+	public Controller player3;
+	public Controller player4;
 
 	public DiggerWorld(@NotNull App application) {
 		super(application);
@@ -35,23 +39,19 @@ public class DiggerWorld extends World {
 		inputMap.put("leftP1", (Key)getSettings().get("p1:left"));
 		inputMap.put("downP1", (Key)getSettings().get("p1:down"));
 		inputMap.put("upP1", (Key)getSettings().get("p1:up"));
-		//inputMap.put("p2", (Key)getSettings().get("p2"));
+		player2 = (Controller)getSettings().get("p2");
 
 		//terrainList.add(new Terrain());
 		graveList.add(new Grave(0, 0, 10, null));
+
 		playerList.add(new Player(new Vector2f(300, 200)));
-		
+		playerList.add(new Player(new Vector2f(1000, 200)));
+
 		renderer.init();
 
 	}
-	
-	@Override
-	public void update() {
-		super.update();
-		for(Key k : inputMap.values()) {
-			k.update();
-		}
 
+	private void checkKeysP1() {
 		if(inputMap.get("rightP1").isPressed()) {
 			playerList.get(0).moveRight();
 		}
@@ -61,15 +61,49 @@ public class DiggerWorld extends World {
 		if(inputMap.get("upP1").isPressed()) {
 			playerList.get(0).moveUp();
 		}
+		if(inputMap.get("downP1").isPressed()) {
+			playerList.get(0).moveDown();
+		}
+
 		if(!inputMap.get("rightP1").isPressed() && !inputMap.get("leftP1").isPressed()) {
 			playerList.get(0).slow();
 		}
+	}
+
+	private void checkKeysP2() {
+		if(player2.getKeyDPadRight().isPressed()) {
+			playerList.get(1).moveRight();
+		}
+		if(player2.getKeyDPadLeft().isPressed()) {
+			playerList.get(1).moveLeft();
+		}
+		if(player2.getKeyDPadUp().isPressed() || player2.getKeyA().isPressed()) {
+			playerList.get(1).moveUp();
+		}
+		if(player2.getKeyDPadDown().isPressed()) {
+			playerList.get(1).moveDown();
+		}
+
+		if(!player2.getKeyDPadRight().isPressed() && !player2.getKeyDPadLeft().isPressed()) {
+			playerList.get(0).slow();
+		}
+	}
+
+	@Override
+	public void update() {
+		super.update();
+		for(Key k : inputMap.values()) {
+			k.update();
+		}
+
+		checkKeysP1();
+		checkKeysP2();
 
 		for(Player p : playerList) {
 			p.update();
 		}
 	}
-	
+
 	@Override
 	public void render(double delta) {
 		renderer.render(delta);
