@@ -7,6 +7,6 @@ import polaris.okapi.world.Vector;
  */
 public class Player {
 	
-	public Vector position = new Vector(30, 30, 30);
+	public Vector position = new Vector(300, 200, 30);
 	
 }

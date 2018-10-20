@@ -13,10 +13,10 @@ import java.util.List;
  */
 public class DiggerWorld extends World {
 	
-	DiggerRenderer renderer = new DiggerRenderer(this);
-	List<Terrain> terrainList = new ArrayList<>();
-	List<Grave> graveList = new ArrayList<>();
-	List<Player> playerList = new ArrayList<>();
+	public DiggerRenderer renderer = new DiggerRenderer(this);
+	public List<Terrain> terrainList = new ArrayList<>();
+	public List<Grave> graveList = new ArrayList<>();
+	public List<Player> playerList = new ArrayList<>();
 	
 	public DiggerWorld(@NotNull App application) {
 		super(application);
@@ -27,6 +27,8 @@ public class DiggerWorld extends World {
 		terrainList.add(new Terrain());
 		graveList.add(new Grave());
 		playerList.add(new Player());
+		
+		renderer.init();
 	}
 	
 	@Override
