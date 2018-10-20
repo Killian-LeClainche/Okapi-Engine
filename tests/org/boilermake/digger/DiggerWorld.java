@@ -20,6 +20,7 @@ public class DiggerWorld extends World {
 	public List<Grave> graveList = new ArrayList<>();
 	public List<Player> playerList = new ArrayList<>();
 	public Map<String, Key> inputMap = new TreeMap<>();
+	public ArrayList<GameMap> mapList = new ArrayList<>();
 	public Controller player2;
 	public Controller player3;
 	public Controller player4;
@@ -49,16 +50,16 @@ public class DiggerWorld extends World {
 
 		renderer.init();
 
-
+		/*
 		Random rangen = new Random();
 		ArrayList<Vector2f> graveCoords = new ArrayList<Vector2f>();
 		int numBlocks = 0;
 
 		while(numBlocks < 16) {
 
-			int xcoord = rangen.nextInt(1800) + 80;
+			int xcoord = rangen.nextInt(1600) + 80;
 			int ycoord = rangen.nextInt(980) + 60;
-			int xsize = rangen.nextInt(40) + 10;
+			int xsize = rangen.nextInt(200) + 70;
 			int ysize = rangen.nextInt(20) + 9;
 
 			Terrain toAdd = new Terrain(xcoord, ycoord, xsize, ysize);
@@ -119,6 +120,25 @@ public class DiggerWorld extends World {
 		Vector2f PlayerCoord2 = new Vector2f(1440, 270);
 		Vector2f PlayerCoord3 = new Vector2f(480, 810);
 		Vector2f PlayerCoord4 = new Vector2f(1440, 810);
+		*/
+
+		GameMap map1 = new GameMap("Map1");
+		GameMap map2 = new GameMap("Map2");
+		GameMap map3 = new GameMap("Map3");
+		GameMap map4 = new GameMap("Map4");
+		GameMap map5 = new GameMap("Map5");
+
+		map1.generateMap();
+		map2.generateMap();
+		map3.generateMap();
+		map4.generateMap();
+		map5.generateMap();
+
+		mapList.add(map1);
+		mapList.add(map2);
+		mapList.add(map3);
+		mapList.add(map4);
+		mapList.add(map5);
 
 		//playerList.add(new Player(PlayerCoord1));
 		//playerList.add(new Player(PlayerCoord2));
