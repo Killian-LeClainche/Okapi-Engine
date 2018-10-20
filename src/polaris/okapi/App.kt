@@ -103,7 +103,13 @@ protected constructor(debug: Boolean) {
      * Instance of current world being rendered.
      */
     var currentWorld: World? = null
-        protected set
+        @Synchronized set(value) {
+            field?.close()
+
+            value?.init()
+
+            field = value
+        }
 
     /**
      * The change of time since the previous delta setup call
@@ -218,9 +224,9 @@ protected constructor(debug: Boolean) {
 
             tickDelta = glfwGetTime()
 
-            glfwSetTime(0.0)
-
             if(updateWindow()) break
+
+            glfwSetTime(0.0)
 
             glfwPollEvents()
 

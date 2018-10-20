@@ -3,7 +3,6 @@ package org.boilermake.digger
 import polaris.okapi.App
 import polaris.okapi.options.Settings
 import polaris.okapi.options.WindowMode
-import polaris.okapi.tests.example1.ExampleGui
 
 /**
  * Created by Killian Le Clainche on 10/20/2018.
@@ -25,7 +24,7 @@ class WindowCreation : App(true) {
 
     override fun init(): Boolean {
         if(super.init()) {
-            currentScreen = DiggerGui(this)
+            currentScreen = DiggerHUD(this)
             currentWorld = DiggerWorld(this)
             return true
         }
