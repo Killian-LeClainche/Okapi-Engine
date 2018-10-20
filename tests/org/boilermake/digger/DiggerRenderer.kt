@@ -44,10 +44,10 @@ class DiggerRenderer(private val world: DiggerWorld) {
             terrainRenders.add(BlockRender(i))
         }
 
-        //rainShader.vertexShaderId = world.application.renderManager.loadShader(File("resources/digger/shaders/rain.vert"), GL20C.GL_VERTEX_SHADER)
-        //rainShader.fragmentShaderId = world.application.renderManager.loadShader(File("resources/digger/shaders/rain.frag"), GL20C.GL_FRAGMENT_SHADER)
+        rainShader.vertexShaderId = world.application.renderManager.loadShader(File("resources/digger/shaders/rain.vert"), GL20C.GL_VERTEX_SHADER)
+        rainShader.fragmentShaderId = world.application.renderManager.loadShader(File("resources/digger/shaders/rain.frag"), GL20C.GL_FRAGMENT_SHADER)
 
-        //rainShader.link()
+        rainShader.link()
 
         world["player"] = "resources/digger/character.png"
         world["ground"] = "resources/digger/ground.png"
@@ -61,7 +61,7 @@ class DiggerRenderer(private val world: DiggerWorld) {
         timeExisted += delta
         world.application.updateView()
 
-        /*rainShader.bind()
+        rainShader.bind()
 
         GL30C.glUniform1f(rainShader["time"], (System.currentTimeMillis() % 10000000) / 100f)
         GL30C.glUniform2f(rainShader["resolution"], world.settings.windowWidth.toFloat(), world.settings.windowHeight.toFloat())
@@ -73,7 +73,7 @@ class DiggerRenderer(private val world: DiggerWorld) {
         VertexAttributes.POS.enable()
         Texture.disable()
         rainQuad.bind()
-        rainQuad.draw()*/
+        rainQuad.draw()
 
         world.application.renderManager.posColorTextureShader.bind()
 

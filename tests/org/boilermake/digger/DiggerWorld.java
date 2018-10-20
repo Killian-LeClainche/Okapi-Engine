@@ -46,10 +46,7 @@ public class DiggerWorld extends World {
 		playerList.add(new Player(new Vector2f(300, 200)));
 
 		playerList.add(new Player(new Vector2f(1000, 200)));
-
-		renderer.init();
-
-
+		
 		Random rangen = new Random();
 		ArrayList<Vector2f> graveCoords = new ArrayList<Vector2f>();
 		int numBlocks = 0;
