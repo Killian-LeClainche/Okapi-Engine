@@ -7,7 +7,6 @@ import polaris.okapi.util.isEqual
 import polaris.okapi.util.pi2
 import polaris.okapi.util.piFractions
 import polaris.okapi.world.Entity
-import polaris.okapi.world.Vector
 import polaris.okapi.world.World
 import java.awt.geom.Point2D
 import kotlin.math.PI

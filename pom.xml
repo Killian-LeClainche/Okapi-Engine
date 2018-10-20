@@ -9,7 +9,7 @@
         <lwjgl.version>3.2.0</lwjgl.version>
         <joml.version>1.9.11</joml.version>
         <jafama.version>2.3.1</jafama.version>
-        <kotlin.version>1.2.30</kotlin.version>
+        <kotlin.version>1.2.51</kotlin.version>
     </properties>
     <profiles>
         <profile>

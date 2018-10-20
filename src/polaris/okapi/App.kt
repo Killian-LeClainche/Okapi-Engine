@@ -259,6 +259,7 @@ protected constructor(debug: Boolean) {
         while(isRunning) {
             timer.tick()
 
+            settings.update()
             settings.poll()
 
             currentWorld?.update()

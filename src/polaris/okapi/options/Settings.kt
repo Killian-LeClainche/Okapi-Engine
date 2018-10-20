@@ -12,6 +12,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Created by Killian Le Clainche on 12/10/2017.
@@ -98,6 +99,7 @@ class Settings {
     var alcSync: Boolean = false
 
     var settings: MutableMap<String, Setting> = HashMap()
+    var controllers: MutableMap<Int, Controller> = HashMap()
 
     var title: String = ""
 
@@ -111,7 +113,9 @@ class Settings {
                 mouseMapping.put(value.key, value)
             else
                 keyboardMapping.put(value.key, value)
-
+        }
+        if(value is Controller) {
+            controllers.put(value.id, value)
         }
         settings[property] = value
     }
@@ -188,7 +192,7 @@ class Settings {
 
         val settingsIO = FileOutputStream(settingsFile)
 
-        properties.store(settingsIO, "Current settings for $title, it is not recommended to alter the values here")
+        properties.store(settingsIO, "Current settings for, it is not recommended to alter the values here")
 
         settingsIO.close()
     }
@@ -307,6 +311,14 @@ class Settings {
         textInput.setLength(0)
         mouseDelta.set(0.0)
         scrollDelta.set(0.0)
+
+        for(i in controllers.values) {
+            i.update();
+        }
+
+        for(i in settings.values) {
+            (i as? Key)?.update()
+        }
     }
 
     fun poll() {
