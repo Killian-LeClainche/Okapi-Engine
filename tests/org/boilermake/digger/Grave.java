@@ -5,9 +5,7 @@ import org.joml.Vector2f;
 /**
  * Created by Killian Le Clainche on 10/20/2018.
  */
-public class Grave {
-	private final Vector2f position;
-	private final Vector2f size;
+public class Grave extends Block {
     private int digTime;
     private final int digTick;
 	private final Item reward;

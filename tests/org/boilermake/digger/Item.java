@@ -1,16 +1,14 @@
 package org.boilermake.digger;
 
 import org.joml.Vector2f;
-import polaris.okapi.world.Vector;
 
 /**
  * Created by Killian Le Clainche on 10/20/2018.
  */
-public class Item {
-    private Vector2f position;
+public class Item extends Block {
     private Vector2f velocity;
-    private final Vector2f acceleration = new Vector2f(0, 2);
-    private Vector2f size;
+    private final Vector2f acceleration = new Vector2f(0, -2);
+    private final Vector2f screen = new Vector2f(1920, 1080);
     private int itemType;
 
     public static class ItemType{
@@ -43,5 +41,21 @@ public class Item {
         this.velocity.y -= this.acceleration.y;
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
+        if(this.position.x < 0) {
+            this.position.x = 0;
+            this.velocity.x = 0;
+        }
+        else if(this.position.x + this.size.x > screen.x) {
+            this.position.x = screen.x - this.size.x;
+            this.velocity.x = 0;
+        }
+        if(this.position.y < 0) {
+            this.position.y = 0;
+            this.velocity.y = 0;
+        }
+        else if(this.position.y + this.size.y > screen.y) {
+            this.position.y = screen.y - this.size.y;
+            this.velocity.y = 0;
+        }
     }
 }
