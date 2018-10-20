@@ -73,6 +73,7 @@ class DrawArray(private val glMode: Int, private val vboDrawMode: Int, floatArra
             buffer.put(value)
             buffer.flip()
 
+            GL33C.glBindBuffer(GL33C.GL_ARRAY_BUFFER, vboId)
             GL33C.glBufferSubData(GL33C.GL_ARRAY_BUFFER, 0, buffer)
 
             field = value
