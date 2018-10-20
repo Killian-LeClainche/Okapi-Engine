@@ -17,12 +17,12 @@ public class Player extends Block {
 	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
 	private final Vector2f terminalVelocity = new Vector2f(20, 0);
 	private final int jumpVel = 50;
-	private final Vector2f max = new Vector2f(1650, 1000);
-	private final Vector2f min = new Vector2f(35, 50);
+	private final Vector2f screen = new Vector2f(1920, 1080);
 
 	public Player(Vector2f position) {
 		this.position = position;
 		this.velocity = new Vector2f(0, 0);
+		this.size = new Vector2f(32, 64);
 		this.jumps = 2;
 		this.isJumping = false;
 		this.isDoubleJumping = false;
@@ -70,8 +70,9 @@ public class Player extends Block {
 
 		this.position.x += this.velocity.x;
 		this.position.y += this.velocity.y;
-		if(this.position.y < min.y) {
-			this.position.y = min.y;
+		if(this.position.y - this.size.y/2 < 0) {
+			this.position.y = this.size.y/2;
+			this.velocity.y = 0;
 			if(!this.isGrounded) {
 				resetJumps();
 				this.isJumping = false;
@@ -79,16 +80,16 @@ public class Player extends Block {
 				this.velocity.y = 0;
 				this.isGrounded = true;
 			}
-		} else if(this.position.y > max.y){
-			this.position.y = max.y;
+		} else if(this.position.y + this.size.y/2 > screen.y){
+			this.position.y = screen.y - this.size.y/2;
 			this.velocity.y = 0;
 		}
 
-		if(this.position.x < min.x) {
-			this.position.x = min.x;
+		if(this.position.x - this.size.x/2 < 0) {
+			this.position.x = this.size.x/2;
 			this.velocity.x = 0;
-		} else if(this.position.x > max.x){
-			this.position.x = max.x;
+		} else if(this.position.x + this.size.x/2 > screen.x){
+			this.position.x = screen.x - this.size.x/2;
 			this.velocity.x = 0;
 		}
 	}
