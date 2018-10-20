@@ -51,7 +51,7 @@ public class DiggerWorld extends World {
 		for(Key k : inputMap.values()) {
 			k.update();
 		}
-		
+
 		for(Player p : playerList) {
 			p.update();
 		}

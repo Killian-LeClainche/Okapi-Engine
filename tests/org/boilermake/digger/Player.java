@@ -6,9 +6,8 @@ import org.joml.Vector2f;
 /**
  * Created by Killian Le Clainche on 10/20/2018.
  */
-public class Player {
+public class Player extends Block {
 
-	public Vector2f position;
 	public Vector2f velocity;
 	public final Vector2f acceleration = new Vector2f(0.5f, -1);
 	private final Vector2f terminalVelocity = new Vector2f(10, 10);
