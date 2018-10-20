@@ -43,7 +43,12 @@ class WindowCreation : App(true) {
         settings["p1:action:up"] = Key(GLFW.GLFW_KEY_W)
         settings["p1:action:left"] = Key(GLFW.GLFW_KEY_A)
         settings["p1:action:down"] = Key(GLFW.GLFW_KEY_S)
-        settings["p1:action:jump"] = Key(GLFW.GLFW_KEY_SPACE)
+        settings["p1:action:jump"] = Key(GLFW.GLFW_KEY_LEFT_SHIFT)
+        settings["p2:action:right"] = Key(GLFW.GLFW_KEY_L)
+        settings["p2:action:up"] = Key(GLFW.GLFW_KEY_I)
+        settings["p2:action:left"] = Key(GLFW.GLFW_KEY_J)
+        settings["p2:action:down"] = Key(GLFW.GLFW_KEY_K)
+        settings["p2:action:jump"] = Key(GLFW.GLFW_KEY_RIGHT_SHIFT)
 
         //OPTIONAL, IN MOST CASES IT'S BEST TO LET DEFAULT BEHAVIOR PERSIST TO HAVE SAVED STATES
         settings.windowMode = WindowMode.WINDOWED
