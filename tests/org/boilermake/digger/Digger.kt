@@ -2,6 +2,7 @@ package org.boilermake.digger
 
 import org.lwjgl.glfw.GLFW
 import polaris.okapi.App
+import polaris.okapi.options.Controller
 import polaris.okapi.options.Key
 import polaris.okapi.options.Settings
 import polaris.okapi.options.WindowMode
@@ -39,16 +40,13 @@ class WindowCreation : App(true) {
         settings["mipmap"] = 0
         settings["oversample"] = 1
         settings["icon"] = "resources/boilermake.png"
-        settings["p1:action:right"] = Key(GLFW.GLFW_KEY_D)
-        settings["p1:action:up"] = Key(GLFW.GLFW_KEY_W)
-        settings["p1:action:left"] = Key(GLFW.GLFW_KEY_A)
-        settings["p1:action:down"] = Key(GLFW.GLFW_KEY_S)
-        settings["p1:action:jump"] = Key(GLFW.GLFW_KEY_LEFT_SHIFT)
-        settings["p2:action:right"] = Key(GLFW.GLFW_KEY_L)
-        settings["p2:action:up"] = Key(GLFW.GLFW_KEY_I)
-        settings["p2:action:left"] = Key(GLFW.GLFW_KEY_J)
-        settings["p2:action:down"] = Key(GLFW.GLFW_KEY_K)
-        settings["p2:action:jump"] = Key(GLFW.GLFW_KEY_RIGHT_SHIFT)
+        settings["p1:right"] = Key(GLFW.GLFW_KEY_D)
+        settings["p1:up"] = Key(GLFW.GLFW_KEY_W)
+        settings["p1:left"] = Key(GLFW.GLFW_KEY_A)
+        settings["p1:down"] = Key(GLFW.GLFW_KEY_S)
+        settings["p1:jump"] = Key(GLFW.GLFW_KEY_LEFT_SHIFT)
+        settings["p2"] = Controller(0)
+
 
         //OPTIONAL, IN MOST CASES IT'S BEST TO LET DEFAULT BEHAVIOR PERSIST TO HAVE SAVED STATES
         settings.windowMode = WindowMode.WINDOWED
