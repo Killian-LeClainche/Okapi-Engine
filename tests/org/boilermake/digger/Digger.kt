@@ -25,7 +25,8 @@ class WindowCreation : App(true) {
 
     override fun init(): Boolean {
         if(super.init()) {
-            currentScreen = ExampleGui(this)
+            currentScreen = DiggerGui(this)
+            currentWorld = DiggerWorld(this)
             return true
         }
         return false
