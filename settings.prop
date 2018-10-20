@@ -1,0 +1,15 @@
+#Current settings for Window Creation Test, it is not recommended to alter the values here
+#Sat Oct 20 12:07:27 EDT 2018
+windowHeight=540
+alcRefreshRate=60
+mipmap=0
+windowWidth=960
+alcSync=false
+oversample=1
+windowMode=0
+windowMaximized=false
+icon=resources/boilermake.png
+windowPosY=270
+windowPosX=480
+monitor=10170560
+enableVsync=true
