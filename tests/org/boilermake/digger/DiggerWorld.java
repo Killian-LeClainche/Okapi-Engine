@@ -15,13 +15,13 @@ import java.util.TreeMap;
  * Created by Killian Le Clainche on 10/20/2018.
  */
 public class DiggerWorld extends World {
-	
-	DiggerRenderer renderer = new DiggerRenderer(this);
-	List<Terrain> terrainList = new ArrayList<>();
-	List<Grave> graveList = new ArrayList<>();
-	List<Player> playerList = new ArrayList<>();
-	Map<String, Key> inputMap = new TreeMap<>();
-	
+
+	public DiggerRenderer renderer = new DiggerRenderer(this);
+	public List<Terrain> terrainList = new ArrayList<>();
+	public List<Grave> graveList = new ArrayList<>();
+	public List<Player> playerList = new ArrayList<>();
+	public Map<String, Key> inputMap = new TreeMap<>();
+
 	public DiggerWorld(@NotNull App application) {
 		super(application);
 	}
@@ -36,6 +36,12 @@ public class DiggerWorld extends World {
 		inputMap.put("leftP2", (Key)getSettings().get("p2:action:left"));
 		inputMap.put("downP2", (Key)getSettings().get("p2:action:down"));
 		inputMap.put("upP2", (Key)getSettings().get("p2:action:up"));
+
+		terrainList.add(new Terrain());
+		graveList.add(new Grave());
+		playerList.add(new Player());
+		
+		renderer.init();
 	}
 	
 	@Override

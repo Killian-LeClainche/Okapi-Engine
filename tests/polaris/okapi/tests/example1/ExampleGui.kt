@@ -39,13 +39,13 @@ class ExampleGui @JvmOverloads constructor(application: App, parent: Gui? = null
         val quadArray = floatArrayOf(
                 //position          color                   texture
                 //x,y,z             r,g,b,a                 u,v
-                -1f, -1f, 0f,       1f, 0f, 0f, 1f,
-                1f, -1f, 0f,       1f, 0f, 0f, 1f,
-                1f, 1f, 0f,       1f, 0f, 0f, 1f,
+                0f, 0f, 0f,       1f, 0f, 0f, 1f,
+                1920f, 0f, 0f,       1f, 0f, 0f, 1f,
+                1920f, 1000f, 0f,       1f, 0f, 0f, 1f,
 
-                1f, 1f, 0f,       1f, 0f, 0f, 1f,
-                -1f, -1f, 0f,       1f, 0f, 0f, 1f,
-                -1f, 1f, 0f,       1f, 0f, 0f, 1f
+                1920f, 1000f, 0f,       1f, 0f, 0f, 1f,
+                0f, 0f, 0f,       1f, 0f, 0f, 1f,
+                0f, 1000f, 0f,       1f, 0f, 0f, 1f
         )
 
         quad = DrawArray(GL_TRIANGLES, GL_STATIC_DRAW, quadArray, 6, VertexAttributes.POS_COLOR)
