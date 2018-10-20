@@ -64,11 +64,17 @@ public class DiggerWorld extends World {
 			Terrain toAdd = new Terrain(xcoord, ycoord, xsize, ysize);
 
 			boolean overlap = false;
-			for (Terrain t : terrainList) {
-				if (Helper.isColliding(t, toAdd) == true) {
-					overlap = true;
-				}
-			}
+
+			if(terrainList.isEmpty() == false) {
+                for (Terrain t : terrainList) {
+
+                    if(Helper.equals(t, toAdd) == false) {
+                        if (Helper.isColliding(t, toAdd) == true) {
+                            overlap = true;
+                        }
+                    }
+                }
+            }
 
 			if(overlap == false)
 			{
@@ -86,8 +92,8 @@ public class DiggerWorld extends World {
 		int xvelocity = rangen.nextInt(21) + 10;
 		int yvelocity = rangen.nextInt(21) + 10;
 
-		Grave toAdd = new Grave(xval, yval, diggingTime, new Item(xval, yval, xvelocity, yvelocity, item));
-		Vector2f graveCoord = new Vector2f(xval * 16, yval * 9);
+		Grave graveToAdd = new Grave(xval, yval, diggingTime, new Item(xval, yval, xvelocity, yvelocity, item));
+		graveList.add(graveToAdd);
 
 		for(int i = 1; i < terrainList.size(); i++)
 		{
@@ -104,7 +110,7 @@ public class DiggerWorld extends World {
 				xvelocity = rangen.nextInt(21) + 10;
 				yvelocity = rangen.nextInt(21) + 10;
 
-				Grave graveToAdd = new Grave(xval, yval, diggingTime, new Item(xval, yval, xvelocity, yvelocity, item));
+				graveToAdd = new Grave(xval, yval, diggingTime, new Item(xval, yval, xvelocity, yvelocity, item));
 				graveList.add(graveToAdd);
 			}
 
