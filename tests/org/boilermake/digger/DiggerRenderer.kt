@@ -63,12 +63,9 @@ class DiggerRenderer(private val world: DiggerWorld) {
 
         rainShader.bind()
 
-        GL30C.glUniform1f(rainShader["time"], (System.currentTimeMillis() % 10000000) / 100f)
+        GL30C.glUniform1f(rainShader["time"], (System.currentTimeMillis() % 10000000) / 1000f)
         GL30C.glUniform2f(rainShader["resolution"], world.settings.windowWidth.toFloat(), world.settings.windowHeight.toFloat())
-        GL30C.glUniform1f(rainShader["hue"], .5f)
-        GL30C.glUniform1f(rainShader["fade"], 1f)
-        GL30C.glUniform1f(rainShader["slow"], 10f)
-        GL30C.glUniform1f(rainShader["gray"], .3f)
+        GL30C.glUniform1f(rainShader["size"], .075f)
 
         VertexAttributes.POS_COLOR_TEXTURE.enable()
         Texture.disable()

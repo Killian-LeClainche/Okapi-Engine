@@ -1,9 +1,7 @@
 uniform float time;
 uniform vec2 resolution;
-uniform float hue;
-uniform float fade;
-uniform float slow;
-uniform float gray;
+uniform float size;
+uniform float angle;
 
 // Created by Reinder Nijhoff 2014
 // @reindernijhoff
@@ -167,44 +165,31 @@ float randomStart(vec2 co){return 0.8+0.2*hash(dot(co,vec2(123.42,117.853))*412.
 //----------------------------------------------------------------------
 // main
 
+float rain(vec2 q, vec2 p, float s) {
+        vec2 st = 256. * ( p* vec2(1, s)+vec2(time*.13-q.y*.2, time*.2) );
+        float f = noise( st ) * noise( st*0.773) * 1.55;
+        f = clamp(pow(abs(f), 40.0) * 13.0, 0.0, q.y*.14);
+        return f;
+}
+
 void main() {
     vec2 q = gl_FragCoord.xy / resolution.xy;
 	vec2 p = -1.0 + 2.0 * q;
 	p.x *= resolution.x / resolution.y;
 
-    if (q.y < .12 || q.y >= .88) {
-		gl_FragColor=vec4(0.,0.,0.,1.);
-		return;
-    } else {
-
-        // camera
-        float z = time;
-        float x = -10.9+1.*sin(time*0.2);
-        vec3 ro = vec3(x,  1.3+.3*cos(time*0.26), z-1.);
-        vec3 ta = vec3(-8.,1.3+.4*cos(time*0.26), z+4.+cos(time*0.04));
-
-        vec3 ww = normalize( ta - ro );
-        vec3 uu = normalize( cross(ww,vec3(0.0,1.0,0.0) ) );
-        vec3 vv = normalize( cross(uu,ww));
-        vec3 rd = normalize( -p.x*uu + p.y*vv + 2.2*ww );
-
         vec3 col = backgroundColor;
 
         // Rain (by Dave Hoskins)
-        vec2 st = 256. * ( p* vec2(.5, .01)+vec2(time*.13-q.y*.6, time*.13) );
-        float f = noise( st ) * noise( st*0.773) * 1.55;
-        f = 0.25+ clamp(pow(abs(f), 13.0) * 13.0, 0.0, q.y*.14);
+        float f = rain(q, p, size);
+        f += rain(q, p, size / 2) * .3;
 
-
-        col += 0.25*f*(0.2+backgroundColor);
+        col += 0.1*f*(0.2+backgroundColor);
 
         // post processing
         col = pow( clamp(col,0.0,1.0), vec3(0.4545) );
         col *= 1.2*vec3(1.,0.99,0.95);
         col = clamp(1.06*col-0.03, 0., 1.);
-        q.y = (q.y-.12)*(1./0.76);
-        col *= 0.5 + 0.5*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.1 );
+        col *= 0.5 + 0.5*pow( 16.0*q.x*q.y*(1.0-q.x)*(1.0-q.y), 0.2 );
 
         gl_FragColor = vec4( col, 1.0 );
-    }
 }
