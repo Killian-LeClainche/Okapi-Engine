@@ -64,6 +64,7 @@ public class Player extends Block {
 	}
 
 	public void update() {
+		System.out.println(this);
 		this.velocity.y += acceleration.y;
 		if(this.velocity.x > terminalVelocity.x) this.velocity.x = terminalVelocity.x;
 		if(this.velocity.x < -terminalVelocity.x) this.velocity.x = -terminalVelocity.x;
@@ -130,7 +131,7 @@ public class Player extends Block {
 	}
 
 	public void moveDown() {
-
+		this.velocity.y += 2*acceleration.y;
 	}
 
 	public HitBox useItem() {
