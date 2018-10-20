@@ -195,7 +195,7 @@ class Shader {
 
         glLinkProgram(shaderId)
         if(glGetProgrami(shaderId, GL_LINK_STATUS) == GL_FALSE)
-            throw RuntimeException("Unable to link shader program:")
+            throw RuntimeException("Unable to link shader program:" + GL20C.glGetProgramInfoLog(shaderId))
 
     }
 
