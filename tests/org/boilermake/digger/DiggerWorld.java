@@ -178,6 +178,34 @@ public class DiggerWorld extends World {
 		for(Player p : playerList) {
 			p.update();
 		}
+
+		for(Player p1 : playerList) {
+			for(Player p2 : playerList) {
+				if(!p1.equals(p2) && Helper.isColliding(p1, p2) ) {
+					//x-axis collisions
+					if(p1.getPosition().x < p2.getPosition().x && p1.getVelocity().x > 0) { // p1 -> p2
+						p1.setPosition(p2.getPosition().x - p2.getSize().x, p1.getPosition().y);
+						p1.stopX();
+						p2.stopX();
+					} else if(p1.getPosition().x > p2.getPosition().x && p1.getVelocity().x < 0) { // p2 <- p1
+						p1.setPosition(p2.getPosition().x + p2.getSize().x, p1.getPosition().y);
+						p1.stopX();
+						p2.stopX();
+					}
+
+					//y-axis collisions             											 p2
+					if(p1.getPosition().y < p2.getPosition().y && p1.getVelocity().y > 0) { // p1
+						p1.setPosition(p1.getPosition().x, p2.getPosition().y - p2.getSize().y);
+						p1.stopY();
+						p2.stopY();
+					} else if(p1.getPosition().y > p2.getPosition().y && p1.getVelocity().y < 0) { // p1
+						p1.setPosition(p1.getPosition().x, p2.getPosition().y + p2.getSize().y);// p2
+						p1.stopY();
+						p2.stopY();
+					}
+				}
+			}
+		}
 	}
 
 	@Override
