@@ -18,6 +18,7 @@ public class DiggerWorld extends World {
 	public DiggerRenderer renderer = new DiggerRenderer(this);
 	public List<Terrain> terrainList = new ArrayList<>();
 	public List<Grave> graveList = new ArrayList<>();
+	public List<Item> itemList = new ArrayList<>();
 	public List<Player> playerList = new ArrayList<>();
 	public Map<String, Key> inputMap = new TreeMap<>();
 	public Controller player2;
@@ -179,32 +180,58 @@ public class DiggerWorld extends World {
 			p.update();
 		}
 
-		for(Player p1 : playerList) {
-			for(Player p2 : playerList) {
-				if(!p1.equals(p2) && Helper.isColliding(p1, p2) ) {
+		for(int i = 0; i < playerList.size(); i++) {
+			Player player = playerList.get(i);
+			for(Player p : playerList) {
+				if(!player.equals(p) && Helper.isColliding(player, p) ) {
 					//x-axis collisions
-					if(p1.getPosition().x < p2.getPosition().x && p1.getVelocity().x > 0) { // p1 -> p2
-						p1.setPosition(p2.getPosition().x - p2.getSize().x, p1.getPosition().y);
-						p1.stopX();
-						p2.stopX();
-					} else if(p1.getPosition().x > p2.getPosition().x && p1.getVelocity().x < 0) { // p2 <- p1
-						p1.setPosition(p2.getPosition().x + p2.getSize().x, p1.getPosition().y);
-						p1.stopX();
-						p2.stopX();
+					if(player.getPosition().x < p.getPosition().x && player.getVelocity().x > 0) { // player -> p
+						player.setPosition(p.getPosition().x - p.getSize().x, player.getPosition().y);
+						player.stopX();
+						p.stopX();
+					} else if(player.getPosition().x > p.getPosition().x && player.getVelocity().x < 0) { // p <- player
+						player.setPosition(p.getPosition().x + p.getSize().x, player.getPosition().y);
+						player.stopX();
+						p.stopX();
 					}
 
-					//y-axis collisions             											 p2
-					if(p1.getPosition().y < p2.getPosition().y && p1.getVelocity().y > 0) { // p1
-						p1.setPosition(p1.getPosition().x, p2.getPosition().y - p2.getSize().y);
-						p1.stopY();
-						p2.stopY();
-					} else if(p1.getPosition().y > p2.getPosition().y && p1.getVelocity().y < 0) { // p1
-						p1.setPosition(p1.getPosition().x, p2.getPosition().y + p2.getSize().y);// p2
-						p1.stopY();
-						p2.stopY();
+					//y-axis collisions             											 p
+					if(player.getPosition().y < p.getPosition().y && player.getVelocity().y > 0) { // player
+						player.setPosition(player.getPosition().x, p.getPosition().y - p.getSize().y);
+						player.stopY();
+						p.stopY();
+					} else if(player.getPosition().y > p.getPosition().y && player.getVelocity().y < 0) { // player
+						player.setPosition(player.getPosition().x, p.getPosition().y + p.getSize().y);// p
+						player.stopY();
+						p.stopY();
 					}
 				}
 			}
+			List<Grave> tempGraveList = new ArrayList<>(graveList);
+			for(Grave grave : graveList) {
+				if(Helper.isColliding(player, grave) && player.isGrounded()) {
+					if(i == 0 && inputMap.get("downP1").isPressed()) {
+						grave.dig();
+					}
+					else if(i == 0 && inputMap.get("downP2").isPressed()) {
+						grave.dig();
+					}
+					if(grave.isDug()) {
+						itemList.add(grave.getReward());
+						tempGraveList.remove(grave);
+					}
+				}
+			}
+			graveList = tempGraveList;
+			List<Item> tempItemList = new ArrayList<>(itemList);
+			for(Item item : itemList) {
+				if(Helper.isColliding(player, item)) {
+					player.setItem(item.getItemType());
+					player.setDelay(item.getItemDelay());
+					tempItemList.remove(item);
+				}
+			}
+			itemList = tempItemList;
 		}
 	}
 

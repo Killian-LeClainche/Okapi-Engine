@@ -10,6 +10,7 @@ public class Item extends Block {
     private final Vector2f acceleration = new Vector2f(0, -2);
     private final Vector2f screen = new Vector2f(1720, 1080);
     private int itemType;
+    private int itemDelay;
 
     public static class ItemType{
         public final static int NOTHING = 0;
@@ -29,13 +30,22 @@ public class Item extends Block {
         this.velocity = new Vector2f(xvel, yvel);
         this.size = new Vector2f(xsize, ysize);
         this.itemType = itemType;
+        switch (itemType) {
+            case ItemType.NOTHING: this.itemDelay = 60; break;
+            case ItemType.DAGGER: this.itemDelay = 20; break;
+            case ItemType.SWORD: this.itemDelay = 30; break;
+            case ItemType.CLAYMORE: this.itemDelay = 40; break;
+            case ItemType.HALBERD: this.itemDelay = 50; break;
+            case ItemType.SNIPER: this.itemDelay = 60; break;
+            case ItemType.SHOTGUN: this.itemDelay = 70; break;
+            case ItemType.PISTOL: this.itemDelay = 40; break;
+            case ItemType.RIFLE: this.itemDelay = 50; break;
+            case ItemType.GOD_FIST: this.itemDelay = 2; break;
+        }
     }
 
     public Item(int xpos, int ypos, int xvel, int yvel, int itemType) {
-        this.position = new Vector2f(xpos, ypos);
-        this.velocity = new Vector2f(xvel, yvel);
-        this.size = new Vector2f(32, 32);
-        this.itemType = itemType;
+        new Item(xpos, ypos, xvel, yvel, 32, 32, itemType);
     }
 
     public Vector2f getPosition() {
@@ -44,6 +54,10 @@ public class Item extends Block {
 
     public int getItemType() {
         return itemType;
+    }
+
+    public int getItemDelay() {
+        return itemDelay;
     }
 
     public void update() {

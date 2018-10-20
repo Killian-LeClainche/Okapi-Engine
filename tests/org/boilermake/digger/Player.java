@@ -20,6 +20,7 @@ public class Player extends Block {
 	private final int jumpVel = 50;
 	private final Vector2f screen = new Vector2f(1720, 1080);
 	private int item;
+	private int delay;
 
 	public Player(Vector2f position) {
 		this.position = position;
@@ -29,7 +30,8 @@ public class Player extends Block {
 		this.isJumping = false;
 		this.isDoubleJumping = false;
 		this.isGrounded = false;
-		this.item = 0;
+		this.item = Item.ItemType.NOTHING;
+		this.delay = 60;
 	}
 
 	public Vector2f getVelocity() {
@@ -61,6 +63,14 @@ public class Player extends Block {
 	public void setItem(int item) {
 		this.item = item;
 	}
+
+	public void setDelay(int delay) {
+	    this.delay = delay;
+    }
+
+	public boolean isGrounded() {
+	    return isGrounded;
+    }
 
 	public boolean hasJumps() {
 		return this.jumps != 0;
@@ -176,28 +186,28 @@ public class Player extends Block {
 
     public HitBox createSwordHitBox() {
         if(this.isFacingLeft) {
-            return new HitBox((int)(this.position.x - this.size.x/2 - 16), (int)this.position.y, 32, 16, 0, 0, 30, this, HitBox.HitBoxTypes.SWORD);
+            return new HitBox((int)(this.position.x - this.size.x/2 - 16), (int)this.position.y, 32, 16, 0, 0, 25, this, HitBox.HitBoxTypes.SWORD);
         }
         else {
-            return new HitBox((int)(this.position.x + this.size.x/2 + 16), (int)this.position.y, 32, 16, 0, 0, 30, this, HitBox.HitBoxTypes.SWORD);
+            return new HitBox((int)(this.position.x + this.size.x/2 + 16), (int)this.position.y, 32, 16, 0, 0, 25, this, HitBox.HitBoxTypes.SWORD);
         }
     }
 
     public HitBox createClaymoreHitBox() {
         if(this.isFacingLeft) {
-            return new HitBox((int)(this.position.x - this.size.x/2 - 32), (int)this.position.y, 64, 16, 0, 0, 60, this, HitBox.HitBoxTypes.SWORD);
+            return new HitBox((int)(this.position.x - this.size.x/2 - 32), (int)this.position.y, 64, 16, 0, 0, 35, this, HitBox.HitBoxTypes.SWORD);
         }
         else {
-            return new HitBox((int)(this.position.x + this.size.x/2 + 32), (int)this.position.y, 64, 16, 0, 0, 60, this, HitBox.HitBoxTypes.SWORD);
+            return new HitBox((int)(this.position.x + this.size.x/2 + 32), (int)this.position.y, 64, 16, 0, 0, 35, this, HitBox.HitBoxTypes.SWORD);
         }
     }
 
     public HitBox createHalberdHitBox() {
         if(this.isFacingLeft) {
-            return new HitBox((int)(this.position.x - this.size.x/2 - 48), (int)this.position.y, 96, 32, 0, 0, 90, this, HitBox.HitBoxTypes.SWORD);
+            return new HitBox((int)(this.position.x - this.size.x/2 - 48), (int)this.position.y, 96, 32, 0, 0, 45, this, HitBox.HitBoxTypes.SWORD);
         }
         else {
-            return new HitBox((int)(this.position.x + this.size.x/2 + 48), (int)this.position.y, 96, 32, 0, 0, 90, this, HitBox.HitBoxTypes.SWORD);
+            return new HitBox((int)(this.position.x + this.size.x/2 + 48), (int)this.position.y, 96, 32, 0, 0, 45, this, HitBox.HitBoxTypes.SWORD);
         }
     }
 
@@ -244,12 +254,12 @@ public class Player extends Block {
         if(this.isFacingLeft) {
             int xsize = 24;
             int xpos = (int)(this.position.x - this.size.x/2 - xsize/2.0);
-            return new HitBox(xpos, (int)this.position.y, xsize, 8, (int)(-screen.x/10), 0, 10, this, HitBox.HitBoxTypes.GUN);
+            return new HitBox(xpos, (int)this.position.y, xsize, 8, (int)(-screen.x/5), 0, 5, this, HitBox.HitBoxTypes.GUN);
         }
         else {
             int xsize = 24;
             int xpos = (int)(this.position.x + this.size.x/2 + xsize/2.0);
-            return new HitBox(xpos, (int)this.position.y, xsize, 8, (int)(screen.x/10), 0, 10, this, HitBox.HitBoxTypes.GUN);
+            return new HitBox(xpos, (int)this.position.y, xsize, 8, (int)(screen.x/5), 0, 5, this, HitBox.HitBoxTypes.GUN);
         }
     }
 
