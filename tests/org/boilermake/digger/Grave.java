@@ -5,9 +5,7 @@ import org.joml.Vector2f;
 /**
  * Created by Killian Le Clainche on 10/20/2018.
  */
-public class Grave {
-	private final Vector2f position;
-	private final Vector2f size;
+public class Grave extends Block {
     private int digTime;
     private final int digTick;
 	private final Item reward;
@@ -23,7 +21,7 @@ public class Grave {
 
     public Grave(int xpos, int ypos, int digTime, Item reward) {
         this.position = new Vector2f(xpos, ypos);
-        this.size = new Vector2f(16, 9);
+        this.size = new Vector2f(32, 64);
         this.digTime = digTime;
         this.reward = reward;
         this.digTick = 1;

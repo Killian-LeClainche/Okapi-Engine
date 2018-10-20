@@ -19,8 +19,6 @@ public class DiggerWorld extends World {
 	public List<Grave> graveList = new ArrayList<>();
 	public List<Player> playerList = new ArrayList<>();
 	public Map<String, Key> inputMap = new TreeMap<>();
-	Terrain[][] tmap = new Terrain[120][120];
-	Grave[][] gmap = new Grave[120][120];
 
 	public DiggerWorld(@NotNull App application) {
 		super(application);
@@ -46,50 +44,84 @@ public class DiggerWorld extends World {
 
 		while(numBlocks < 16) {
 
-			int xcoord = rangen.nextInt(120);
-			int ycoord = rangen.nextInt(120);
-			int xsize = rangen.nextInt(10);
-			int ysize = rangen.nextInt(6);
-			Vector2f terrainCoord = new Vector2f(xcoord, ycoord);
-			Vector2f terrainSize = new Vector2f(xcoord + xsize, ycoord + ysize);
+			int xcoord = rangen.nextInt(1800) + 80;
+			int ycoord = rangen.nextInt(980) + 60;
+			int xsize = rangen.nextInt(40) + 10;
+			int ysize = rangen.nextInt(20) + 9;
 
 			Terrain toAdd = new Terrain(xcoord, ycoord, xsize, ysize);
 
 			boolean overlap = false;
 			for (Terrain t : terrainList) {
-				if (overlapping(toAdd, t) == true) {
+				if (Helper.isColliding(t, toAdd) == true) {
 					overlap = true;
-					break;
 				}
+			}
+
+			if(overlap == false)
+			{
+				terrainList.add(toAdd);
+				numBlocks++;
 			}
 		}
 
+		int numGraves = 0;
 
-			int xval = rangen.nextInt(119) + 1;
-			int yval = rangen.nextInt(119) + 1;
+		int xval = rangen.nextInt((int)(terrainList.get(0).getPosition().x + terrainList.get(0).getSize().x)) + 1;
+		int yval = (int)(terrainList.get(0).getPosition().y + 1.0);
+		int diggingTime = rangen.nextInt(3) + 1;
+		int item = rangen.nextInt(2) + 1;
+		int xvelocity = rangen.nextInt(21) + 10;
+		int yvelocity = rangen.nextInt(21) + 10;
 
-			gmap[xval][yval] = graveList.remove(0);
-			Vector2f graveCoord = new Vector2f(xval * 16, yval * 9);
+		Grave toAdd = new Grave(xval, yval, diggingTime, new Item(xval, yval, xvelocity, yvelocity, item));
+		Vector2f graveCoord = new Vector2f(xval * 16, yval * 9);
 
-			Vector2f PlayerCoord1 = new Vector2f(480, 270);
-			Vector2f PlayerCoord2 = new Vector2f(1440, 270);
-			Vector2f PlayerCoord3 = new Vector2f(480, 810);
-			Vector2f PlayerCoord4 = new Vector2f(1440, 810);
+		for(int i = 1; i < terrainList.size(); i++)
+		{
+			Terrain t = terrainList.get(i);
+			int decision = rangen.nextInt(2);
 
+			if(decision == 0)
+			{
+				xval = rangen.nextInt((int)(t.getPosition().x + t.getSize().x)) + 1;
+				yval = (int)(t.getPosition().y + 1.0);
 
-			renderer.init();
+				diggingTime = rangen.nextInt(3) + 1;
+				item = rangen.nextInt(2) + 1;
+				xvelocity = rangen.nextInt(21) + 10;
+				yvelocity = rangen.nextInt(21) + 10;
+
+				Grave graveToAdd = new Grave(xval, yval, diggingTime, new Item(xval, yval, xvelocity, yvelocity, item));
+				graveList.add(graveToAdd);
+			}
+
+		}
+
+		Vector2f PlayerCoord1 = new Vector2f(480, 270);
+		Vector2f PlayerCoord2 = new Vector2f(1440, 270);
+		Vector2f PlayerCoord3 = new Vector2f(480, 810);
+		Vector2f PlayerCoord4 = new Vector2f(1440, 810);
+
+		playerList.add(new Player(PlayerCoord1));
+		playerList.add(new Player(PlayerCoord2));
+		playerList.add(new Player(PlayerCoord3));
+		playerList.add(new Player(PlayerCoord4));
+
+		renderer.init();
 	}
 	
 	@Override
 	public void update() {
-			super.update();
-			for(Key k : inputMap.values()) {
-				k.update();
-			}
 
-			for(Player p : playerList) {
-				p.update();
-			}
+		super.update();
+		for(Key k : inputMap.values()) {
+			k.update();
+		}
+
+		for(Player p : playerList) {
+			p.update();
+		}
 
 			if(inputMap.get("rightP1").isPressed()) {
 				playerList.get(0).moveRight();

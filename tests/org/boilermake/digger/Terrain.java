@@ -6,7 +6,7 @@ import polaris.okapi.render.Texture;
 /**
  * Created by Killian Le Clainche on 10/20/2018.
  */
-public class Terrain {
+public class Terrain extends Block {
     private final Vector2f position;
     private final Vector2f size;
 
@@ -19,5 +19,4 @@ public class Terrain {
         this.position = new Vector2f(xpos, ypos);
         this.size = new Vector2f(16, 9);
     }
-
 }
