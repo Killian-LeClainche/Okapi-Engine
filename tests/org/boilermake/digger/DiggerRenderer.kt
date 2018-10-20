@@ -13,29 +13,15 @@ import polaris.okapi.render.VertexAttributes
 
 class DiggerRenderer(private val world: DiggerWorld) {
 
-    lateinit var quad: DrawArray
-
     var timeExisted: Double = 0.0
 
-    var shaderTexID: Int = 0
+    val playerRenders: MutableList<PlayerRender> = ArrayList()
 
     fun init() {
 
-        val pos = world.playerList[0].position;
-
-        val quadArray = floatArrayOf(
-                //position          color                   texture
-                //x,y,z             r,g,b,a                 u,v
-                pos.x - 60f, pos.y - 60f, 0f,       1f, 1f, 1f, 1f,     0f, 1f,
-                pos.x + 60f, pos.y - 60f, 0f,       1f, 1f, 1f, 1f,     1f, 1f,
-                pos.x + 60f, pos.y + 60f, 0f,       1f, 1f, 1f, 1f,     1f, 0f,
-
-                pos.x + 60f, pos.y + 60f, 0f,       1f, 1f, 1f, 1f,     1f, 0f,
-                pos.x - 60f, pos.y - 60f, 0f,       1f, 1f, 1f, 1f,     0f, 1f,
-                pos.x - 60f, pos.y + 60f, 0f,       1f, 1f, 1f, 1f,     0f, 1f
-        )
-
-        quad = DrawArray(GL20C.GL_TRIANGLES, GL20C.GL_DYNAMIC_DRAW, quadArray, 6, VertexAttributes.POS_COLOR_TEXTURE)
+        for(i in world.playerList) {
+            playerRenders.add(PlayerRender(i))
+        }
 
         world["player"] = "resources/digger/character.png"
     }
@@ -52,25 +38,40 @@ class DiggerRenderer(private val world: DiggerWorld) {
 
         Texture.enable()
 
-        quad.bind()
+        texture.bind()
 
-        val pos = world.playerList[0].position;
+        for(i in playerRenders) {
+            i.render()
+        }
+    }
 
-        quad.array = floatArrayOf(
+}
+
+class PlayerRender(val player: Player) {
+
+    var quad: DrawArray = DrawArray(GL20C.GL_TRIANGLES, GL20C.GL_DYNAMIC_DRAW, getQuadArray(), 6, VertexAttributes.POS_COLOR_TEXTURE)
+
+    fun getQuadArray(): FloatArray {
+        val pos = player.position;
+        return floatArrayOf(
                 //position          color                   texture
                 //x,y,z             r,g,b,a                 u,v
-                pos.x - 60f, pos.y - 60f, 0f,       1f, 1f, 1f, 1f,     0f, 1f,
-                pos.x + 60f, pos.y - 60f, 0f,       1f, 1f, 1f, 1f,     1f, 1f,
-                pos.x + 60f, pos.y + 60f, 0f,       1f, 1f, 1f, 1f,     1f, 0f,
+                pos.x - 60f, pos.y - 60f, 0f,       1f, 1f, 1f, 1f,     0.01f, .99f,
+                pos.x + 60f, pos.y - 60f, 0f,       1f, 1f, 1f, 1f,     .99f, .99f,
+                pos.x + 60f, pos.y + 60f, 0f,       1f, 1f, 1f, 1f,     .99f, 0.01f,
 
-                pos.x + 60f, pos.y + 60f, 0f,       1f, 1f, 1f, 1f,     1f, 0f,
-                pos.x - 60f, pos.y - 60f, 0f,       1f, 1f, 1f, 1f,     0f, 1f,
-                pos.x - 60f, pos.y + 60f, 0f,       1f, 1f, 1f, 1f,     0f, 0f
+                pos.x + 60f, pos.y + 60f, 0f,       1f, 1f, 1f, 1f,     .99f, 0.01f,
+                pos.x - 60f, pos.y - 60f, 0f,       1f, 1f, 1f, 1f,     0.01f, .99f,
+                pos.x - 60f, pos.y + 60f, 0f,       1f, 1f, 1f, 1f,     0.01f, 0.01f
         )
+    }
+
+    fun render() {
+        quad.bind()
+
+        quad.array = getQuadArray()
 
         quad.draw()
-
-        quad.disable()
     }
 
 }
