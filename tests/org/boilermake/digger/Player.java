@@ -11,10 +11,11 @@ public class Player extends Block {
 	public Vector2f velocity;
 	private int jumps;
 	private boolean isJumping;
-	public final Vector2f acceleration = new Vector2f(0.75f, -9.8f);
-	private final Vector2f terminalVelocity = new Vector2f(20, 20);
-	private final int jumpVel = 20;
-	private final Vector2f max = new Vector2f(1850, 1000);
+	private boolean isGrounded;
+	public final Vector2f acceleration = new Vector2f(0.75f, -4f);
+	private final Vector2f terminalVelocity = new Vector2f(20, 0);
+	private final int jumpVel = 65;
+	private final Vector2f max = new Vector2f(1700, 1000);
 	private final Vector2f min = new Vector2f(35, 35);
 
 	public Player(Vector2f position) {
@@ -22,6 +23,7 @@ public class Player extends Block {
 		this.velocity = new Vector2f(0, 0);
 		this.jumps = 2;
 		this.isJumping = false;
+		this.isGrounded = false;
 	}
 
 	public Vector2f getVelocity() {
@@ -55,23 +57,25 @@ public class Player extends Block {
 	}
 
 	public void resetJumps() {
-		this.jumps = 2;
+		this.jumps = 1;
 	}
 
 	public void update() {
-		getVelocity().y += acceleration.y;
-		if(getVelocity().y > terminalVelocity.y) getVelocity().y = terminalVelocity.y;
-		if(getVelocity().y < -terminalVelocity.y) getVelocity().y = -terminalVelocity.y;
-		if(getVelocity().x > terminalVelocity.x) getVelocity().x = terminalVelocity.x;
-		if(getVelocity().x < -terminalVelocity.x) getVelocity().x = -terminalVelocity.x;
+		this.velocity.y += acceleration.y;
+		System.out.println(this.velocity.y);
+		if(this.velocity.x > terminalVelocity.x) this.velocity.x = terminalVelocity.x;
+		if(this.velocity.x < -terminalVelocity.x) this.velocity.x = -terminalVelocity.x;
 
 		this.position.x += this.velocity.x;
 		this.position.y += this.velocity.y;
 		if(this.position.y < min.y) {
 			this.position.y = min.y;
-			this.jumps = 1;
-			this.isJumping = false;
-			this.velocity.y = 0;
+			if(!this.isGrounded) {
+				resetJumps();
+				this.isJumping = false;
+				this.velocity.y = 0;
+				this.isGrounded = true;
+			}
 		} else if(this.position.y > max.y){
 			this.position.y = max.y;
 			this.velocity.y = 0;
@@ -90,32 +94,23 @@ public class Player extends Block {
 		setVelocity(0, 0);
 	}
 
-	private void move(int direction) {
-		if(direction == 0) { //right
-			this.velocity.x += acceleration.x;
-		}
-		if(direction == 1) { //left
-			this.velocity.x += -acceleration.x;
-		}
-		if(direction == 2 && hasJumps()) { //up
+	public void moveRight() {
+		this.velocity.x += acceleration.x;
+	}
+
+	public void moveLeft() {
+		this.velocity.x += -acceleration.x;
+	}
+
+	public void moveUp() {
+		if(hasJumps()) {
 			this.velocity.y += jumpVel;
+			this.isGrounded = false;
 			if(!this.isJumping) {
 				this.jumps--;
 				this.isJumping = true;
 			}
 		}
-	}
-
-	public void moveRight() {
-		move(0);
-	}
-
-	public void moveLeft() {
-		move(1);
-	}
-
-	public void moveUp() {
-		move(2);
 	}
 
 	public void moveDown() {
