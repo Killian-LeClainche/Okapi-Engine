@@ -62,6 +62,9 @@ public class DiggerWorld extends World {
 		if(inputMap.get("leftP1").isPressed()) {
 			playerList.get(0).moveLeft();
 		}
+		if(inputMap.get("upP1").isPressed()) {
+			playerList.get(0).moveUp();
+		}
 		if(!inputMap.get("rightP1").isPressed() && !inputMap.get("leftP1").isPressed()) {
 			playerList.get(0).slow();
 		}
