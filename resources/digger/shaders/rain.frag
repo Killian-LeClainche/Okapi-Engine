@@ -20,7 +20,7 @@ uniform float gray;
 
 //----------------------------------------------------------------------
 
-const vec3 backgroundColor = vec3(0.2,0.4,0.6) * 0.09;
+const vec3 backgroundColor = vec3(0.2,0.4,0.6) * 0.0;
 
 //----------------------------------------------------------------------
 // noises
@@ -169,7 +169,7 @@ float randomStart(vec2 co){return 0.8+0.2*hash(dot(co,vec2(123.42,117.853))*412.
 
 void main() {
     vec2 q = gl_FragCoord.xy / resolution.xy;
-	vec2 p = -1.0 + 2.0*q;
+	vec2 p = -1.0 + 2.0 * q;
 	p.x *= resolution.x / resolution.y;
 
     if (q.y < .12 || q.y >= .88) {

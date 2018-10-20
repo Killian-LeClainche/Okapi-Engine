@@ -25,14 +25,14 @@ class DiggerRenderer(private val world: DiggerWorld) {
 
     val rainShader: Shader = Shader()
     val rainQuad: DrawArray = DrawArray(GL20C.GL_TRIANGLES, GL20C.GL_STATIC_DRAW, floatArrayOf(
-            0f, 0f, 0f,
-            1920f, 0f, 0f,
-            1920f, 1080f, 0f,
+            0f, 0f, 0f,     0f, 0f, 0f, 0f,     0f, 0f,
+            1920f, 0f, 0f,     0f, 0f, 0f, 0f,     0f, 0f,
+            1920f, 1080f, 0f,     0f, 0f, 0f, 0f,     0f, 0f,
 
-            1920f, 1080f, 0f,
-            0f, 0f, 0f,
-            0f, 1080f, 0f
-    ), 6, VertexAttributes.POS)
+            1920f, 1080f, 0f,     0f, 0f, 0f, 0f,     0f, 0f,
+            0f, 0f, 0f,     0f, 0f, 0f, 0f,     0f, 0f,
+            0f, 1080f, 0f,     0f, 0f, 0f, 0f,     0f, 0f
+    ), 6, VertexAttributes.POS_COLOR_TEXTURE)
 
     fun init() {
 
@@ -70,14 +70,13 @@ class DiggerRenderer(private val world: DiggerWorld) {
         GL30C.glUniform1f(rainShader["slow"], 10f)
         GL30C.glUniform1f(rainShader["gray"], .3f)
 
-        VertexAttributes.POS.enable()
+        VertexAttributes.POS_COLOR_TEXTURE.enable()
         Texture.disable()
         rainQuad.bind()
         rainQuad.draw()
 
         world.application.renderManager.posColorTextureShader.bind()
 
-        VertexAttributes.POS_COLOR_TEXTURE.enable()
 
         Texture.enable()
 

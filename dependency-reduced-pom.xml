@@ -126,14 +126,20 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-test</artifactId>
-      <version>1.2.30</version>
+      <version>1.2.51</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>kotlin-test-common</artifactId>
+          <groupId>org.jetbrains.kotlin</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <properties>
     <lwjgl.version>3.2.0</lwjgl.version>
     <joml.version>1.9.11</joml.version>
-    <kotlin.version>1.2.30</kotlin.version>
+    <kotlin.version>1.2.51</kotlin.version>
     <jafama.version>2.3.1</jafama.version>
   </properties>
 </project>
