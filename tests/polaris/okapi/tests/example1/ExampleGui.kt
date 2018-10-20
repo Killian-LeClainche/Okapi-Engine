@@ -7,7 +7,6 @@ import polaris.okapi.render.DrawArray
 import polaris.okapi.render.Shader
 import polaris.okapi.render.Texture
 import polaris.okapi.render.VertexAttributes
-import java.io.File
 
 
 /**

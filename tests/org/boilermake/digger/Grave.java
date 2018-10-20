@@ -1,7 +1,6 @@
 package org.boilermake.digger;
 
 import org.joml.Vector2f;
-import polaris.okapi.world.Vector;
 
 /**
  * Created by Killian Le Clainche on 10/20/2018.

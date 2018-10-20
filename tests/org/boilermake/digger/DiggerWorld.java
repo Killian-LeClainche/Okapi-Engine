@@ -2,10 +2,10 @@ package org.boilermake.digger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2f;
 import polaris.okapi.App;
 import polaris.okapi.options.Key;
 import polaris.okapi.render.Texture;
-import polaris.okapi.world.Vector;
 import polaris.okapi.world.World;
 
 import java.util.ArrayList;
@@ -30,20 +30,16 @@ public class DiggerWorld extends World {
 	
 	@Override
 	public void init() {
-		inputMap.put("rightP1", (Key)getSettings().get("p1:action:right"));
-		inputMap.put("leftP1", (Key)getSettings().get("p1:action:left"));
-		inputMap.put("downP1", (Key)getSettings().get("p1:action:down"));
-		inputMap.put("upP1", (Key)getSettings().get("p1:action:up"));
-		inputMap.put("jumpP1", (Key)getSettings().get("p1:action:jump"));
-		inputMap.put("rightP2", (Key)getSettings().get("p2:action:right"));
-		inputMap.put("leftP2", (Key)getSettings().get("p2:action:left"));
-		inputMap.put("downP2", (Key)getSettings().get("p2:action:down"));
-		inputMap.put("upP2", (Key)getSettings().get("p2:action:up"));
-		inputMap.put("jumpP2", (Key)getSettings().get("p2:action:jump"));
 
-		terrainList.add(new Terrain(0, 0));
+		inputMap.put("rightP1", (Key)getSettings().get("p1:right"));
+		inputMap.put("leftP1", (Key)getSettings().get("p1:left"));
+		inputMap.put("downP1", (Key)getSettings().get("p1:down"));
+		inputMap.put("upP1", (Key)getSettings().get("p1:up"));
+		//inputMap.put("p2", (Key)getSettings().get("p2"));
+
+		//terrainList.add(new Terrain());
 		graveList.add(new Grave(0, 0, 10, null));
-		playerList.add(new Player(new Vector(300, 200, 30)));
+		playerList.add(new Player(new Vector2f(300, 200)));
 		
 		renderer.init();
 
@@ -51,10 +47,24 @@ public class DiggerWorld extends World {
 	
 	@Override
 	public void update() {
+		super.update();
 		for(Key k : inputMap.values()) {
 			k.update();
 		}
+		
+		for(Player p : playerList) {
+			p.update();
+		}
 
+		if(inputMap.get("rightP1").isPressed()) {
+			playerList.get(0).moveRight();
+		}
+		if(inputMap.get("leftP1").isPressed()) {
+			playerList.get(0).moveLeft();
+		}
+		if(!inputMap.get("rightP1").isPressed() && !inputMap.get("leftP1").isPressed()) {
+			playerList.get(0).slow();
+		}
 	}
 	
 	@Override
