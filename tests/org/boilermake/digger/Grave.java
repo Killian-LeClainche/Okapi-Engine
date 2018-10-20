@@ -21,7 +21,7 @@ public class Grave extends Block {
 
     public Grave(int xpos, int ypos, int digTime, Item reward) {
         this.position = new Vector2f(xpos, ypos);
-        this.size = new Vector2f(16, 9);
+        this.size = new Vector2f(32, 64);
         this.digTime = digTime;
         this.reward = reward;
         this.digTick = 1;

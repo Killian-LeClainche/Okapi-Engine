@@ -26,7 +26,8 @@ public class Item extends Block {
 
     public Item(int xpos, int ypos, int xvel, int yvel, int itemType) {
         this.position = new Vector2f(xpos, ypos);
-        this.size = new Vector2f(16, 9);
+        this.velocity = new Vector2f(xvel, yvel);
+        this.size = new Vector2f(32, 32);
         this.itemType = itemType;
     }
 

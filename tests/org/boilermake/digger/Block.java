@@ -25,8 +25,8 @@ public class Block {
     }
 
     public void setSize(int sizex, int sizey) {
-        this.position.x = sizex;
-        this.position.y = sizey;
+        this.size.x = sizex;
+        this.size.y = sizey;
 
     }
 }
