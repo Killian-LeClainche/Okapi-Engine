@@ -18,6 +18,7 @@ public class Player extends Block {
 	private final Vector2f terminalVelocity = new Vector2f(20, 0);
 	private final int jumpVel = 50;
 	private final Vector2f screen = new Vector2f(1920, 1080);
+	private int item;
 
 	public Player(Vector2f position) {
 		this.position = position;
@@ -27,6 +28,7 @@ public class Player extends Block {
 		this.isJumping = false;
 		this.isDoubleJumping = false;
 		this.isGrounded = false;
+		this.item = 0;
 	}
 
 	public Vector2f getVelocity() {
@@ -53,6 +55,10 @@ public class Player extends Block {
 	public void setPosition(float x, float y) {
 		this.position.x = x;
 		this.position.y = y;
+	}
+
+	public void setItem(int item) {
+		this.item = item;
 	}
 
 	public boolean hasJumps() {
@@ -135,6 +141,9 @@ public class Player extends Block {
 	}
 
 	public HitBox useItem() {
-	    return null;
+	    switch(this.item) {
+			default: break;
+		}
+		return null;
     }
 }

@@ -12,6 +12,7 @@ public class Item extends Block {
     private int itemType;
 
     public static class ItemType{
+        public final static int NOTHING = 0;
         public final static int SWORD = 1;
         public final static int GUN = 2;
     }

@@ -96,6 +96,8 @@ public class DiggerWorld extends World {
 			k.update();
 		}
 
+		player2.update();
+
 		checkKeysP1();
 		checkKeysP2();
 
