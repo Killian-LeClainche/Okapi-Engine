@@ -1,7 +1,6 @@
 package polaris.okapi.tests.starship.world.entity
 
 import org.joml.Vector2d
-import polaris.okapi.world.Vector
 
 /**
  * Created by Killian Le Clainche on 2/26/2018.

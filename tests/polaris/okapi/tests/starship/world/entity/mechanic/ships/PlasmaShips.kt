@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL11
 import polaris.okapi.render.Texture
 import polaris.okapi.tests.starship.world.entity.ShipInfo
 import polaris.okapi.tests.starship.world.entity.Starship
-import polaris.okapi.world.Vector
 import polaris.okapi.world.World
 
 /**

@@ -2,6 +2,7 @@ package polaris.okapi.render
 
 import org.lwjgl.opengl.ARBShaderObjects
 import org.lwjgl.opengl.GL20C
+import org.lwjgl.opengl.GL33C
 import org.lwjgl.opengl.GL33C.*
 import org.lwjgl.system.rpmalloc.RPmalloc
 import polaris.okapi.util.readFileAsString
@@ -59,19 +60,26 @@ enum class VertexAttributes(val ids: IntArray, val strides: IntArray, val stride
     });
 }
 
-class DrawArray(private val glMode: Int, private val vboDrawMode: Int, private val verticeCount: Int, private val attributes: VertexAttributes) {
+class DrawArray(private val glMode: Int, private val vboDrawMode: Int, floatArray: FloatArray, private val verticeCount: Int, private val attributes: VertexAttributes) {
 
     val vaoId: Int = glGenVertexArrays()
     val vboId: Int = glGenBuffers()
+
     var buffer: FloatBuffer = RPmalloc.rpmalloc((verticeCount * VertexAttributes.POS_COLOR.strideLength).toLong())!!.asFloatBuffer()
 
-    constructor(glMode: Int, vboDrawMode: Int, array: FloatArray, verticeCount: Int, attributes: VertexAttributes) : this(glMode, vboDrawMode, verticeCount, attributes) {
-        buffer.put(array)
-        create()
-    }
+    var array: FloatArray = floatArray
+        set(value) {
+            buffer.clear()
+            buffer.put(value)
+            buffer.flip()
 
-    constructor(glMode: Int, vboDrawMode: Int, buffer: FloatBuffer, verticeCount: Int, attributes: VertexAttributes) : this(glMode, vboDrawMode, verticeCount, attributes) {
-        buffer.put(buffer)
+            GL33C.glBufferSubData(GL33C.GL_ARRAY_BUFFER, 0, buffer)
+
+            field = value
+        }
+
+    init {
+        buffer.put(array)
         create()
     }
 
