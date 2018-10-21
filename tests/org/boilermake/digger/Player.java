@@ -13,7 +13,6 @@ public class Player extends Block {
 	private boolean isJumping;
 	private long jumpTime;
 	private boolean isDoubleJumping;
-	private boolean isGrounded;
 	private boolean isFacingLeft;
 	private boolean hasCollided;
 	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
@@ -30,7 +29,6 @@ public class Player extends Block {
 		this.jumps = 2;
 		this.isJumping = false;
 		this.isDoubleJumping = false;
-		this.isGrounded = false;
 		this.item = Item.ItemType.NOTHING;
 		this.delay = 60;
 	}
@@ -75,7 +73,7 @@ public class Player extends Block {
     }
 
 	public boolean isGrounded() {
-	    return isGrounded;
+	    return this.velocity.y == 0;
     }
 
 	public boolean isFalling() {
@@ -83,7 +81,7 @@ public class Player extends Block {
 	}
 
 	public boolean isMoving() {
-		return this.isGrounded && this.velocity.x != 0;
+		return isGrounded() && !(this.velocity.x < this.acceleration.x && this.velocity.x > -this.acceleration.x);
 	}
 
 	public boolean isGoingUp() {
@@ -95,15 +93,7 @@ public class Player extends Block {
 	}
 
 	public boolean isIdle() {
-		return this.velocity.x == 0 && this.velocity.y == 0;
-	}
-
-	public void setCollided(boolean hasCollided) {
-		this.hasCollided = hasCollided;
-	}
-
-	public boolean hasCollided() {
-		return this.hasCollided;
+		return !isMoving() && isGrounded();
 	}
 
 	public boolean hasJumps() {
@@ -111,27 +101,28 @@ public class Player extends Block {
 	}
 
 	public void resetJumps() {
-		this.isGrounded = true;
 		this.isJumping = false;
 		this.isDoubleJumping = false;
 		this.jumps = 2;
 	}
 
 	public void update() {
+		System.out.println(isGrounded());
 		this.velocity.y += acceleration.y;
 		if(this.velocity.x > terminalVelocity.x) this.velocity.x = terminalVelocity.x;
 		if(this.velocity.x < -terminalVelocity.x) this.velocity.x = -terminalVelocity.x;
 		if(this.velocity.y < -terminalVelocity.y) this.velocity.y = -terminalVelocity.y;
+
+		if(!isGrounded() && this.jumps == 2) {
+			this.jumps--;
+		}
 
 		this.position.x += this.velocity.x;
 		this.position.y += this.velocity.y;
 		if(this.position.y - this.size.y/2 < 0) {
 			this.position.y = this.size.y/2;
 			this.velocity.y = 0;
-			if(!this.isGrounded) {
-				resetJumps();
-				this.velocity.y = 0;
-			}
+			resetJumps();
 		} else if(this.position.y + this.size.y/2 > screen.y){
 			this.position.y = screen.y - this.size.y/2;
 			this.velocity.y = 0;
@@ -147,29 +138,35 @@ public class Player extends Block {
 	}
 
 	public void slow() {
-		if(this.velocity.x >= this.acceleration.x/2 + 0.1) {
+		if(this.velocity.x >= this.acceleration.x) {
 			this.velocity.x -= 2*acceleration.x;
-		} else if(this.velocity.x <= -this.acceleration.x/2 - 0.1) {
+		} else if(this.velocity.x <= -this.acceleration.x) {
 			this.velocity.x += 2*acceleration.x;
 		} else {
 			this.velocity.x = 0;
 		}
-
 	}
 
 	public void moveRight() {
-		this.velocity.x += acceleration.x;
+		if(this.isFacingLeft) {
+			this.velocity.x += 5*acceleration.x;
+		} else {
+			this.velocity.x += acceleration.x;
+		}
 		this.isFacingLeft = false;
 	}
 
 	public void moveLeft() {
-		this.velocity.x += -acceleration.x;
+		if(!this.isFacingLeft) {
+			this.velocity.x += -5*acceleration.x;
+		} else {
+			this.velocity.x += -acceleration.x;
+		}
 		this.isFacingLeft = true;
 	}
 
 	public void moveUp() {
 		if(hasJumps()) {
-			this.isGrounded = false;
 			if(!this.isJumping) {
 				this.velocity.y = jumpVel;
 				this.jumps--;

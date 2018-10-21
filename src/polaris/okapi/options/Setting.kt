@@ -18,6 +18,14 @@ class IntSetting(var value: Int) : Setting {
     override fun save(): String = this.value.toString()
 }
 
+class LongSetting(var value: Long) : Setting {
+    override fun load(value: String) {
+        this.value = value.toLong()
+    }
+
+    override fun save(): String = this.value.toString()
+}
+
 class DoubleSetting(var value: Double) : Setting {
 
     override fun load(value: String) {

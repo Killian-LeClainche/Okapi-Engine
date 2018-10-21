@@ -148,7 +148,7 @@ class Settings {
                     "enableVsync" -> if(enableVsync) enableVsync = value.toBoolean()
                     "alcRefreshRate" -> if(alcRefreshRate == 60) alcRefreshRate = value.toInt()
                     "alcSync" -> if(!alcSync) alcSync = value.toBoolean()
-                    "monitor" -> settings["monitor"] = IntSetting(value.toInt())
+                    "monitor" -> settings["monitor"] = LongSetting(value.toLong())
                     "windowMode" -> if(!updateWindow) windowMode = WindowMode.valueOf(value.toInt())
                     "windowPosX" -> windowPosX = value.toInt()
                     "windowPosY" -> windowPosY = value.toInt()
