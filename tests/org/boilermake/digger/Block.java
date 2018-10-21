@@ -21,7 +21,6 @@ public class Block {
     public void setPosition(int posx, int posy) {
         this.position.x = posx;
         this.position.y = posy;
-
     }
 
     public void setSize(int sizex, int sizey) {

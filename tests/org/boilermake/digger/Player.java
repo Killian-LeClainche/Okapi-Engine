@@ -144,7 +144,7 @@ public class Player extends Block {
 
 	public void moveRight() {
 		if(this.isFacingLeft) {
-			this.velocity.x = acceleration.x;
+			this.velocity.x = -velocity.x;
 		} else {
 			this.velocity.x += acceleration.x;
 		}
@@ -153,7 +153,7 @@ public class Player extends Block {
 
 	public void moveLeft() {
 		if(!this.isFacingLeft) {
-			this.velocity.x = -acceleration.x;
+			this.velocity.x = -velocity.x;
 		} else {
 			this.velocity.x += -acceleration.x;
 		}
