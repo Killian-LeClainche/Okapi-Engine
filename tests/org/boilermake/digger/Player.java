@@ -15,6 +15,8 @@ public class Player extends Block {
 	private boolean isDoubleJumping;
 	private boolean isFacingLeft;
 	private boolean isDead;
+	private boolean isGraveDigging;
+	private boolean hasClickedGrave;
 	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
 	private final Vector2f terminalVelocity = new Vector2f(20, 48);
 	private final int jumpVel = 50;
@@ -22,6 +24,7 @@ public class Player extends Block {
 	private int item;
 	public int ammo;
 	private int delay;
+	public long clickGraveTime;
 
 	public Player(Vector2f position) {
 		this.position = position;
@@ -31,6 +34,8 @@ public class Player extends Block {
 		this.isJumping = false;
 		this.isDoubleJumping = false;
 		this.isDead = false;
+		this.isGraveDigging = false;
+		this.hasClickedGrave = false;
 		this.item = Item.ItemType.NOTHING;
 		this.ammo = -1;
 		this.delay = 60;
@@ -102,6 +107,14 @@ public class Player extends Block {
 	public boolean isDoubleJumping() {
 		return this.isDoubleJumping;
 	}
+
+	public boolean isGraveDigging() {
+	    return this.isGraveDigging;
+    }
+
+    public boolean hasClickedGrave() {
+	    return this.hasClickedGrave;
+    }
 
 	public boolean isIdle() {
 		return !isMoving() && isGrounded();
@@ -198,7 +211,7 @@ public class Player extends Block {
 	    return this.isDead;
     }
 
-    public void isDead(boolean isDead) {
+    public void setIsDead(boolean isDead) {
         this.isDead = isDead;
     }
 
@@ -316,5 +329,18 @@ public class Player extends Block {
 
     public HitBox createGodFistHitBox() {
         return new HitBox((int)this.position.x, (int)this.position.y, 128, 128, 0, 0, 1, this, HitBox.HitBoxTypes.FIST);
+    }
+
+    public void setIsGraveDigging(boolean isGraveDigging) {
+	    this.isGraveDigging = isGraveDigging;
+    }
+
+    public void startDig() {
+	    this.clickGraveTime = System.currentTimeMillis();
+	    this.hasClickedGrave = true;
+    }
+
+    public void setHasClickedGrave(boolean b) {
+	    this.hasClickedGrave = b;
     }
 }
