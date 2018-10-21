@@ -119,9 +119,6 @@ public class DiggerWorld extends World {
 	@Override
 	public void update() {
 		super.update();
-		for(Key k : inputMap.values()) {
-			k.update();
-		}
 
 		player2.update();
 
@@ -184,10 +181,10 @@ public class DiggerWorld extends World {
 			List<Grave> tempGraveList = new ArrayList<>(graveList);
 			for(Grave grave : graveList) {
 				if(Helper.isColliding(player, grave) && player.isGrounded()) {
-					if(i == 0 && inputMap.get("digP1").isPressed()) {
+					if(i == 0 && inputMap.get("digP1").isClicked()) {
 						grave.dig();
 					}
-					else if(i == 0 && inputMap.get("digP2").isPressed()) {
+					else if(i == 0 && inputMap.get("digP2").isClicked()) {
 						grave.dig();
 					}
 					if(grave.isDug()) {
