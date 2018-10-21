@@ -178,7 +178,7 @@ public class Player extends Block {
 			this.velocity.x = 0;
 		}
 
-		if(System.currentTimeMillis() - attackTime > 167) {
+		if(System.currentTimeMillis() - attackTime > 480) {
 			this.isAttacking = false;
 		}
 	}

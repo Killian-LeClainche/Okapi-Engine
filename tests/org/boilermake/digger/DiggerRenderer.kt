@@ -490,7 +490,7 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
             player.isAttacking -> when(player.item) {
                 1 -> animation.swap("attack-animation:sword")
                 2 -> animation.swap("attack-animation:claymore")
-                else -> animation.swap("attack-animation:halberd")
+                3 -> animation.swap("attack-animation:halberd")
             }
             player.isGoingUp -> animation.swap("double-jump-animation")
             player.isFalling -> animation.swap("double-jump-animation")
@@ -557,6 +557,13 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
                         5 -> itemAnimation.swap("run-shotgun")
                         6 -> itemAnimation.swap("run-rifle")
                         else -> itemAnimation.swap("run-godfist")
+                    }
+                }
+                animation.animation.startsWith("attack-animation") -> {
+                    when(player.item) {
+                        1 -> itemAnimation.swap("attack-sword")
+                        2 -> itemAnimation.swap("attack-claymore")
+                        3 -> itemAnimation.swap("attack-halberd")
                     }
                 }
             }
