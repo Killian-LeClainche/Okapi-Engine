@@ -241,6 +241,30 @@ public class DiggerWorld extends World {
 				}
 			}
 			itemList = tempItemList;
+
+			List<HitBox> tempHitBoxList = new ArrayList<>(hitboxList);
+			List<Player> tempPlayerList = new ArrayList<>(playerList);
+			for(HitBox h : hitboxList)
+			{
+				for(Player p : playerList)
+				{
+					if(Helper.isColliding(h, p))
+					{
+						if(h.getOwner().equals(p))
+						{
+							continue;
+						}
+
+						else
+						{
+							p.setIsDead(true);
+							tempPlayerList.remove(p);
+						}
+					}
+				}
+			}
+			hitboxList = tempHitBoxList;
+			playerList = tempPlayerList;
 		}
 	}
 

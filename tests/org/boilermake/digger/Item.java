@@ -16,15 +16,13 @@ public class Item extends Block {
 
     public static class ItemType{
         public final static int NOTHING = 0;
-        public final static int DAGGER = 1;
-        public final static int SWORD = 2;
-        public final static int CLAYMORE = 3;
-        public final static int HALBERD = 4;
-        public final static int SNIPER = 5;
-        public final static int SHOTGUN = 6;
-        public final static int PISTOL = 7;
-        public final static int RIFLE = 8;
-        public final static int GOD_FIST = 10;
+        public final static int SWORD = 1;
+        public final static int CLAYMORE = 2;
+        public final static int HALBERD = 3;
+        public final static int SNIPER = 4;
+        public final static int SHOTGUN = 5;
+        public final static int RIFLE = 6;
+        public final static int GOD_FIST = 7;
     }
 
     public Item(int xpos, int ypos, int xvel, int yvel, int xsize, int ysize, int itemType) {
@@ -34,13 +32,11 @@ public class Item extends Block {
         this.itemType = itemType;
         switch (itemType) {
             case ItemType.NOTHING: this.itemDelay = 60; break;
-            case ItemType.DAGGER: this.itemDelay = 20; break;
             case ItemType.SWORD: this.itemDelay = 30; break;
             case ItemType.CLAYMORE: this.itemDelay = 40; break;
             case ItemType.HALBERD: this.itemDelay = 50; break;
             case ItemType.SNIPER: this.itemDelay = 60; break;
             case ItemType.SHOTGUN: this.itemDelay = 70; break;
-            case ItemType.PISTOL: this.itemDelay = 40; break;
             case ItemType.RIFLE: this.itemDelay = 50; break;
             case ItemType.GOD_FIST: this.itemDelay = 2; break;
         }
