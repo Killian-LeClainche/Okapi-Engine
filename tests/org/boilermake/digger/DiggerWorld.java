@@ -90,7 +90,7 @@ public class DiggerWorld extends World {
 		mapList.add(map4);
 		mapList.add(map5);
 		
-		int randomVal = 1;
+		int randomVal = random(0,4);
 		
 		terrainList.addAll(mapList.get(randomVal).terrainList);
 		graveList.addAll(mapList.get(randomVal).graveList);
@@ -281,39 +281,22 @@ public class DiggerWorld extends World {
 			List<Grave> tempGraveList = new ArrayList<>(graveList);
 			for (Grave grave : graveList) {
 				if (Helper.isColliding(player, grave) && player.isGrounded()) {
-				    //TODO: condense this else if into one block (should be easy)
 					if (i == 0 && inputMap.get("digP1").isClicked()) {
 						grave.dig();
 						player.startDig();
-                        if(grave.isDug()) {
-                            player.setIsGraveDigging(false);
-                        } else {
-                            player.setIsGraveDigging(true);
-                        }
+						player.setIsGraveDigging(true);
 					} else if (i == 1 && inputMap.get("digP2").isClicked()) {
 						grave.dig();
 						player.startDig();
-                        if(grave.isDug()) {
-                            player.setIsGraveDigging(false);
-                        } else {
-                            player.setIsGraveDigging(true);
-                        }
+						player.setIsGraveDigging(true);
 					} else if (i == 2 && inputMap.get("digP3").isClicked()) {
 						grave.dig();
 						player.startDig();
-                        if(grave.isDug()) {
-                            player.setIsGraveDigging(false);
-                        } else {
-                            player.setIsGraveDigging(true);
-                        }
+						player.setIsGraveDigging(true);
 					} else if (i == 3 && inputMap.get("digP3").isClicked()) {
 						grave.dig();
 						player.startDig();
-                        if(grave.isDug()) {
-                            player.setIsGraveDigging(false);
-                        } else {
-                            player.setIsGraveDigging(true);
-                        }
+						player.setIsGraveDigging(true);
 					}
 
 					if (grave.isDug()) {

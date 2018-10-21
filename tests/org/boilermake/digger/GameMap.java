@@ -80,11 +80,11 @@ public class GameMap {
 
             Random rangen = new Random();
 
-            Item temp = new Item(450, 645, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(7)+1);
-            this.graveList.add(new Grave(450, 645, rangen.nextInt(3) + 1, temp));
+            Item temp = new Item(450, 615, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(7)+1);
+            this.graveList.add(new Grave(450, 615, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(1440, 645, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(7)+1);
-            this.graveList.add(new Grave(1440, 645, rangen.nextInt(3) + 1, temp));
+            temp = new Item(1440, 615, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(7)+1);
+            this.graveList.add(new Grave(1440, 615, rangen.nextInt(3) + 1, temp));
 
             temp = new Item(960, 85, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(7)+1);
             this.graveList.add(new Grave(960, 85, rangen.nextInt(3) + 1, temp));
