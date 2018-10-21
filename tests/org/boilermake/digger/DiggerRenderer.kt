@@ -66,6 +66,13 @@ class DiggerRenderer(private val world: DiggerWorld) {
         world["player"] = "resources/digger/character.png"
         world["ground"] = "resources/digger/ground.png"
 
+
+        world["run-animation"] = "resources/digger/RunAnimation.png"
+        world["jump-animation"] = "resources/digger/JumpAnimation.png"
+        world["fall-animation"] = "resources/digger/FallAnimation.png"
+        world["idle-animation"] = "resources/digger/IdleAnimation.png"
+        world["dig-animation"] = "resources/digger/DigAnimation.png"
+        world["double-jump-animation"] = "resources/digger/DoubleJumpAnimation.png"
     }
 
     fun render(delta: Double) {
@@ -163,26 +170,38 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
         size.y /= 2
 
         val uSize = 1 / 30f
-        val u1 = uSize * (animationId / 8)
-        val u2 = u1 + uSize
+        var u1 = uSize * (animationId / 8)
+        var u2 = u1 + uSize
+
+        if(!player.isFacingLeft) {
+            val tempU = u1
+            u1 = u2
+            u2 = tempU
+        }
 
         return floatArrayOf(
                 //position          color                   texture
                 //x,y,z             r,g,b,a                 u,v
-                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u1, .99f,
-                pos.x + size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u2, .99f,
-                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f,
+                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u2, .99f,
+                pos.x + size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u1, .99f,
+                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
 
-                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f,
-                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u1, .99f,
-                pos.x - size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f
+                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u2, .99f,
+                pos.x - size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
         )
     }
 
     fun render() {
         animationId = (animationId + 1) % 240
 
-        world["idle-animation", "resources/digger/IdleAnimation.png"].bind()
+        when {
+            player.isIdle -> world["dig-animation"].bind()
+            player.isGoingUp -> world["fall-animation"].bind()
+            player.isFalling -> world["fall-animation"].bind()
+            player.isDoubleJumping -> world["double-jump-animation"].bind()
+            else -> world["run-animation"].bind()
+        }
 
         quad.bind()
 
