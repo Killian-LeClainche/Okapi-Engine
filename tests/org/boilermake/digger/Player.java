@@ -308,12 +308,12 @@ public class Player extends Block {
 
     public HitBox createShotgunHitBox() {
         if(this.isFacingLeft) {
-            int xsize = 64;
+            int xsize = 128;
             int xpos = (int)(this.position.x - this.size.x/2 - xsize/2.0);
             return new HitBox(xpos, (int)this.position.y, xsize, 96, 0, 0, 10, this, HitBox.HitBoxTypes.GUN);
         }
         else {
-            int xsize = 64;
+            int xsize = 128;
             int xpos = (int)(this.position.x + this.size.x/2 + xsize/2.0);
             return new HitBox(xpos, (int)this.position.y, xsize, 8, 0, 0, 10, this, HitBox.HitBoxTypes.GUN);
         }
@@ -334,12 +334,12 @@ public class Player extends Block {
 
     public HitBox createRifleHitBox() {
         if(this.isFacingLeft) {
-            int xsize = 24;
+            int xsize = 196;
             int xpos = (int)(this.position.x - this.size.x/2 - xsize/2.0);
             return new HitBox(xpos, (int)this.position.y, xsize, 8, (int)(-screen.x/5), 0, 5, this, HitBox.HitBoxTypes.GUN);
         }
         else {
-            int xsize = 24;
+            int xsize = 196;
             int xpos = (int)(this.position.x + this.size.x/2 + xsize/2.0);
             return new HitBox(xpos, (int)this.position.y, xsize, 8, (int)(screen.x/5), 0, 5, this, HitBox.HitBoxTypes.GUN);
         }

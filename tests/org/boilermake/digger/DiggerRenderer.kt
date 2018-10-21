@@ -115,6 +115,8 @@ class DiggerRenderer(private val world: DiggerWorld) {
         world["attack-claymore"] = "resources/digger/AttackClaymoreItem.png"
         world["attack-halberd"] = "resources/digger/AttackHalberdItem.png"
         world["attack-sword"] = "resources/digger/AttackSwordItem.png"
+
+        world["gunshot"] = "resources/digger/gunshot.png"
     }
 
     fun render(delta: Double) {
@@ -274,7 +276,7 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
     var itemAnimation: Animation = Animation(player, 0, 30, "idle-animation")
     val quad: DrawArray = DrawArray(GL20C.GL_TRIANGLES, GL20C.GL_DYNAMIC_DRAW, getQuadArray(), 6, VertexAttributes.POS_COLOR_TEXTURE)
     val itemQuad: DrawArray = DrawArray(GL20C.GL_TRIANGLES, GL20C.GL_DYNAMIC_DRAW, getItemQuadArray(), 6, VertexAttributes.POS_COLOR_TEXTURE)
-
+    var gunshotTicks: Int = 0
 
     fun getQuadArray(): FloatArray {
         val pos = player.position
