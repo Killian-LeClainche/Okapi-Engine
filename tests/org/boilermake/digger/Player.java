@@ -19,6 +19,7 @@ public class Player extends Block {
 	private boolean isGraveDigging;
 	private boolean hasClickedGrave;
 	public long attackTime;
+	public long shootingTime;
 	public boolean isAttacking;
 	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
 	private final Vector2f terminalVelocity = new Vector2f(20, 48);
@@ -91,7 +92,7 @@ public class Player extends Block {
 			case Item.ItemType.HALBERD: this.ammo = -1; break;
 			case Item.ItemType.SNIPER: this.ammo = 2; break;
 			case Item.ItemType.SHOTGUN: this.ammo = 4; break;
-			case Item.ItemType.RIFLE: this.ammo = 2; break;
+			case Item.ItemType.RIFLE: this.ammo = 4; break;
 			case Item.ItemType.GOD_FIST: this.ammo = -1; break;
 		}
 	}
@@ -130,6 +131,20 @@ public class Player extends Block {
 
     public boolean isAttacking() {
 		return this.isAttacking;
+	}
+
+	public boolean isSniperShooting() {
+		return isAttacking() && item == 4;
+	}
+
+	public boolean isShotgunShooting()
+	{
+		return isAttacking() && item == 5;
+	}
+
+	public boolean isRifleShooting()
+	{
+		return isAttacking() && item == 6;
 	}
 	public boolean isIdle() {
 		return !isMoving() && isGrounded();
@@ -243,8 +258,12 @@ public class Player extends Block {
 	}
 
 	public HitBox useItem() {
-
+		float tempVel = this.velocity.x;
 		this.velocity.x = 0;
+		if(this.item == Item.ItemType.SHOTGUN || this.item == Item.ItemType.RIFLE ||this.item == Item.ItemType.SNIPER )  {
+			if(tempVel < 0) this.velocity.x += 5*this.acceleration.x;
+			else this.velocity.x -= 5*this.acceleration.x;
+		}
 	    switch(this.item) {
             case Item.ItemType.SWORD : return createSwordHitBox();
             case Item.ItemType.CLAYMORE : return createClaymoreHitBox();
