@@ -29,6 +29,11 @@ public class HitBox extends Block {
         this.time--;
     }
 
+    public Player getOwner()
+    {
+        return this.owner;
+    }
+
     public boolean isExpired() {
         return this.time <= 0;
     }
