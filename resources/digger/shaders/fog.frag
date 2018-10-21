@@ -8,7 +8,7 @@ uniform vec2 bottom;
 float cloudDensity = .75; 	// overall density [0,1]
 float noisiness = 0.25; 	// overall strength of the noise effect [0,1]
 float speed = 0.05;			// controls the animation speed [0, 0.1 ish)
-float cloudHeight = 100.0; 	// (inverse) height of the input gradient [0,...)
+float cloudHeight = 5.0; 	// (inverse) height of the input gradient [0,...)
 
 
 // Simplex noise below = ctrl+c, ctrl+v:
