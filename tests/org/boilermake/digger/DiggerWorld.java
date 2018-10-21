@@ -89,35 +89,18 @@ public class DiggerWorld extends World {
 		mapList.add(map4);
 		mapList.add(map5);
 		
-		int randomVal = random(0,4);
+		int randomVal = random(0, 4);
 		
 		terrainList.addAll(mapList.get(randomVal).terrainList);
 		graveList.addAll(mapList.get(randomVal).graveList);
 		playerList.addAll(mapList.get(randomVal).playerList);
 
-/*
-		Vector2f PlayerCoord1 = new Vector2f(530, 450);
-		Vector2f PlayerCoord2 = new Vector2f(1370, 450);
-		Vector2f PlayerCoord3 = new Vector2f(1390, 1080);
-		Vector2f PlayerCoord4 = new Vector2f(490, 1080);
-
-		playerList.add(new Player(PlayerCoord1, new Vector3f(255, 255, 255)));
-		//playerList.get(0).setItem(2);
-		playerList.add(new Player(PlayerCoord2, new Vector3f(128, 34, 24)));
-		playerList.add(new Player(PlayerCoord3, new Vector3f(44, 117, 51)));
-		playerList.add(new Player(PlayerCoord4, new Vector3f(0, 0, 160)));
+		player1 = playerList.get(0);
+		player2 = playerList.get(1);
+		player3 = playerList.get(2);
+		player4 = playerList.get(3);
 
 
-		player1 = new Player(PlayerCoord1, new Vector3f(255, 255, 255));
-		player2 = new Player(PlayerCoord2, new Vector3f(128, 34, 24));
-		player3 = new Player(PlayerCoord3, new Vector3f(44, 117, 51));
-		player4 = new Player(PlayerCoord4, new Vector3f(0, 0, 160));
-
-		playerList.add(player1);
-		playerList.add(player2);
-		playerList.add(player3);
-		playerList.add(player4);
-*/
 		renderer.init();
 	}
 
