@@ -281,22 +281,39 @@ public class DiggerWorld extends World {
 			List<Grave> tempGraveList = new ArrayList<>(graveList);
 			for (Grave grave : graveList) {
 				if (Helper.isColliding(player, grave) && player.isGrounded()) {
+				    //TODO: condense this else if into one block (should be easy)
 					if (i == 0 && inputMap.get("digP1").isClicked()) {
 						grave.dig();
 						player.startDig();
-						player.setIsGraveDigging(true);
+                        if(grave.isDug()) {
+                            player.setIsGraveDigging(false);
+                        } else {
+                            player.setIsGraveDigging(true);
+                        }
 					} else if (i == 1 && inputMap.get("digP2").isClicked()) {
 						grave.dig();
 						player.startDig();
-						player.setIsGraveDigging(true);
+                        if(grave.isDug()) {
+                            player.setIsGraveDigging(false);
+                        } else {
+                            player.setIsGraveDigging(true);
+                        }
 					} else if (i == 2 && inputMap.get("digP3").isClicked()) {
 						grave.dig();
 						player.startDig();
-						player.setIsGraveDigging(true);
+                        if(grave.isDug()) {
+                            player.setIsGraveDigging(false);
+                        } else {
+                            player.setIsGraveDigging(true);
+                        }
 					} else if (i == 3 && inputMap.get("digP3").isClicked()) {
 						grave.dig();
 						player.startDig();
-						player.setIsGraveDigging(true);
+                        if(grave.isDug()) {
+                            player.setIsGraveDigging(false);
+                        } else {
+                            player.setIsGraveDigging(true);
+                        }
 					}
 
 					if (grave.isDug()) {
