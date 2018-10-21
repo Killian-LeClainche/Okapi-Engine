@@ -92,6 +92,10 @@ public class Player extends Block {
 		return !isMoving() && isGrounded();
 	}
 
+	public boolean isFacingLeft() {
+	    return this.isFacingLeft;
+    }
+
 	public boolean hasJumps() {
 		return this.jumps != 0;
 	}

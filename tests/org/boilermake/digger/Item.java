@@ -6,7 +6,9 @@ import org.joml.Vector2f;
  * Created by Killian Le Clainche on 10/20/2018.
  */
 public class Item extends Block {
-    private Vector2f velocity;
+    public Vector2f velocity;
+    public Vector2f position;
+    public Vector2f size;
     private final Vector2f acceleration = new Vector2f(0, -2);
     private final Vector2f screen = new Vector2f(1920, 1080);
     private int itemType;
@@ -45,12 +47,18 @@ public class Item extends Block {
     }
 
     public Item(int xpos, int ypos, int xvel, int yvel, int itemType) {
-        new Item(xpos, ypos, xvel, yvel, 32, 32, itemType);
+        this(xpos, ypos, xvel, yvel, 32, 32, itemType);
     }
 
     public Vector2f getPosition() {
-        return position;
+        return this.position;
     }
+
+    public Vector2f getSize() {
+        return this.size;
+    }
+
+    public Vector2f getVelocity() { return this.velocity; }
 
     public int getItemType() {
         return itemType;

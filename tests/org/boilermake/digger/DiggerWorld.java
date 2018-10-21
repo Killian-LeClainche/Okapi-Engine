@@ -44,10 +44,8 @@ public class DiggerWorld extends World {
 		inputMap.put("digP2", player2.getKeyDPadDown());
 		inputMap.put("upP2", player2.getKeyA());
 
-		graveList.add(new Grave(0, 0, 10, null));
-
 		playerList.add(new Player(new Vector2f(300, 200)));
-		playerList.add(new Player(new Vector2f(1000, 200)));
+		playerList.add(new Player(new Vector2f(1000, 600)));
 
 		Vector2f PlayerCoord1 = new Vector2f(480, 270);
 		Vector2f PlayerCoord2 = new Vector2f(1440, 270);
