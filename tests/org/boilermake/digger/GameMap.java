@@ -162,11 +162,11 @@ public class GameMap {
         {
             //eye
             this.terrainList.add(new Terrain(590, 690, 300, 120));
-            this.terrainList.add(new Terrain(590, 690, 120, 300));
+            this.terrainList.add(new Terrain(590, 740, 120, 120));
 
             //right eye
             this.terrainList.add(new Terrain(1290, 690, 300, 120));
-            this.terrainList.add(new Terrain(1290, 690, 120, 300));
+            this.terrainList.add(new Terrain(1290, 740, 120, 120));
 
             //nose
             this.terrainList.add(new Terrain(940, 310, 300, 90));
