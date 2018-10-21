@@ -34,6 +34,11 @@ public class Player extends Block {
 		this.delay = 60;
 	}
 
+	//isIdle
+	//isMoving
+	//isGoingUp
+	//isFalling
+	//isDoubleJumpingUp
 	public Vector2f getVelocity() {
 		return velocity;
 	}
@@ -71,6 +76,26 @@ public class Player extends Block {
 	public boolean isGrounded() {
 	    return isGrounded;
     }
+
+	public boolean isFalling() {
+		return this.velocity.y < 0 && !this.isDoubleJumping;
+	}
+
+	public boolean isMoving() {
+		return this.isGrounded && this.velocity.x != 0;
+	}
+
+	public boolean isGoingUp() {
+		return this.velocity.y > 0 && !this.isDoubleJumping;
+	}
+
+	public boolean isDoubleJumping() {
+		return this.isDoubleJumping;
+	}
+
+	public boolean isIdle() {
+		return this.velocity.x == 0 && this.velocity.y == 0;
+	}
 
 	public boolean hasJumps() {
 		return this.jumps != 0;
