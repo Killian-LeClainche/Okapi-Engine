@@ -106,11 +106,11 @@ public class DiggerWorld extends World {
 
 	private void checkKeysP1() {
 		if(playerList.size() > 0 && !player1.isDead()) {
-			if(inputMap.get("rightP1").isPressed()) {
+			if(inputMap.get("rightP1").isPressed() && (!player1.isAttacking || !player1.isGrounded())) {
 				player1.setIsGraveDigging(false);
 				player1.moveRight();
 			}
-			if(inputMap.get("leftP1").isPressed()) {
+			if(inputMap.get("leftP1").isPressed() && (!player1.isAttacking || !player1.isGrounded())) {
                 player1.setIsGraveDigging(false);
                 player1.moveLeft();
 			}
@@ -121,6 +121,8 @@ public class DiggerWorld extends World {
 
 			if(inputMap.get("itemP1").isClicked()) {
                 player1.setIsGraveDigging(false);
+                player1.isAttacking = true;
+                player1.attackTime = System.currentTimeMillis();
 				HitBox h = player1.useItem();
 				hitboxList.add(h);
 			}
@@ -133,11 +135,11 @@ public class DiggerWorld extends World {
 
 	private void checkKeysP2() {
 		if(playerList.size() > 1 && !player2.isDead()) {
-			if (inputMap.get("rightP2").isPressed()) {
+			if (inputMap.get("rightP2").isPressed()  && (!player2.isAttacking || !player2.isGrounded())) {
                 player2.setIsGraveDigging(false);
                 player2.moveRight();
 			}
-			if (inputMap.get("leftP2").isPressed()) {
+			if (inputMap.get("leftP2").isPressed()  && (!player2.isAttacking || !player2.isGrounded())) {
                 player2.setIsGraveDigging(false);
                 player2.moveLeft();
 			}
@@ -148,6 +150,8 @@ public class DiggerWorld extends World {
 
 			if(inputMap.get("itemP2").isClicked()) {
                 player2.setIsGraveDigging(false);
+                player2.isAttacking = true;
+                player2.attackTime = System.currentTimeMillis();
 				HitBox h = player2.useItem();
 				hitboxList.add(h);
 			}
@@ -160,11 +164,11 @@ public class DiggerWorld extends World {
 
 	private void checkKeysP3() {
 		if(playerList.size() > 2 && !player3.isDead()) {
-			if (inputMap.get("rightP3").isPressed()) {
+			if (inputMap.get("rightP3").isPressed()  && (!player3.isAttacking || !player3.isGrounded())) {
                 player3.setIsGraveDigging(false);
                 player3.moveRight();
 			}
-			if (inputMap.get("leftP3").isPressed()) {
+			if (inputMap.get("leftP3").isPressed()  && (!player3.isAttacking || !player3.isGrounded())) {
                 player3.setIsGraveDigging(false);
                 player3.moveLeft();
 			}
@@ -175,6 +179,8 @@ public class DiggerWorld extends World {
 
 			if(inputMap.get("itemP3").isClicked()) {
                 player3.setIsGraveDigging(false);
+                player3.isAttacking = true;
+                player3.attackTime = System.currentTimeMillis();
 				HitBox h = player3.useItem();
 				hitboxList.add(h);
 			}
@@ -187,11 +193,11 @@ public class DiggerWorld extends World {
 
 	private void checkKeysP4() {
 		if(playerList.size() > 3 && !player4.isDead()) {
-			if (inputMap.get("rightP4").isPressed()) {
+			if (inputMap.get("rightP4").isPressed() && (!player4.isAttacking || !player4.isGrounded())) {
 				player4.setIsGraveDigging(false);
                 player4.moveRight();
 			}
-			if (inputMap.get("leftP4").isPressed()) {
+			if (inputMap.get("leftP4").isPressed() && (!player4.isAttacking || !player4.isGrounded())) {
                 player4.setIsGraveDigging(false);
                 player4.moveLeft();
 			}
@@ -202,6 +208,8 @@ public class DiggerWorld extends World {
 
 			if(inputMap.get("itemP4").isClicked()) {
                 player4.setIsGraveDigging(false);
+                player4.isAttacking = true;
+                player4.attackTime = System.currentTimeMillis();
 				HitBox h = player4.useItem();
 				hitboxList.add(h);
 			}

@@ -18,6 +18,8 @@ public class Player extends Block {
 	private boolean isDead;
 	private boolean isGraveDigging;
 	private boolean hasClickedGrave;
+	public long attackTime;
+	public boolean isAttacking;
 	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
 	private final Vector2f terminalVelocity = new Vector2f(20, 48);
     private final Vector3f color;
@@ -126,6 +128,9 @@ public class Player extends Block {
 	    return this.hasClickedGrave;
     }
 
+    public boolean isAttacking() {
+		return this.isAttacking;
+	}
 	public boolean isIdle() {
 		return !isMoving() && isGrounded();
 	}
@@ -145,7 +150,6 @@ public class Player extends Block {
 	}
 
 	public void update() {
-		System.out.println(isGraveDigging());
 		this.velocity.y += acceleration.y;
 		if(this.velocity.x > terminalVelocity.x) this.velocity.x = terminalVelocity.x;
 		if(this.velocity.x < -terminalVelocity.x) this.velocity.x = -terminalVelocity.x;
@@ -172,6 +176,10 @@ public class Player extends Block {
 		} else if(this.position.x + this.size.x/2 > screen.x){
 			this.position.x = screen.x - this.size.x/2;
 			this.velocity.x = 0;
+		}
+
+		if(System.currentTimeMillis() - attackTime > 167) {
+			this.isAttacking = false;
 		}
 	}
 
@@ -236,6 +244,7 @@ public class Player extends Block {
 
 	public HitBox useItem() {
 
+		this.velocity.x = 0;
 	    switch(this.item) {
             case Item.ItemType.SWORD : return createSwordHitBox();
             case Item.ItemType.CLAYMORE : return createClaymoreHitBox();
