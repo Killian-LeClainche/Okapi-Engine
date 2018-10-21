@@ -28,6 +28,8 @@ public class DiggerWorld extends World {
 	public List<HitBox> hitboxList = new ArrayList<>();
 	public Controller player2C, player3C, player4C;
 	public Player player1, player2, player3, player4;
+	public Player winner;
+	public boolean isEnded;
 
 
 	public DiggerWorld(@NotNull App application) {
@@ -36,6 +38,8 @@ public class DiggerWorld extends World {
 	
 	@Override
 	public void init() {
+	    winner = null;
+	    isEnded = false;
 		//Player 1
 		inputMap.put("rightP1", (Key)getSettings().get("p1:right"));
 		inputMap.put("leftP1", (Key)getSettings().get("p1:left"));
@@ -251,6 +255,7 @@ public class DiggerWorld extends World {
 					}
 				}
 			}
+
 			for (Terrain t : terrainList) {
 				if (!player.equals(t) && Helper.isColliding(player, t)) {
 					//y-axis collisions             											 				           p2
@@ -272,6 +277,7 @@ public class DiggerWorld extends World {
 					}
 				}
 			}
+
 			List<Grave> tempGraveList = new ArrayList<>(graveList);
 			for (Grave grave : graveList) {
 				if (Helper.isColliding(player, grave) && player.isGrounded()) {
@@ -322,11 +328,14 @@ public class DiggerWorld extends World {
 						{
 							continue;
 						}
-
 						else
 						{
 							p.setIsDead(true);
 							tempPlayerList.remove(p);
+							if(tempPlayerList.size() == 1) {
+							    winner = tempPlayerList.get(0);
+							    isEnded = true;
+                            }
 						}
 					}
 				}
