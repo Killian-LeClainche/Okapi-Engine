@@ -86,13 +86,20 @@ public class DiggerWorld extends World {
 
 	private void checkKeysP1() {
 		if(inputMap.get("rightP1").isPressed()) {
+			playerList.get(0).setIsGraveDigging(false);
 			playerList.get(0).moveRight();
 		}
 		if(inputMap.get("leftP1").isPressed()) {
+			playerList.get(0).setIsGraveDigging(false);
 			playerList.get(0).moveLeft();
 		}
 		if(inputMap.get("upP1").isPressed()) {
+			playerList.get(0).setIsGraveDigging(false);
 			playerList.get(0).moveUp();
+		}
+
+		if(inputMap.get("digP1").isPressed()) {
+			playerList.get(0).setIsGraveDigging(true);
 		}
 
 		if(!inputMap.get("rightP1").isPressed() && !inputMap.get("leftP1").isPressed()) {
@@ -128,6 +135,9 @@ public class DiggerWorld extends World {
 		for(Player p : playerList) {
 			if(!p.isDead()) {
 				p.update();
+				if(System.currentTimeMillis() - p.clickGraveTime > 160) {
+					p.setHasClickedGrave(false);
+				}
 			}
 		}
 
@@ -183,9 +193,11 @@ public class DiggerWorld extends World {
 				if(Helper.isColliding(player, grave) && player.isGrounded()) {
 					if(i == 0 && inputMap.get("digP1").isClicked()) {
 						grave.dig();
+						player.startDig();
 					}
-					else if(i == 0 && inputMap.get("digP2").isClicked()) {
+					else if(i == 1 && inputMap.get("digP2").isClicked()) {
 						grave.dig();
+						player.startDig();
 					}
 					if(grave.isDug()) {
 						itemList.add(grave.getReward());
