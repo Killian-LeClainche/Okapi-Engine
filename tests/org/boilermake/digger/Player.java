@@ -92,6 +92,10 @@ public class Player extends Block {
 		return !isMoving() && isGrounded();
 	}
 
+	public boolean isFacingLeft() {
+	    return this.isFacingLeft;
+    }
+
 	public boolean hasJumps() {
 		return this.jumps != 0;
 	}
@@ -144,7 +148,7 @@ public class Player extends Block {
 
 	public void moveRight() {
 		if(this.isFacingLeft) {
-			this.velocity.x = -velocity.x;
+			this.velocity.x = acceleration.x;
 		} else {
 			this.velocity.x += acceleration.x;
 		}
@@ -153,7 +157,7 @@ public class Player extends Block {
 
 	public void moveLeft() {
 		if(!this.isFacingLeft) {
-			this.velocity.x = -velocity.x;
+			this.velocity.x = -acceleration.x;
 		} else {
 			this.velocity.x += -acceleration.x;
 		}

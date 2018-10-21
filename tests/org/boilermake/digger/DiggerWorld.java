@@ -199,7 +199,6 @@ public class DiggerWorld extends World {
 			graveList = tempGraveList;
 			List<Item> tempItemList = new ArrayList<>(itemList);
 			for(Item item : itemList) {
-				System.out.println(item);
 				if(Helper.isColliding(player, item)) {
 					player.setItem(item.getItemType());
 					player.setDelay(item.getItemDelay());
