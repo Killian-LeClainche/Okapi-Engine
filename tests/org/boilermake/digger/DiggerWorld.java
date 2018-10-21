@@ -90,7 +90,7 @@ public class DiggerWorld extends World {
 		mapList.add(map4);
 		mapList.add(map5);
 		
-		int randomVal = 1;
+		int randomVal = random(0,4);
 		
 		terrainList.addAll(mapList.get(randomVal).terrainList);
 		graveList.addAll(mapList.get(randomVal).graveList);
