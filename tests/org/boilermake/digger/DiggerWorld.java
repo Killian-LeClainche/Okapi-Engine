@@ -124,10 +124,6 @@ public class DiggerWorld extends World {
 				hitboxList.add(h);
 			}
 
-			if(inputMap.get("digP1").isPressed()) {
-				playerList.get(0).setIsGraveDigging(true);
-			}
-
 			if(!inputMap.get("rightP1").isPressed() && !inputMap.get("leftP1").isPressed()) {
 				playerList.get(0).slow();
 			}
@@ -153,10 +149,6 @@ public class DiggerWorld extends World {
 				playerList.get(1).setIsGraveDigging(false);
 				HitBox h = playerList.get(1).useItem();
 				hitboxList.add(h);
-			}
-
-			if (inputMap.get("digP2").isPressed()) {
-				playerList.get(1).setIsGraveDigging(true);
 			}
 
 			if (!inputMap.get("rightP2").isPressed() && !inputMap.get("leftP2").isPressed()) {
@@ -186,10 +178,6 @@ public class DiggerWorld extends World {
 				hitboxList.add(h);
 			}
 
-			if (inputMap.get("digP3").isPressed()) {
-				playerList.get(2).setIsGraveDigging(true);
-			}
-
 			if (!inputMap.get("rightP3").isPressed() && !inputMap.get("leftP3").isPressed()) {
 				playerList.get(2).slow();
 			}
@@ -217,10 +205,6 @@ public class DiggerWorld extends World {
 				hitboxList.add(h);
 			}
 
-			if (inputMap.get("digP4").isPressed()) {
-				playerList.get(3).setIsGraveDigging(true);
-			}
-
 			if (!inputMap.get("rightP4").isPressed() && !inputMap.get("leftP4").isPressed()) {
 				playerList.get(3).slow();
 			}
@@ -235,6 +219,8 @@ public class DiggerWorld extends World {
 
 		checkKeysP1();
 		checkKeysP2();
+		checkKeysP3();
+		checkKeysP4();
 
 		for (Player p : playerList) {
 			if (!p.isDead()) {
@@ -249,7 +235,6 @@ public class DiggerWorld extends World {
 			Player player = playerList.get(i);
 			for (Player p : playerList) {
 				if (!player.equals(p) && Helper.equals(player, p)) {
-					System.out.println("here");
 					if(player.velocity.x > 0) {
 						player.getPosition().x -= 10;
 						p.getPosition().x += 10;
@@ -286,10 +271,21 @@ public class DiggerWorld extends World {
 					if (i == 0 && inputMap.get("digP1").isClicked()) {
 						grave.dig();
 						player.startDig();
+						player.setIsGraveDigging(true);
 					} else if (i == 1 && inputMap.get("digP2").isClicked()) {
 						grave.dig();
 						player.startDig();
+						player.setIsGraveDigging(true);
+					} else if (i == 2 && inputMap.get("digP3").isClicked()) {
+						grave.dig();
+						player.startDig();
+						player.setIsGraveDigging(true);
+					} else if (i == 3 && inputMap.get("digP3").isClicked()) {
+						grave.dig();
+						player.startDig();
+						player.setIsGraveDigging(true);
 					}
+
 					if (grave.isDug()) {
 						itemList.add(grave.getReward());
 						tempGraveList.remove(grave);
