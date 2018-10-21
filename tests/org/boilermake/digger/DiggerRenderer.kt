@@ -45,7 +45,10 @@ class DiggerRenderer(private val world: DiggerWorld) {
     fun init() {
 
         for(i in world.playerList) {
-            playerRenders.add(PlayerRender(world, i))
+            if (!i.isDead) {
+                playerRenders.add(PlayerRender(world, i))
+
+            }
         }
 
         for(i in world.terrainList) {
@@ -53,7 +56,9 @@ class DiggerRenderer(private val world: DiggerWorld) {
         }
 
         for(i in world.graveList) {
-            graveRenders.add(BlockRender(i))
+            if(!i.isDug) {
+                graveRenders.add(BlockRender(i))
+            }
         }
 
         rainShader.vertexShaderId = world.application.renderManager.loadShader(File("resources/digger/shaders/rain.vert"), GL20C.GL_VERTEX_SHADER)
@@ -325,6 +330,11 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
                     else -> animation.swap("idle-animation:godfist")
                 }
             }
+            player.isGoingUp -> animation.swap("fall-animation")
+            player.isFalling -> animation.swap("fall-animation")
+            player.isDoubleJumping -> animation.swap("double-jump-animation")
+            player.isGraveDigging -> animation.swap("dig-animation")
+
             else -> {
                 when {
                     player.item == 0 -> animation.swap("run-animation")

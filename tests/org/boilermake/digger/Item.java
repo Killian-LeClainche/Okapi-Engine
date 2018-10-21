@@ -11,7 +11,7 @@ public class Item extends Block {
     public Vector2f size;
     private final Vector2f acceleration = new Vector2f(0, -2);
     private final Vector2f screen = new Vector2f(1920, 1080);
-    private int itemType;
+    public int itemType;
     private int itemDelay;
 
     public static class ItemType{
