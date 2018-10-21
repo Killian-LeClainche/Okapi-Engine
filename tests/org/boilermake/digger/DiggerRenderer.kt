@@ -9,6 +9,7 @@ import polaris.okapi.render.DrawArray
 import polaris.okapi.render.Shader
 import polaris.okapi.render.Texture
 import polaris.okapi.render.VertexAttributes
+import polaris.okapi.util.random
 import java.awt.Color.gray
 import java.io.File
 
@@ -21,8 +22,9 @@ class DiggerRenderer(private val world: DiggerWorld) {
 
     var timeExisted: Double = 0.0
 
-    val playerRenders: MutableList<BlockRender> = ArrayList()
+    val playerRenders: MutableList<PlayerRender> = ArrayList()
     val terrainRenders: MutableList<TerrainRender> = ArrayList()
+    val graveRenders: MutableList<BlockRender> = ArrayList()
 
     val rainShader: Shader = Shader()
     val rainQuad: DrawArray = DrawArray(GL20C.GL_TRIANGLES, GL20C.GL_STATIC_DRAW, floatArrayOf(
@@ -40,11 +42,15 @@ class DiggerRenderer(private val world: DiggerWorld) {
     fun init() {
 
         for(i in world.playerList) {
-            playerRenders.add(BlockRender(i))
+            playerRenders.add(PlayerRender(world, i))
         }
 
         for(i in world.terrainList) {
             terrainRenders.add(TerrainRender(this, i))
+        }
+
+        for(i in world.graveList) {
+            graveRenders.add(BlockRender(i))
         }
 
         rainShader.vertexShaderId = world.application.renderManager.loadShader(File("resources/digger/shaders/rain.vert"), GL20C.GL_VERTEX_SHADER)
@@ -95,8 +101,8 @@ class DiggerRenderer(private val world: DiggerWorld) {
 
         world["ground"].bind()
 
-        for(i in terrainRenders) {
-            i.render(true)
+        for(i in graveRenders) {
+            i.render()
         }
 
         blockFogShader.bind()
@@ -144,6 +150,48 @@ class BlockRender(val block: Block) {
 
 }
 
+class PlayerRender(val world: DiggerWorld, val player: Player) {
+    val quad: DrawArray = DrawArray(GL20C.GL_TRIANGLES, GL20C.GL_DYNAMIC_DRAW, getQuadArray(), 6, VertexAttributes.POS_COLOR_TEXTURE)
+
+    var animationId: Int = 0
+
+    fun getQuadArray(): FloatArray {
+        val pos = player.position
+        val size = Vector2f(player.size)
+
+        size.x /= 2
+        size.y /= 2
+
+        val uSize = 1 / 30f
+        val u1 = uSize * (animationId / 8)
+        val u2 = u1 + uSize
+
+        return floatArrayOf(
+                //position          color                   texture
+                //x,y,z             r,g,b,a                 u,v
+                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u1, .99f,
+                pos.x + size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u2, .99f,
+                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f,
+
+                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f,
+                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u1, .99f,
+                pos.x - size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f
+        )
+    }
+
+    fun render() {
+        animationId = (animationId + 1) % 240
+
+        world["idle-animation", "resources/digger/IdleAnimation.png"].bind()
+
+        quad.bind()
+
+        quad.array = getQuadArray()
+
+        quad.draw()
+    }
+}
+
 class TerrainRender(val renderer: DiggerRenderer, val block: Block) {
     val blockRender: BlockRender = BlockRender(block)
     val quad: DrawArray = DrawArray(GL20C.GL_TRIANGLES, GL20C.GL_STATIC_DRAW, getQuadArray(), 6, VertexAttributes.POS_COLOR_TEXTURE)
@@ -168,16 +216,11 @@ class TerrainRender(val renderer: DiggerRenderer, val block: Block) {
     }
 
     fun render(pass: Boolean) {
-        if(pass) {
-
-        }
-        else {
-            val pos = block.position
-            val size = Vector2f(block.size)
-            GL30C.glUniform2f(renderer.blockFogShader["bottom"], pos.x - size.x / 2, pos.y - size.y / 2)
-            GL30C.glUniform2f(renderer.blockFogShader["top"], pos.x + size.x / 2, pos.y + size.y / 2)
-            quad.bind()
-            quad.draw()
-        }
+        val pos = block.position
+        val size = Vector2f(block.size)
+        GL30C.glUniform2f(renderer.blockFogShader["bottom"], pos.x - size.x / 2, pos.y - size.y / 2)
+        GL30C.glUniform2f(renderer.blockFogShader["top"], pos.x + size.x / 2, pos.y + size.y / 2)
+        quad.bind()
+        quad.draw()
     }
 }

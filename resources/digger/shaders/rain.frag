@@ -183,7 +183,7 @@ void main() {
         float f = rain(q, p, size);
         f += rain(q, p, size / 2) * .3;
 
-        f = clamp(abs(f) - .1, 0.0, 1.0);
+        f = clamp(abs(f) - .05, 0.0, 1.0);
 
         col += 0.1*f*(0.2+backgroundColor);
 
