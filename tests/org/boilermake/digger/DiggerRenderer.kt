@@ -73,6 +73,7 @@ class DiggerRenderer(private val world: DiggerWorld) {
 
         world["player"] = "resources/digger/character.png"
         world["ground"] = "resources/digger/ground.png"
+        world["dead"] = "resources/digger/characterdead.png"
 
         world["idle-animation"] = "resources/digger/IdleAnimation.png"
         world["idle-animation:claymore"] = "resources/digger/IdleClaymoreAnimation.png"
@@ -405,6 +406,11 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
                     else -> animation.swap("idle-animation:godfist")
                 }
             }
+            player.isGoingUp -> animation.swap("fall-animation")
+            player.isFalling -> animation.swap("fall-animation")
+            player.isDoubleJumping -> animation.swap("double-jump-animation")
+            player.isGraveDigging -> animation.swap("dig-animation")
+
             else -> {
                 when(player.item) {
                     0 -> animation.swap("run-animation")

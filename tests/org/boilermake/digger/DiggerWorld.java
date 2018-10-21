@@ -348,6 +348,7 @@ public class DiggerWorld extends World {
 						else
 						{
 							p.setIsDead(true);
+							p.update();
 							tempPlayerList.remove(p);
 							if(tempPlayerList.size() == 1) {
 							    winner = tempPlayerList.get(0);

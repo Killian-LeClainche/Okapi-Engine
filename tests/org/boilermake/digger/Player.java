@@ -346,7 +346,14 @@ public class Player extends Block {
     }
 
     public HitBox createGodFistHitBox() {
-        return new HitBox((int)this.position.x, (int)this.position.y, 128, 128, 0, 0, 1, this, HitBox.HitBoxTypes.FIST);
+		if(this.isFacingLeft) {
+			return new HitBox((int) (this.position.x - this.size.x / 2 - 128 / 2.0), (int) this.position.y, 128, 128, 0, 0, 1, this, HitBox.HitBoxTypes.FIST);
+		}
+
+		else
+		{
+			return new HitBox((int) (this.position.x + this.size.x / 2 + 128 / 2.0), (int) this.position.y, 128, 128, 0, 0, 1, this, HitBox.HitBoxTypes.FIST);
+		}
     }
 
     public void setIsGraveDigging(boolean isGraveDigging) {
