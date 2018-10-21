@@ -318,8 +318,10 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
         val uSize = 1f / itemAnimation.size
         var u1 = uSize * itemAnimation.id
         var u2 = u1 + uSize
+        var faceRight = 1
 
         if(player.isFacingLeft == (animation.animation == "idle-animation:godfist")) {
+            faceRight = -1
             val tempU = u1
             u1 = u2
             u2 = tempU
@@ -365,26 +367,111 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
             return floatArrayOf(
                     //position          color                   texture
                     //x,y,z             r,g,b,a                 u,v
-                    pos.x - size.x / 2, pos.y - size.y / 5 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
-                    pos.x + size.x / 2, pos.y - size.y / 5 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
-                    pos.x + size.x / 2, pos.y + size.y / 5 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x/ 1.5f - 32 * faceRight, pos.y - size.y / 12 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x/ 1.5f - 32 * faceRight, pos.y - size.y / 12 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x/ 1.5f - 32 * faceRight, pos.y + size.y / 12 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
 
-                    pos.x + size.x / 2, pos.y + size.y / 5 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
-                    pos.x - size.x / 2, pos.y - size.y / 5 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
-                    pos.x - size.x / 2, pos.y + size.y / 5 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+                    pos.x + size.x/ 1.5f - 32 * faceRight, pos.y + size.y / 12 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x/ 1.5f - 32 * faceRight, pos.y - size.y / 12 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x/ 1.5f - 32 * faceRight, pos.y + size.y / 12 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
             )
         if(itemAnimation.animation == "run-sniper")
             return floatArrayOf(
                     //position          color                   texture
                     //x,y,z             r,g,b,a                 u,v
-                    pos.x - size.x / 2, pos.y - size.y / 2 + 32, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
-                    pos.x + size.x / 2, pos.y - size.y / 2 + 32, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
-                    pos.x + size.x / 2, pos.y + size.y / 2 + 32, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x / 1.5f - 32 * faceRight, pos.y - size.y / 6 + 24, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x / 1.5f - 32 * faceRight, pos.y - size.y / 6 + 24, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x / 1.5f - 32 * faceRight, pos.y + size.y / 6 + 24, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
 
-                    pos.x + size.x / 2, pos.y + size.y / 2 + 32, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
-                    pos.x - size.x / 2, pos.y - size.y / 2 + 32, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
-                    pos.x - size.x / 2, pos.y + size.y / 2 + 32, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+                    pos.x + size.x / 1.5f - 32 * faceRight, pos.y + size.y / 6 + 24, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x / 1.5f - 32 * faceRight, pos.y - size.y / 6 + 24, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x / 1.5f - 32 * faceRight, pos.y + size.y / 6 + 24, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
             )
+        if(itemAnimation.animation == "idle-sword")
+            return floatArrayOf(
+                    //position          color                   texture
+                    //x,y,z             r,g,b,a                 u,v
+                    pos.x - size.x / 2 - 4 * faceRight, pos.y - size.y / 2 + 8, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x / 2 - 4 * faceRight, pos.y - size.y / 2 + 8, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x / 2 - 4 * faceRight, pos.y + size.y / 2 + 8, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                    pos.x + size.x / 2 - 4 * faceRight, pos.y + size.y / 2 + 8, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x / 2 - 4 * faceRight, pos.y - size.y / 2 + 8, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x / 2 - 4 * faceRight, pos.y + size.y / 2 + 8, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+            )
+        if(itemAnimation.animation == "idle-halberd")
+            return floatArrayOf(
+                    //position          color                   texture
+                    //x,y,z             r,g,b,a                 u,v
+                    pos.x - size.x / 6 + 18 * faceRight, pos.y - size.y / 3 - 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x / 6 + 18 * faceRight, pos.y - size.y / 3 - 16, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x / 6 + 18 * faceRight, pos.y + size.y / 3 - 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                    pos.x + size.x / 6 + 18 * faceRight, pos.y + size.y / 3 - 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x / 6 + 18 * faceRight, pos.y - size.y / 3 - 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x / 6 + 18 * faceRight, pos.y + size.y / 3 - 16, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+            )
+        if(itemAnimation.animation == "run-godfist")
+            return floatArrayOf(
+                    //position          color                   texture
+                    //x,y,z             r,g,b,a                 u,v
+                    pos.x - size.x / 4 - 32 * faceRight, pos.y - size.y / 4 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x / 4 - 32 * faceRight, pos.y - size.y / 4 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x / 4 - 32 * faceRight, pos.y + size.y / 4 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                    pos.x + size.x / 4 - 32 * faceRight, pos.y + size.y / 4 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x / 4 - 32 * faceRight, pos.y - size.y / 4 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x / 4 - 32 * faceRight, pos.y + size.y / 4 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+            )
+        if(itemAnimation.animation == "idle-rifle")
+            return floatArrayOf(
+                    //position          color                   texture
+                    //x,y,z             r,g,b,a                 u,v
+                    pos.x - size.x / 3 - 16 * faceRight, pos.y - size.y / 9 + 23, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x / 3 - 16 * faceRight, pos.y - size.y / 9 + 23, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x / 3 - 16 * faceRight, pos.y + size.y / 9 + 23, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                    pos.x + size.x / 3 - 16 * faceRight, pos.y + size.y / 9 + 23, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x / 3 - 16 * faceRight, pos.y - size.y / 9 + 23, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x / 3 - 16 * faceRight, pos.y + size.y / 9 + 23, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+            )
+        if(itemAnimation.animation == "run-rifle")
+            return floatArrayOf(
+                    //position          color                   texture
+                    //x,y,z             r,g,b,a                 u,v
+                    pos.x - size.x / 3 - 16 * faceRight, pos.y - size.y / 7 + 23, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x / 3 - 16 * faceRight, pos.y - size.y / 7 + 23, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x / 3 - 16 * faceRight, pos.y + size.y / 7 + 23, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                    pos.x + size.x / 3 - 16 * faceRight, pos.y + size.y / 7 + 23, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x / 3 - 16 * faceRight, pos.y - size.y / 7 + 23, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x / 3 - 16 * faceRight, pos.y + size.y / 7 + 23, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+            )
+        if(itemAnimation.animation == "idle-shotgun")
+            return floatArrayOf(
+                    //position          color                   texture
+                    //x,y,z             r,g,b,a                 u,v
+                    pos.x - size.x / 4 - 16 * faceRight, pos.y - size.y / 12 + 20, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x / 4 - 16 * faceRight, pos.y - size.y / 12 + 20, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x / 4 - 16 * faceRight, pos.y + size.y / 12 + 20, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                    pos.x + size.x / 4 - 16 * faceRight, pos.y + size.y / 12 + 20, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x / 4 - 16 * faceRight, pos.y - size.y / 12 + 20, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x / 4 - 16 * faceRight, pos.y + size.y / 12 + 20, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+            )
+        if(itemAnimation.animation == "run-halberd")
+            return floatArrayOf(
+                    //position          color                   texture
+                    //x,y,z             r,g,b,a                 u,v
+                    pos.x - size.x, pos.y - size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x, pos.y - size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x, pos.y + size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                    pos.x + size.x, pos.y + size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x, pos.y - size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x, pos.y + size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+            )
+
         return floatArrayOf(
                 //position          color                   texture
                 //x,y,z             r,g,b,a                 u,v
@@ -400,6 +487,11 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
 
     fun render() {
         when {
+            player.isAttacking -> when(player.item) {
+                1 -> animation.swap("attack-animation:sword")
+                2 -> animation.swap("attack-animation:claymore")
+                else -> animation.swap("attack-animation:halberd")
+            }
             player.isGoingUp -> animation.swap("double-jump-animation")
             player.isFalling -> animation.swap("double-jump-animation")
             player.isDoubleJumping -> animation.swap("double-jump-animation")
