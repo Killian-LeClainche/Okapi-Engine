@@ -85,41 +85,52 @@ public class DiggerWorld extends World {
 	}
 
 	private void checkKeysP1() {
-		if(inputMap.get("rightP1").isPressed()) {
-			playerList.get(0).setIsGraveDigging(false);
-			playerList.get(0).moveRight();
-		}
-		if(inputMap.get("leftP1").isPressed()) {
-			playerList.get(0).setIsGraveDigging(false);
-			playerList.get(0).moveLeft();
-		}
-		if(inputMap.get("upP1").isPressed()) {
-			playerList.get(0).setIsGraveDigging(false);
-			playerList.get(0).moveUp();
-		}
+		if(playerList.size() > 0) {
+			if(inputMap.get("rightP1").isPressed()) {
+				playerList.get(0).setIsGraveDigging(false);
+				playerList.get(0).moveRight();
+			}
+			if(inputMap.get("leftP1").isPressed()) {
+				playerList.get(0).setIsGraveDigging(false);
+				playerList.get(0).moveLeft();
+			}
+			if(inputMap.get("upP1").isPressed()) {
+				playerList.get(0).setIsGraveDigging(false);
+				playerList.get(0).moveUp();
+			}
 
-		if(inputMap.get("digP1").isPressed()) {
-			playerList.get(0).setIsGraveDigging(true);
-		}
+			if(inputMap.get("digP1").isPressed()) {
+				playerList.get(0).setIsGraveDigging(true);
+			}
 
-		if(!inputMap.get("rightP1").isPressed() && !inputMap.get("leftP1").isPressed()) {
-			playerList.get(0).slow();
+			if(!inputMap.get("rightP1").isPressed() && !inputMap.get("leftP1").isPressed()) {
+				playerList.get(0).slow();
+			}
 		}
 	}
 
 	private void checkKeysP2() {
-		if(inputMap.get("rightP2").isPressed()) {
-			playerList.get(1).moveRight();
-		}
-		if(inputMap.get("leftP2").isPressed()) {
-			playerList.get(1).moveLeft();
-		}
-		if(inputMap.get("upP2").isPressed()) {
-			playerList.get(1).moveUp();
-		}
+		if(playerList.size() > 1) {
+			if (inputMap.get("rightP2").isPressed()) {
+				playerList.get(1).setIsGraveDigging(false);
+				playerList.get(1).moveRight();
+			}
+			if (inputMap.get("leftP2").isPressed()) {
+				playerList.get(1).setIsGraveDigging(false);
+				playerList.get(1).moveLeft();
+			}
+			if (inputMap.get("upP2").isPressed()) {
+				playerList.get(1).setIsGraveDigging(false);
+				playerList.get(1).moveUp();
+			}
 
-		if(!inputMap.get("rightP2").isPressed() && !inputMap.get("leftP2").isPressed()) {
-			playerList.get(1).slow();
+			if (inputMap.get("digP2").isPressed()) {
+				playerList.get(1).setIsGraveDigging(true);
+			}
+
+			if (!inputMap.get("rightP2").isPressed() && !inputMap.get("leftP2").isPressed()) {
+				playerList.get(1).slow();
+			}
 		}
 	}
 
