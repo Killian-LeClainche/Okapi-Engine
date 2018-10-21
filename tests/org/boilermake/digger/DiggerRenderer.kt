@@ -214,8 +214,6 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
     fun render() {
         animationId = (animationId + 1) % 240
 
-        System.out.println(player.isGraveDigging)
-
         when {
             player.isIdle -> {
                 world["idle-animation"].bind()
