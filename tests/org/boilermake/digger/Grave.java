@@ -6,7 +6,9 @@ import org.joml.Vector2f;
  * Created by Killian Le Clainche on 10/20/2018.
  */
 public class Grave extends Block {
+
     private int digCount;
+    private boolean digPressed;
 	private final Item reward;
 
 
@@ -35,4 +37,17 @@ public class Grave extends Block {
     public boolean isDug() {
 	    return digCount <= 0;
     }
+
+    public boolean isDigPressed() {
+        return digPressed;
+    }
+
+    public void setDigPressed(boolean digPressed) {
+        this.digPressed = digPressed;
+    }
+
+    public int getDigCount() {
+        return digCount;
+    }
+
 }
