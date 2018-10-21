@@ -487,6 +487,11 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
 
     fun render() {
         when {
+            player.isAttacking -> when(player.item) {
+                1 -> animation.swap("attack-animation:sword")
+                2 -> animation.swap("attack-animation:claymore")
+                else -> animation.swap("attack-animation:halberd")
+            }
             player.isGoingUp -> animation.swap("double-jump-animation")
             player.isFalling -> animation.swap("double-jump-animation")
             player.isDoubleJumping -> animation.swap("double-jump-animation")
