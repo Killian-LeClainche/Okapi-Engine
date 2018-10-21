@@ -10,6 +10,7 @@ import polaris.okapi.render.DrawArray
 import polaris.okapi.render.Shader
 import polaris.okapi.render.Texture
 import polaris.okapi.render.VertexAttributes
+import polaris.okapi.util.isEqual
 import polaris.okapi.util.random
 import java.awt.Color.gray
 import java.io.File
@@ -70,23 +71,43 @@ class DiggerRenderer(private val world: DiggerWorld) {
         world["idle-animation"] = "resources/digger/IdleAnimation.png"
         world["idle-animation:claymore"] = "resources/digger/IdleClaymoreAnimation.png"
         world["idle-animation:sword"] = "resources/digger/IdleSwordAnimation.png"
+        world["idle-animation:godfist"] = "resources/digger/IdleGodFistAnimation.png"
+        world["idle-animation:gun"] = "resources/digger/IdleGunAnimation.png"
 
         world["run-animation"] = "resources/digger/RunAnimation.png"
         world["run-animation:claymore"] = "resources/digger/RunClaymoreAnimation.png"
         world["run-animation:sword"] = "resources/digger/RunSwordAnimation.png"
+        world["run-animation:godfist"] = "resources/digger/RunGodFistAnimation.png"
+        world["run-animation:gun"] = "resources/digger/RunGunAnimation.png"
 
         world["jump-animation"] = "resources/digger/JumpAnimation.png"
         world["fall-animation"] = "resources/digger/FallAnimation.png"
         world["dig-animation"] = "resources/digger/DigAnimation.png"
         world["double-jump-animation"] = "resources/digger/DoubleJumpAnimation.png"
 
+        world["attack-animation:claymore"] = "resources/digger/AttackClaymoreAnimation.png"
+        world["attack-animation:halberd"] = "resources/digger/AttackHalberdAnimation.png"
+        world["attack-animation:sword"] = "resources/digger/AttackSwordAnimation.png"
+
         world["idle-claymore"] = "resources/digger/IdleClaymore.png"
         world["idle-halberd"] = "resources/digger/IdleHalberd.png"
         world["idle-sword"] = "resources/digger/IdleSword.png"
+        world["idle-godfist"] = "resources/digger/IdleGodFistItem.png"
+        world["idle-rifle"] = "resources/digger/IdleRifleItem.png"
+        world["idle-shotgun"] = "resources/digger/IdleShotgunItem.png"
+        world["idle-sniper"] = "resources/digger/IdleSniperItem.png"
 
         world["run-claymore"] = "resources/digger/RunClaymoreItem.png"
         world["run-halberd"] = "resources/digger/RunHalberdItem.png"
         world["run-sword"] = "resources/digger/RunSwordItem.png"
+        world["run-godfist"] = "resources/digger/RunGodFistItem.png"
+        world["run-rifle"] = "resources/digger/RunRifleItem.png"
+        world["run-shotgun"] = "resources/digger/RunShotgunItem.png"
+        world["run-sniper"] = "resources/digger/RunSniperItem.png"
+
+        world["attack-claymore"] = "resources/digger/AttackClaymoreItem.png"
+        world["attack-halberd"] = "resources/digger/AttackHalberdItem.png"
+        world["attack-sword"] = "resources/digger/AttackSwordItem.png"
     }
 
     fun render(delta: Double) {
@@ -171,10 +192,32 @@ class BlockRender(val block: Block) {
 
 }
 
+class Animation(var id: Int, var size: Int, var animation: String) {
+
+    var ticks = 0
+
+    fun update() {
+        ticks++;
+
+        if(ticks >= 8) {
+            ticks = 0
+            id = (id + 1) % size
+        }
+    }
+
+    fun swap(newAnimation: String) {
+        if(animation != newAnimation) {
+            id = 0
+            size = 30
+            animation = newAnimation
+        }
+    }
+}
+
 class PlayerRender(val world: DiggerWorld, val player: Player) {
+    var animation: Animation = Animation(0, 30, "idle-animation")
     val quad: DrawArray = DrawArray(GL20C.GL_TRIANGLES, GL20C.GL_DYNAMIC_DRAW, getQuadArray(), 6, VertexAttributes.POS_COLOR_TEXTURE)
 
-    var animationId: Int = 0
 
     fun getQuadArray(): FloatArray {
         val pos = player.position
@@ -188,8 +231,8 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
         size.x /= 2
         size.y /= 2
 
-        val uSize = 1 / 30f
-        var u1 = uSize * (animationId / 8)
+        val uSize = 1f / animation.size
+        var u1 = uSize * animation.id
         var u2 = u1 + uSize
 
         if(!player.isFacingLeft) {
@@ -212,25 +255,36 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
     }
 
     fun render() {
-        animationId = (animationId + 1) % 240
-
         when {
             player.isIdle -> {
-                world["idle-animation"].bind()
+                when {
+                    player.item == 0 -> animation.swap("idle-animation")
+                    player.item == 1 -> animation.swap("idle-animation:sword")
+                    player.item == 2 -> animation.swap("idle-animation:claymore")
+                    player.item == 3 -> animation.swap("idle-animation:sword")
+                    player.item < 7 -> animation.swap("idle-animation:gun")
+                    else -> animation.swap("idle-animation:godfist")
+                }
             }
-            player.isGoingUp -> world["fall-animation"].bind()
-            player.isFalling -> world["fall-animation"].bind()
-            player.isDoubleJumping -> world["double-jump-animation"].bind()
-            player.isGraveDigging -> world["dig-animation"].bind()
-            player.item == 1  && player.isIdle -> world["idle-sword"].bind()
-            player.item == 2 && player.isIdle -> world["idle-claymore"].bind()
-            player.item == 3 && player.isIdle -> world["idle-halberd"].bind()
-            player.item == 1  && !player.isIdle -> world["run-sword"].bind()
-            player.item == 2 && !player.isIdle -> world["run-claymore"].bind()
-            player.item == 3 && !player.isIdle -> world["run-halberd"].bind()
-
-            else -> world["run-animation"].bind()
+            player.isGoingUp -> animation.swap("fall-animation")
+            player.isFalling -> animation.swap("fall-animation")
+            player.isDoubleJumping -> animation.swap("double-jump-animation")
+            player.isGraveDigging -> animation.swap("dig-animation")
+            else -> {
+                when {
+                    player.item == 0 -> animation.swap("run-animation")
+                    player.item == 1 -> animation.swap("run-animation:sword")
+                    player.item == 2 -> animation.swap("run-animation:claymore")
+                    player.item == 3 -> animation.swap("run-animation:sword")
+                    player.item < 7 -> animation.swap("run-animation:gun")
+                    else -> animation.swap("run-animation:godfist")
+                }
+            }
         }
+
+        animation.update()
+
+        world[animation.animation].bind()
 
         quad.bind()
 
