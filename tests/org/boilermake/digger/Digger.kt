@@ -45,8 +45,10 @@ class WindowCreation : App(true) {
         settings["p1:left"] = Key(GLFW.GLFW_KEY_A)
         settings["p1:dig"] = Key(GLFW.GLFW_KEY_S)
         settings["p1:jump"] = Key(GLFW.GLFW_KEY_LEFT_SHIFT)
-        settings["p1:item"] = Key(GLFW.GLFW_KEY_E);
+        settings["p1:item"] = Key(GLFW.GLFW_KEY_E)
         settings["p2"] = Controller(0)
+        settings["p3"] = Controller(1)
+        settings["p4"] = Controller(2)
 
 
         //OPTIONAL, IN MOST CASES IT'S BEST TO LET DEFAULT BEHAVIOR PERSIST TO HAVE SAVED STATES

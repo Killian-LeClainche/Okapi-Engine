@@ -3,6 +3,7 @@ package org.boilermake.digger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import polaris.okapi.App;
 import polaris.okapi.options.Controller;
 import polaris.okapi.options.Key;
@@ -35,26 +36,36 @@ public class DiggerWorld extends World {
 	
 	@Override
 	public void init() {
-		player2 = (Controller)getSettings().get("p2");
+		//Player 1
 		inputMap.put("rightP1", (Key)getSettings().get("p1:right"));
 		inputMap.put("leftP1", (Key)getSettings().get("p1:left"));
 		inputMap.put("digP1", (Key)getSettings().get("p1:dig"));
 		inputMap.put("upP1", (Key)getSettings().get("p1:up"));
 		inputMap.put("itemP1", (Key)getSettings().get("p1:item"));
+
+		//Player 2
+		player2 = (Controller)getSettings().get("p2");
 		inputMap.put("rightP2", player2.getKeyDPadRight());
 		inputMap.put("leftP2", player2.getKeyDPadLeft());
 		inputMap.put("digP2", player2.getKeyX());
 		inputMap.put("upP2", player2.getKeyA());
 		inputMap.put("itemP2", player2.getKeyB());
 
+		//Player 3
+		player3 = (Controller)getSettings().get("p3");
+		inputMap.put("rightP3", player3.getKeyDPadRight());
+		inputMap.put("leftP3", player3.getKeyDPadLeft());
+		inputMap.put("digP3", player3.getKeyX());
+		inputMap.put("upP3", player3.getKeyA());
+		inputMap.put("itemP3", player3.getKeyB());
 
-		playerList.add(new Player(new Vector2f(300, 200)));
-		playerList.add(new Player(new Vector2f(1000, 600)));
-
-		Vector2f PlayerCoord1 = new Vector2f(480, 270);
-		Vector2f PlayerCoord2 = new Vector2f(1440, 270);
-		Vector2f PlayerCoord3 = new Vector2f(480, 810);
-		Vector2f PlayerCoord4 = new Vector2f(1440, 810);
+		//Player 4
+		player4 = (Controller)getSettings().get("p4");
+		inputMap.put("rightP4", player4.getKeyDPadRight());
+		inputMap.put("leftP4", player4.getKeyDPadLeft());
+		inputMap.put("digP4", player4.getKeyX());
+		inputMap.put("upP4", player4.getKeyA());
+		inputMap.put("itemP4", player4.getKeyB());
 
 		GameMap map1 = new GameMap("Map1");
 		GameMap map2 = new GameMap("Map2");
@@ -78,12 +89,16 @@ public class DiggerWorld extends World {
 		
 		terrainList.addAll(mapList.get(randomVal).terrainList);
 		graveList.addAll(mapList.get(randomVal).graveList);
-		
 
-		//playerList.add(new Player(PlayerCoord1));
-		//playerList.add(new Player(PlayerCoord2));
-		//playerList.add(new Player(PlayerCoord3));
-		//playerList.add(new Player(PlayerCoord4));
+		Vector2f PlayerCoord1 = new Vector2f(480, 270);
+		Vector2f PlayerCoord2 = new Vector2f(1440, 270);
+		Vector2f PlayerCoord3 = new Vector2f(480, 810);
+		Vector2f PlayerCoord4 = new Vector2f(1440, 810);
+
+		playerList.add(new Player(PlayerCoord1, new Vector3f(255, 255, 255)));
+		playerList.add(new Player(PlayerCoord2, new Vector3f(42, 34, 24)));
+		//playerList.add(new Player(PlayerCoord3, new Vector3f(44, 117, 51)));
+		//playerList.add(new Player(PlayerCoord4, new Vector3f(0, 0, 160)));
 
 		renderer.init();
 	}
@@ -150,6 +165,68 @@ public class DiggerWorld extends World {
 		}
 	}
 
+	private void checkKeysP3() {
+		if(playerList.size() > 2) {
+			if (inputMap.get("rightP3").isPressed()) {
+				playerList.get(2).setIsGraveDigging(false);
+				playerList.get(2).moveRight();
+			}
+			if (inputMap.get("leftP3").isPressed()) {
+				playerList.get(2).setIsGraveDigging(false);
+				playerList.get(2).moveLeft();
+			}
+			if (inputMap.get("upP3").isPressed()) {
+				playerList.get(2).setIsGraveDigging(false);
+				playerList.get(2).moveUp();
+			}
+
+			if(inputMap.get("itemP3").isClicked()) {
+				playerList.get(2).setIsGraveDigging(false);
+				HitBox h = playerList.get(2).useItem();
+				hitboxList.add(h);
+			}
+
+			if (inputMap.get("digP3").isPressed()) {
+				playerList.get(2).setIsGraveDigging(true);
+			}
+
+			if (!inputMap.get("rightP3").isPressed() && !inputMap.get("leftP3").isPressed()) {
+				playerList.get(2).slow();
+			}
+		}
+	}
+
+	private void checkKeysP4() {
+		if(playerList.size() > 3) {
+			if (inputMap.get("rightP4").isPressed()) {
+				playerList.get(3).setIsGraveDigging(false);
+				playerList.get(3).moveRight();
+			}
+			if (inputMap.get("leftP4").isPressed()) {
+				playerList.get(3).setIsGraveDigging(false);
+				playerList.get(3).moveLeft();
+			}
+			if (inputMap.get("upP4").isPressed()) {
+				playerList.get(3).setIsGraveDigging(false);
+				playerList.get(3).moveUp();
+			}
+
+			if(inputMap.get("itemP4").isClicked()) {
+				playerList.get(3).setIsGraveDigging(false);
+				HitBox h = playerList.get(3).useItem();
+				hitboxList.add(h);
+			}
+
+			if (inputMap.get("digP4").isPressed()) {
+				playerList.get(3).setIsGraveDigging(true);
+			}
+
+			if (!inputMap.get("rightP4").isPressed() && !inputMap.get("leftP4").isPressed()) {
+				playerList.get(3).slow();
+			}
+		}
+	}
+
 	@Override
 	public void update() {
 		super.update();
@@ -171,26 +248,14 @@ public class DiggerWorld extends World {
 		for (int i = 0; i < playerList.size(); i++) {
 			Player player = playerList.get(i);
 			for (Player p : playerList) {
-				if (!player.equals(p) && Helper.isColliding(player, p)) {
-					//x-axis collisions
-					if (player.getPosition().x < p.getPosition().x && player.getVelocity().x > 0) { // player -> p
-						player.setPosition(p.getPosition().x - p.getSize().x, player.getPosition().y);
-						player.stopX();
-						p.stopX();
-					} else if (player.getPosition().x > p.getPosition().x && player.getVelocity().x < 0) { // p <- player
-						player.setPosition(p.getPosition().x + p.getSize().x, player.getPosition().y);
-						player.stopX();
-						p.stopX();
-					}
-					//y-axis collisions             											 p
-					else if (player.getPosition().y < p.getPosition().y && player.getVelocity().y > 0) { // player
-						player.setPosition(player.getPosition().x, p.getPosition().y - p.getSize().y);
-						player.stopY();
-						p.stopY();
-					} else if (player.getPosition().y > p.getPosition().y && player.getVelocity().y < 0) { // player
-						player.setPosition(player.getPosition().x, p.getPosition().y + p.getSize().y);// p
-						player.stopY();
-						p.stopY();
+				if (!player.equals(p) && Helper.equals(player, p)) {
+					System.out.println("here");
+					if(player.velocity.x > 0) {
+						player.getPosition().x -= 10;
+						p.getPosition().x += 10;
+					} else {
+						player.getPosition().x += 10;
+						p.getPosition().x -= 10;
 					}
 				}
 			}
