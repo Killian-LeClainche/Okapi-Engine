@@ -23,7 +23,8 @@ public class DiggerWorld extends World {
 	public List<Item> itemList = new ArrayList<>();
 	public List<Player> playerList = new ArrayList<>();
 	public Map<String, Key> inputMap = new TreeMap<>();
-	public ArrayList<GameMap> mapList = new ArrayList<>();
+	public List<GameMap> mapList = new ArrayList<>();
+	public List<HitBox> hitboxList = new ArrayList<>();
 	public Controller player2;
 	public Controller player3;
 	public Controller player4;
@@ -39,10 +40,13 @@ public class DiggerWorld extends World {
 		inputMap.put("leftP1", (Key)getSettings().get("p1:left"));
 		inputMap.put("digP1", (Key)getSettings().get("p1:dig"));
 		inputMap.put("upP1", (Key)getSettings().get("p1:up"));
+		inputMap.put("itemP1", (Key)getSettings().get("p1:item"));
 		inputMap.put("rightP2", player2.getKeyDPadRight());
 		inputMap.put("leftP2", player2.getKeyDPadLeft());
-		inputMap.put("digP2", player2.getKeyDPadDown());
+		inputMap.put("digP2", player2.getKeyX());
 		inputMap.put("upP2", player2.getKeyA());
+		inputMap.put("itemP2", player2.getKeyB());
+
 
 		playerList.add(new Player(new Vector2f(300, 200)));
 		playerList.add(new Player(new Vector2f(1000, 600)));
@@ -99,6 +103,12 @@ public class DiggerWorld extends World {
 				playerList.get(0).moveUp();
 			}
 
+			if(inputMap.get("itemP1").isClicked()) {
+				playerList.get(0).setIsGraveDigging(false);
+				HitBox h = playerList.get(0).useItem();
+				hitboxList.add(h);
+			}
+
 			if(inputMap.get("digP1").isPressed()) {
 				playerList.get(0).setIsGraveDigging(true);
 			}
@@ -124,6 +134,12 @@ public class DiggerWorld extends World {
 				playerList.get(1).moveUp();
 			}
 
+			if(inputMap.get("itemP2").isClicked()) {
+				playerList.get(1).setIsGraveDigging(false);
+				HitBox h = playerList.get(1).useItem();
+				hitboxList.add(h);
+			}
+
 			if (inputMap.get("digP2").isPressed()) {
 				playerList.get(1).setIsGraveDigging(true);
 			}
@@ -143,18 +159,18 @@ public class DiggerWorld extends World {
 		checkKeysP1();
 		checkKeysP2();
 
-		for(Player p : playerList) {
-			if(!p.isDead()) {
+		for (Player p : playerList) {
+			if (!p.isDead()) {
 				p.update();
-				if(System.currentTimeMillis() - p.clickGraveTime > 160) {
+				if (System.currentTimeMillis() - p.clickGraveTime > 160) {
 					p.setHasClickedGrave(false);
 				}
 			}
 		}
 
-		for(int i = 0; i < playerList.size(); i++) {
+		for (int i = 0; i < playerList.size(); i++) {
 			Player player = playerList.get(i);
-			for(Player p : playerList) {
+			for (Player p : playerList) {
 				if (!player.equals(p) && Helper.isColliding(player, p)) {
 					//x-axis collisions
 					if (player.getPosition().x < p.getPosition().x && player.getVelocity().x > 0) { // player -> p
@@ -178,39 +194,38 @@ public class DiggerWorld extends World {
 					}
 				}
 			}
-			for(Terrain t : terrainList) {
-				if(!player.equals(t) && Helper.isColliding(player, t) ) {
+			for (Terrain t : terrainList) {
+				if (!player.equals(t) && Helper.isColliding(player, t)) {
 					//y-axis collisions             											 				           p2
-					if (player.getPosition().y < t.getPosition().y - t.getSize().y/2 && player.getVelocity().y > 0) { // p1
-						player.setPosition(player.getPosition().x, t.getPosition().y - t.getSize().y/2 - player.getSize().y/2);
+					if (player.getPosition().y < t.getPosition().y - t.getSize().y / 2 && player.getVelocity().y > 0) { // p1
+						player.setPosition(player.getPosition().x, t.getPosition().y - t.getSize().y / 2 - player.getSize().y / 2);
 						player.stopY();
-					} else if (player.getPosition().y > t.getPosition().y + t.getSize().y/2 && player.getVelocity().y < 0) {      // p1
-						player.setPosition(player.getPosition().x, t.getPosition().y + t.getSize().y/2 + player.getSize().y/2);// p2
+					} else if (player.getPosition().y > t.getPosition().y + t.getSize().y / 2 && player.getVelocity().y < 0) {      // p1
+						player.setPosition(player.getPosition().x, t.getPosition().y + t.getSize().y / 2 + player.getSize().y / 2);// p2
 						player.stopY();
 						player.resetJumps();
 					}
 					//x-axis collisions
-					else if (player.getPosition().x < t.getPosition().x - t.getSize().x/2 && player.getVelocity().x > 0) { // p1 -> p2
-						player.setPosition(t.getPosition().x - t.getSize().x/2 - player.getSize().x/2, player.getPosition().y);
+					else if (player.getPosition().x < t.getPosition().x - t.getSize().x / 2 && player.getVelocity().x > 0) { // p1 -> p2
+						player.setPosition(t.getPosition().x - t.getSize().x / 2 - player.getSize().x / 2, player.getPosition().y);
 						player.stopX();
-					} else if (player.getPosition().x > t.getPosition().x + t.getSize().x/2 && player.getVelocity().x < 0) { // p2 <- p1
-						player.setPosition(t.getPosition().x + t.getSize().x/2 + player.getSize().x/2, player.getPosition().y);
+					} else if (player.getPosition().x > t.getPosition().x + t.getSize().x / 2 && player.getVelocity().x < 0) { // p2 <- p1
+						player.setPosition(t.getPosition().x + t.getSize().x / 2 + player.getSize().x / 2, player.getPosition().y);
 						player.stopX();
 					}
 				}
 			}
 			List<Grave> tempGraveList = new ArrayList<>(graveList);
-			for(Grave grave : graveList) {
-				if(Helper.isColliding(player, grave) && player.isGrounded()) {
-					if(i == 0 && inputMap.get("digP1").isClicked()) {
+			for (Grave grave : graveList) {
+				if (Helper.isColliding(player, grave) && player.isGrounded()) {
+					if (i == 0 && inputMap.get("digP1").isClicked()) {
+						grave.dig();
+						player.startDig();
+					} else if (i == 1 && inputMap.get("digP2").isClicked()) {
 						grave.dig();
 						player.startDig();
 					}
-					else if(i == 1 && inputMap.get("digP2").isClicked()) {
-						grave.dig();
-						player.startDig();
-					}
-					if(grave.isDug()) {
+					if (grave.isDug()) {
 						itemList.add(grave.getReward());
 						tempGraveList.remove(grave);
 					}
@@ -218,14 +233,15 @@ public class DiggerWorld extends World {
 			}
 			graveList = tempGraveList;
 			List<Item> tempItemList = new ArrayList<>(itemList);
-			for(Item item : itemList) {
-				if(Helper.isColliding(player, item)) {
+			for (Item item : itemList) {
+				if (Helper.isColliding(player, item)) {
 					player.setItem(item.getItemType());
 					player.setDelay(item.getItemDelay());
 					tempItemList.remove(item);
 				}
 			}
 			itemList = tempItemList;
+
 		}
 	}
 
