@@ -203,6 +203,8 @@ public class DiggerWorld extends World {
 				}
 			}
 			itemList = tempItemList;
+
+
 		}
 	}
 

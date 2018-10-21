@@ -20,6 +20,7 @@ public class Player extends Block {
 	private final int jumpVel = 50;
 	private final Vector2f screen = new Vector2f(1920, 1080);
 	private int item;
+	public int ammo;
 	private int delay;
 
 	public Player(Vector2f position) {
@@ -31,6 +32,7 @@ public class Player extends Block {
 		this.isDoubleJumping = false;
 		this.isDead = false;
 		this.item = Item.ItemType.NOTHING;
+		this.ammo = -1;
 		this.delay = 60;
 	}
 
@@ -62,6 +64,19 @@ public class Player extends Block {
 
 	public void setItem(int item) {
 		this.item = item;
+
+		switch (item) {
+			case Item.ItemType.NOTHING: this.ammo = -1; break;
+			case Item.ItemType.DAGGER: this.ammo = -1; break;
+			case Item.ItemType.SWORD: this.ammo = -1; break;
+			case Item.ItemType.CLAYMORE: this.ammo = -1; break;
+			case Item.ItemType.HALBERD: this.ammo = -1; break;
+			case Item.ItemType.SNIPER: this.ammo = 2; break;
+			case Item.ItemType.SHOTGUN: this.ammo = 4; break;
+			case Item.ItemType.PISTOL: this.ammo = 5; break;
+			case Item.ItemType.RIFLE: this.ammo = 2; break;
+			case Item.ItemType.GOD_FIST: this.ammo = -1; break;
+		}
 	}
 
 	public void setDelay(int delay) {
@@ -196,15 +211,16 @@ public class Player extends Block {
 	}
 
 	public HitBox useItem() {
+
 	    switch(this.item) {
             case Item.ItemType.DAGGER : return createDaggerHitBox();
             case Item.ItemType.SWORD : return createSwordHitBox();
             case Item.ItemType.CLAYMORE : return createClaymoreHitBox();
             case Item.ItemType.HALBERD : return createHalberdHitBox();
-            case Item.ItemType.SNIPER : return createSniperHitBox();
-            case Item.ItemType.SHOTGUN : return createShotgunHitBox();
-            case Item.ItemType.PISTOL : return createPistolHitBox();
-            case Item.ItemType.RIFLE : return createRifleHitBox();
+            case Item.ItemType.SNIPER : ammo -= 1; if(ammo == 0){ setItem(0);} return createSniperHitBox();
+            case Item.ItemType.SHOTGUN : ammo -= 1; if(ammo == 0){ setItem(0);} return createShotgunHitBox();
+            case Item.ItemType.PISTOL : ammo -= 1; if(ammo == 0){ setItem(0);} return createPistolHitBox();
+            case Item.ItemType.RIFLE : ammo -= 1; if(ammo == 0){ setItem(0);} return createRifleHitBox();
             case Item.ItemType.GOD_FIST : return createGodFistHitBox();
 			default: return null;
 		}
