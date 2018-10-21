@@ -147,8 +147,8 @@ public class DiggerWorld extends World {
 		
 		int randomVal = random(0, 4);
 		
-		terrainList.addAll(mapList.get(randomVal).terrainList);
-		graveList.addAll(mapList.get(randomVal).graveList);
+		terrainList.addAll(mapList.get(4).terrainList);
+		graveList.addAll(mapList.get(4).graveList);
 		
 
 		//playerList.add(new Player(PlayerCoord1));

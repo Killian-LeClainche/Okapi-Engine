@@ -20,119 +20,127 @@ public class GameMap {
         {
 
             int xsize = 260;
-            int ysize = 50;
+            int ysize = 40;
 
-            this.terrainList.add(new Terrain(100, 180, xsize, ysize));
-            this.terrainList.add(new Terrain(280, 360, xsize, ysize));
-            this.terrainList.add(new Terrain(1140, 180, xsize, ysize));
-            this.terrainList.add(new Terrain(1320, 360, xsize, ysize));
+            this.terrainList.add(new Terrain(300, 80, xsize, ysize));
+            this.terrainList.add(new Terrain(490, 330, xsize, ysize));
+            this.terrainList.add(new Terrain(300, 870, xsize, ysize));
+            this.terrainList.add(new Terrain(490, 650, xsize, ysize));
 
-            this.terrainList.add(new Terrain(460, 540, xsize+100, ysize));
+            this.terrainList.add(new Terrain(960, 510, xsize+100, ysize));
 
-            this.terrainList.add(new Terrain(100, 720, xsize, ysize));
-            this.terrainList.add(new Terrain(280, 900, xsize, ysize));
-            this.terrainList.add(new Terrain(1140, 720, xsize, ysize));
-            this.terrainList.add(new Terrain(1320, 900, xsize, ysize));
+            this.terrainList.add(new Terrain(1650, 80, xsize, ysize));
+            this.terrainList.add(new Terrain(1420, 330, xsize, ysize));
+            this.terrainList.add(new Terrain(1650, 870, xsize, ysize));
+            this.terrainList.add(new Terrain(1420, 650, xsize, ysize));
 
             Random rangen = new Random();
-            Item temp = new Item(180, 180, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(180, 180, rangen.nextInt(3) + 1, temp));
+            Item temp = new Item(430, 80, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(430, 80, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(410, 360, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(410, 360, rangen.nextInt(3) + 1, temp));
+            temp = new Item(620, 330, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(620, 330, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(1270, 180, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(1270, 180, rangen.nextInt(3) + 1, temp));
+            temp = new Item(430, 870, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(430, 870, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(1460, 360, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(1460, 360, rangen.nextInt(3) + 1, temp));
+            temp = new Item(620, 650, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(620, 650, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(590, 540, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(190, 540, rangen.nextInt(3) + 1, temp));
+            temp = new Item(1090, 510, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(1090, 510, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(180, 720, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(180, 720, rangen.nextInt(3) + 1, temp));
+            temp = new Item(1780, 80, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(1780, 80, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(410, 900, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(410, 900, rangen.nextInt(3) + 1, temp));
+            temp = new Item(1550, 330, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(1550, 330, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(1270, 720, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(1270, 720, rangen.nextInt(3) + 1, temp));
+            temp = new Item(1780, 870, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(1780, 870, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(1460, 900, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(1460, 900, rangen.nextInt(3) + 1, temp));
+            temp = new Item(1550, 650, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(1550, 650, rangen.nextInt(3) + 1, temp));
 
         }
 
         if(mapName.equals("Map2"))
         {
-            int xsize = 1500;
-            int ysize = 100;
+            int xsize = 1920;
+            int ysize = 70;
 
-            this.terrainList.add(new Terrain(200, 200, xsize, ysize));
-            this.terrainList.add(new Terrain(200, 400, xsize, ysize));
-            this.terrainList.add(new Terrain(200, 800, xsize, ysize));
+            for(int i = 0; i < 10; i++)
+            {
+                this.terrainList.add(new Terrain(960, 620 + (i*50), 50, 25));
+            }
+            //this.terrainList.add(new Terrain(960, 680, 50, 50));
+            this.terrainList.add(new Terrain(480, 580, 960, ysize));
+            this.terrainList.add(new Terrain(1440, 580, 960, ysize));
+            this.terrainList.add(new Terrain(960, 10, xsize, 50));
+
 
             Random rangen = new Random();
 
-            Item temp = new Item(960, 200, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(960, 200, rangen.nextInt(3) + 1, temp));
+            Item temp = new Item(480, 580, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(480, 580, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(960, 400, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(960, 400, rangen.nextInt(3) + 1, temp));
+            temp = new Item(1440, 580, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(1440, 580, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(960, 800, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(960, 800, rangen.nextInt(3) + 1, temp));
+            temp = new Item(960, 10, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(960, 10, rangen.nextInt(3) + 1, temp));
         }
 
         if (mapName.equals("Map3"))
         {
-            this.terrainList.add(new Terrain(200, 160, 400, 90));
-            this.terrainList.add(new Terrain(720, 340, 180, 70));
-            this.terrainList.add(new Terrain(180, 510, 320, 90));
-            this.terrainList.add(new Terrain(450, 700, 400, 90));
-            this.terrainList.add(new Terrain(1070, 200, 700, 90));
-            this.terrainList.add(new Terrain(240, 885, 270, 70));
-            this.terrainList.add(new Terrain(910, 615, 400, 90));
-            this.terrainList.add(new Terrain(800, 900, 600, 90));
+            int ysize = 25;
+            this.terrainList.add(new Terrain(350, 870, 500, ysize));
+            this.terrainList.add(new Terrain(720, 640, 180, ysize));
+            this.terrainList.add(new Terrain(240, 510, 320, ysize));
+            this.terrainList.add(new Terrain(450, 270, 400, ysize));
+            this.terrainList.add(new Terrain(1470, 200, 700, ysize));
+            this.terrainList.add(new Terrain(750, 40, 270, ysize));
+            this.terrainList.add(new Terrain(1180, 545, 400, ysize));
+            this.terrainList.add(new Terrain(1650, 810, 600, ysize));
 
             Random rangen = new Random();
 
-            Item temp = new Item(300, 160, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(300, 160, rangen.nextInt(3) + 1, temp));
+            Item temp = new Item(780, 40, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(780, 40, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(800, 340, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(800, 340, rangen.nextInt(3) + 1, temp));
+            temp = new Item(1500, 200, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(1500, 200, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(1420, 200, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(1420, 200, rangen.nextInt(3) + 1, temp));
+            temp = new Item(500, 270, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(500, 270, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(375, 885, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(375, 885, rangen.nextInt(3) + 1, temp));
+            temp = new Item(770, 640, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(770, 640, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(650, 700, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(650, 700, rangen.nextInt(3) + 1, temp));
+            temp = new Item(1710, 810, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(1710, 810, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(1100, 900, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(1100, 900, rangen.nextInt(3) + 1, temp));
+            temp = new Item(390, 870, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(390, 870, rangen.nextInt(3) + 1, temp));
         }
 
         if(mapName.equals("Map4"))
         {
-            this.terrainList.add(new Terrain(200, 100, 400, 90));
-            this.terrainList.add(new Terrain(430, 410, 135, 80));
-            this.terrainList.add(new Terrain(200, 900, 100, 70));
-            this.terrainList.add(new Terrain(500, 800, 600, 90));
-            this.terrainList.add(new Terrain(970, 140, 200, 90));
-            this.terrainList.add(new Terrain(1040, 500, 140, 80));
-            this.terrainList.add(new Terrain(1340, 430, 150, 90));
-            this.terrainList.add(new Terrain(1640, 330, 150, 90));
-            this.terrainList.add(new Terrain(1530, 820, 300, 90));
+            int ysize = 25;
+            this.terrainList.add(new Terrain(200, 100, 400, ysize));
+            this.terrainList.add(new Terrain(430, 410, 135, ysize));
+            this.terrainList.add(new Terrain(670, 340, 100, ysize));
+            this.terrainList.add(new Terrain(500, 800, 600, ysize));
+            this.terrainList.add(new Terrain(970, 140, 200, ysize));
+            this.terrainList.add(new Terrain(1040, 500, 140, ysize));
+            this.terrainList.add(new Terrain(1340, 380, 150, ysize));
+            this.terrainList.add(new Terrain(1640, 330, 150, ysize));
+            this.terrainList.add(new Terrain(1530, 820, 300, ysize));
 
             Random rangen = new Random();
 
-            Item temp = new Item(300, 100, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(300, 100, rangen.nextInt(3) + 1, temp));
+            Item temp = new Item(270, 100, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(270, 100, rangen.nextInt(3) + 1, temp));
 
             temp = new Item(490, 410, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
             this.graveList.add(new Grave(490, 410, rangen.nextInt(3) + 1, temp));
@@ -146,18 +154,33 @@ public class GameMap {
             temp = new Item(250, 900, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
             this.graveList.add(new Grave(250, 900, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(1700, 820, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(1700, 820, rangen.nextInt(3) + 1, temp));
+            temp = new Item(1600, 820, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(1600, 820, rangen.nextInt(3) + 1, temp));
         }
 
         if(mapName.equals("Map5"))
         {
-            this.terrainList.add(new Terrain(640, 190, 300, 90));
-            this.terrainList.add(new Terrain(1280, 190, 300, 90));
-            this.terrainList.add(new Terrain(930, 505, 60, 70));
-            this.terrainList.add(new Terrain(500, 650, 90, 150));
-            this.terrainList.add(new Terrain(500, 800, 1000, 100));
-            this.terrainList.add(new Terrain(1410, 650, 90, 150));
+            //eye
+            this.terrainList.add(new Terrain(590, 690, 300, 120));
+            this.terrainList.add(new Terrain(590, 690, 120, 300));
+
+            //right eye
+            this.terrainList.add(new Terrain(1290, 690, 300, 120));
+            this.terrainList.add(new Terrain(1290, 690, 120, 300));
+
+            //nose
+            this.terrainList.add(new Terrain(940, 310, 300, 90));
+            this.terrainList.add(new Terrain(940, 370, 120, 190));
+
+            //mouth and jaw
+            this.terrainList.add(new Terrain(950, 20, 1000, 100));
+            this.terrainList.add(new Terrain(610, 100, 60, 100));
+            this.terrainList.add(new Terrain(940, 100, 60, 100));
+            this.terrainList.add(new Terrain(1270, 100, 60, 100));
+            this.terrainList.add(new Terrain(1427, 120, 45, 150));
+            this.terrainList.add(new Terrain(473, 120, 45, 150));
+            this.terrainList.add(new Terrain(375, 230, 150, 70));
+            this.terrainList.add(new Terrain(1525, 230, 150, 70));
 
             Random rangen = new Random();
 
