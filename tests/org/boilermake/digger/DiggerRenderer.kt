@@ -471,6 +471,18 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
                     pos.x - size.x, pos.y - size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
                     pos.x - size.x, pos.y + size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
             )
+        if(itemAnimation.animation == "attack-halberd")
+            return floatArrayOf(
+                    //position          color                   texture
+                    //x,y,z             r,g,b,a                 u,v
+                    pos.x - size.x, pos.y - size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x, pos.y - size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x, pos.y + size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                    pos.x + size.x, pos.y + size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x, pos.y - size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x, pos.y + size.y / 2 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+            )
 
         return floatArrayOf(
                 //position          color                   texture
