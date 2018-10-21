@@ -1,11 +1,15 @@
-float cloudDensity = 1.0; 	// overall density [0,1]
-float noisiness = 0.35; 	// overall strength of the noise effect [0,1]
-float speed = 0.1;			// controls the animation speed [0, 0.1 ish)
-float cloudHeight = 2.5; 	// (inverse) height of the input gradient [0,...)
+#version 330 core
+
 uniform float time;
 uniform vec2 resolution;
 uniform vec2 top;
 uniform vec2 bottom;
+
+float cloudDensity = .75; 	// overall density [0,1]
+float noisiness = 0.25; 	// overall strength of the noise effect [0,1]
+float speed = 0.05;			// controls the animation speed [0, 0.1 ish)
+float cloudHeight = 100.0; 	// (inverse) height of the input gradient [0,...)
+
 
 // Simplex noise below = ctrl+c, ctrl+v:
 // Description : Array and textureless GLSL 2D/3D/4D simplex
@@ -128,18 +132,23 @@ float gradient(vec2 uv) {
  	return (1.0 - uv.y * uv.y * cloudHeight);
 }
 
-void main()
+float _smoothstep(float x)
 {
-    vec2 diff = vec2(bottom.x - top.x, top.y - bottom.y);
-	vec2 uv = (vec2(gl_FragCoord.x - top.x, gl_FragCoord.y - bottom.y)) / diff;
-    vec3 p = vec3(uv, time * speed);
+    return x*x*(3.0 - 2.0*x);	//MAD, MUL, MUL
+}
+
+void main( )
+{
+    vec2 top_new = vec2(top.x / 1920.0, top.y / 1080.0);
+    vec2 bottom_new = vec2(bottom.x / 1920.0, bottom.y / 1080.0);
+    vec2 diff = bottom_new - top_new;
+	vec2 uv = ((gl_FragCoord.xy / resolution.xy) - top_new) / diff;
+
+    vec3 p = vec3(uv, time*speed+sin(top.x*top.y));
     vec3 someRandomOffset = vec3(0.1, 0.3, 0.2);
     vec2 duv = vec2(fBm(p), fBm(p + someRandomOffset)) * noisiness;
     float q = gradient(uv + duv) * cloudDensity;
-        float c = 1.0;
+    float c = 1.0;
+    gl_FragColor = vec4(1.0, 1.0, 1.0, q * c);
 
-        c *= (1.0 - uv.y) / 2.0;
-
-        q *= c;
-	gl_FragColor = vec4(q,q,q, 1.0);
 }

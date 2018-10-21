@@ -1,6 +1,7 @@
 package org.boilermake.digger
 
 import org.joml.Vector2f
+import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL20C
 import org.lwjgl.opengl.GL30C
 import org.lwjgl.opengl.GL33C
@@ -65,6 +66,9 @@ class DiggerRenderer(private val world: DiggerWorld) {
 
         val texture: Texture = world["player"]
 
+        GL30C.glEnable(GL30C.GL_BLEND)
+        GL30C.glBlendFunc(GL30C.GL_SRC_ALPHA, GL30C.GL_ONE_MINUS_SRC_ALPHA)
+
         timeExisted += delta
         world.application.updateView()
         VertexAttributes.POS_COLOR_TEXTURE.enable()
@@ -78,7 +82,6 @@ class DiggerRenderer(private val world: DiggerWorld) {
         Texture.disable()
         rainQuad.bind()
         rainQuad.draw()
-
 
         world.application.renderManager.posColorTextureShader.bind()
 
@@ -96,14 +99,14 @@ class DiggerRenderer(private val world: DiggerWorld) {
             i.render(true)
         }
 
-        /*blockFogShader.bind()
+        blockFogShader.bind()
 
         GL30C.glUniform1f(blockFogShader["time"], (System.currentTimeMillis() % 10000000) / 1000f)
         GL30C.glUniform2f(blockFogShader["resolution"], world.settings.windowWidth.toFloat(), world.settings.windowHeight.toFloat())
 
         for(i in terrainRenders) {
             i.render(false)
-        }*/
+        }
     }
 
 }
@@ -154,27 +157,25 @@ class TerrainRender(val renderer: DiggerRenderer, val block: Block) {
         return floatArrayOf(
                 //position          color                   texture
                 //x,y,z             r,g,b,a                 u,v
-                pos.x - size.x, pos.y + size.y * 2 - size.y, 0f,       1f, 1f, 1f, 1f,     0.01f, .99f,
-                pos.x + size.x, pos.y + size.y * 2 - size.y, 0f,       1f, 1f, 1f, 1f,     .99f, .99f,
-                pos.x + size.x, pos.y + size.y * 2 + size.y, 0f,       1f, 1f, 1f, 1f,     .99f, 0.01f,
+                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     0.01f, .99f,
+                pos.x + size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     .99f, .99f,
+                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     .99f, 0.01f,
 
-                pos.x + size.x, pos.y + size.y * 2 + size.y, 0f,       1f, 1f, 1f, 1f,     .99f, 0.01f,
-                pos.x - size.x, pos.y + size.y * 2 - size.y, 0f,       1f, 1f, 1f, 1f,     0.01f, .99f,
-                pos.x - size.x, pos.y + size.y * 2 + size.y, 0f,       1f, 1f, 1f, 1f,     0.01f, 0.01f
+                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     .99f, 0.01f,
+                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     0.01f, .99f,
+                pos.x - size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     0.01f, 0.01f
         )
     }
 
     fun render(pass: Boolean) {
-
         if(pass) {
-            blockRender.quad.bind()
-            blockRender.quad.draw()
+
         }
         else {
             val pos = block.position
             val size = Vector2f(block.size)
-            GL30C.glUniform2f(renderer.blockFogShader["top"], pos.x - size.x, pos.y + size.y * 2 + size.y)
-            GL30C.glUniform2f(renderer.blockFogShader["bottom"], pos.x + size.x, pos.y + size.y * 2 - size.y)
+            GL30C.glUniform2f(renderer.blockFogShader["bottom"], pos.x - size.x / 2, pos.y - size.y / 2)
+            GL30C.glUniform2f(renderer.blockFogShader["top"], pos.x + size.x / 2, pos.y + size.y / 2)
             quad.bind()
             quad.draw()
         }

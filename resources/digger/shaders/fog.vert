@@ -1,12 +1,15 @@
 #version 330 core
 
-in vec3 in_Position;
-in vec4 in_Color;
-in vec3 in_Normal;
-in vec2 in_TexCoord;
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec4 color;
+layout(location = 3) in vec2 texCoord;
+
+out vec3 in_Position;
+out vec4 in_Color;
+out vec2 in_TexCoord;
 
 void main() {
 
-	vec3 pos = vec3(in_Position.x / 960 - 1, in_Position.y / 540 - 1, -1);
-    gl_Position = vec4(pos, 1.0);
+    in_Position = vec3(position.x / 960 - 1, position.y / 540 - 1, position.z);
+    gl_Position = vec4(in_Position, 1.0);
 }
