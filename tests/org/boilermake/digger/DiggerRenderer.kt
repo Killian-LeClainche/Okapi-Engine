@@ -1,6 +1,7 @@
 package org.boilermake.digger
 
 import org.joml.Vector2f
+import org.joml.Vector3f
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL20C
 import org.lwjgl.opengl.GL30C
@@ -66,13 +67,26 @@ class DiggerRenderer(private val world: DiggerWorld) {
         world["player"] = "resources/digger/character.png"
         world["ground"] = "resources/digger/ground.png"
 
+        world["idle-animation"] = "resources/digger/IdleAnimation.png"
+        world["idle-animation:claymore"] = "resources/digger/IdleClaymoreAnimation.png"
+        world["idle-animation:sword"] = "resources/digger/IdleSwordAnimation.png"
 
         world["run-animation"] = "resources/digger/RunAnimation.png"
+        world["run-animation:claymore"] = "resources/digger/RunClaymoreAnimation.png"
+        world["run-animation:sword"] = "resources/digger/RunSwordAnimation.png"
+
         world["jump-animation"] = "resources/digger/JumpAnimation.png"
         world["fall-animation"] = "resources/digger/FallAnimation.png"
-        world["idle-animation"] = "resources/digger/IdleAnimation.png"
         world["dig-animation"] = "resources/digger/DigAnimation.png"
         world["double-jump-animation"] = "resources/digger/DoubleJumpAnimation.png"
+
+        world["idle-claymore"] = "resources/digger/IdleClaymore.png"
+        world["idle-halberd"] = "resources/digger/IdleHalberd.png"
+        world["idle-sword"] = "resources/digger/IdleSword.png"
+
+        world["run-claymore"] = "resources/digger/RunClaymoreItem.png"
+        world["run-halberd"] = "resources/digger/RunHalberdItem.png"
+        world["run-sword"] = "resources/digger/RunSwordItem.png"
     }
 
     fun render(delta: Double) {
@@ -165,6 +179,11 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
     fun getQuadArray(): FloatArray {
         val pos = player.position
         val size = Vector2f(player.size)
+        val color = Vector3f(player.color)
+
+        color.x /= 255f
+        color.y /= 255f
+        color.z /= 255f
 
         size.x /= 2
         size.y /= 2
@@ -182,24 +201,29 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
         return floatArrayOf(
                 //position          color                   texture
                 //x,y,z             r,g,b,a                 u,v
-                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u2, .99f,
-                pos.x + size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u1, .99f,
-                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                pos.x - size.x, pos.y - size.y, 0f,       color.x, color.y, color.z, 1f,     u2, 1f,
+                pos.x + size.x, pos.y - size.y, 0f,       color.x, color.y, color.z, 1f,     u1, 1f,
+                pos.x + size.x, pos.y + size.y, 0f,       color.x, color.y, color.z, 1f,     u1, 0.0f,
 
-                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
-                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u2, .99f,
-                pos.x - size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+                pos.x + size.x, pos.y + size.y, 0f,       color.x, color.y, color.z, 1f,     u1, 0.0f,
+                pos.x - size.x, pos.y - size.y, 0f,       color.x, color.y, color.z, 1f,     u2, 1f,
+                pos.x - size.x, pos.y + size.y, 0f,       color.x, color.y, color.z, 1f,     u2, 0.0f
         )
     }
 
     fun render() {
         animationId = (animationId + 1) % 240
 
+        System.out.println(player.isGraveDigging)
+
         when {
-            player.isIdle -> world["dig-animation"].bind()
+            player.isIdle -> {
+                world["idle-animation"].bind()
+            }
             player.isGoingUp -> world["fall-animation"].bind()
             player.isFalling -> world["fall-animation"].bind()
             player.isDoubleJumping -> world["double-jump-animation"].bind()
+            player.isGraveDigging -> world["dig-animation"].bind()
             else -> world["run-animation"].bind()
         }
 

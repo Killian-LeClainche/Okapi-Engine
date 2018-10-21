@@ -96,7 +96,7 @@ public class DiggerWorld extends World {
 		Vector2f PlayerCoord4 = new Vector2f(1440, 810);
 
 		playerList.add(new Player(PlayerCoord1, new Vector3f(255, 255, 255)));
-		playerList.add(new Player(PlayerCoord2, new Vector3f(42, 34, 24)));
+		playerList.add(new Player(PlayerCoord2, new Vector3f(128, 34, 24)));
 		//playerList.add(new Player(PlayerCoord3, new Vector3f(44, 117, 51)));
 		//playerList.add(new Player(PlayerCoord4, new Vector3f(0, 0, 160)));
 
