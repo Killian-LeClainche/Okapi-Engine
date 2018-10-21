@@ -228,7 +228,7 @@ public class DiggerWorld extends World {
 		for (Player p : playerList) {
 			if (!p.isDead()) {
 				p.update();
-				if (System.currentTimeMillis() - p.clickGraveTime > 160) {
+				if (System.currentTimeMillis() - p.clickGraveTime > 320) {
 					p.setHasClickedGrave(false);
 				}
 			}

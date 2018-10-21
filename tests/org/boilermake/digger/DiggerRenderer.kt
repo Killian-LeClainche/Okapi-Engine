@@ -14,6 +14,7 @@ import polaris.okapi.util.isEqual
 import polaris.okapi.util.random
 import java.awt.Color.gray
 import java.io.File
+import java.lang.Math.abs
 
 /**
  * Created by Killian Le Clainche on 10/20/2018.
@@ -135,15 +136,15 @@ class DiggerRenderer(private val world: DiggerWorld) {
 
         Texture.enable()
 
-        texture.bind()
-
-        for(i in playerRenders) {
-            i.render()
-        }
-
         world["ground"].bind()
 
         for(i in graveRenders) {
+            i.render()
+        }
+
+        texture.bind()
+
+        for(i in playerRenders) {
             i.render()
         }
 
@@ -192,16 +193,37 @@ class BlockRender(val block: Block) {
 
 }
 
-class Animation(var id: Int, var size: Int, var animation: String) {
+class Animation(val player: Player, var id: Int, var size: Int, var animation: String) {
 
     var ticks = 0
 
     fun update() {
         ticks++;
 
-        if(ticks >= 8) {
-            ticks = 0
-            id = (id + 1) % size
+        when {
+            animation == "dig-animation" -> {
+                if(player.hasClickedGrave()) {
+                    id = 2 * (10 - abs(ticks - 10))
+                    if(ticks == 20)
+                        ticks = 0
+                }
+                else {
+                    ticks = 0
+                    id = 0
+                }
+            }
+            animation == "idle-animation:sword" -> {
+                if(ticks >= 32) {
+                    ticks = 0
+                    id = (id + 1) % size
+                }
+            }
+            else -> {
+                if(ticks >= 8) {
+                    ticks = 0
+                    id = (id + 1) % size
+                }
+            }
         }
     }
 
@@ -210,13 +232,26 @@ class Animation(var id: Int, var size: Int, var animation: String) {
             id = 0
             size = 30
             animation = newAnimation
+            when (animation) {
+                "idle-animation:gun" -> size = 1
+                "idle-animation:claymore" -> size = 1
+                "idle-animation:sword" -> size = 5
+                "idle-claymore" -> size = 1
+                "idle-halberd" -> size = 1
+                "idle-sword" -> size = 1
+                "idle-shotgun" -> size = 1
+                "idle-sniper" -> size = 1
+                "idle-rifle" -> size = 1
+            }
         }
     }
 }
 
 class PlayerRender(val world: DiggerWorld, val player: Player) {
-    var animation: Animation = Animation(0, 30, "idle-animation")
+    var animation: Animation = Animation(player, 0, 30, "idle-animation")
+    var itemAnimation: Animation = Animation(player, 0, 30, "idle-animation")
     val quad: DrawArray = DrawArray(GL20C.GL_TRIANGLES, GL20C.GL_DYNAMIC_DRAW, getQuadArray(), 6, VertexAttributes.POS_COLOR_TEXTURE)
+    val itemQuad: DrawArray = DrawArray(GL20C.GL_TRIANGLES, GL20C.GL_DYNAMIC_DRAW, getItemQuadArray(), 6, VertexAttributes.POS_COLOR_TEXTURE)
 
 
     fun getQuadArray(): FloatArray {
@@ -235,7 +270,7 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
         var u1 = uSize * animation.id
         var u2 = u1 + uSize
 
-        if(!player.isFacingLeft) {
+        if(player.isFacingLeft == (animation.animation == "idle-animation:godfist")) {
             val tempU = u1
             u1 = u2
             u2 = tempU
@@ -254,8 +289,32 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
         )
     }
 
+    fun getItemQuadArray(): FloatArray {
+        val pos = player.position
+        val size = Vector2f(player.size)
+
+        val u2 = 1f
+        val u1 = 0f
+
+        return floatArrayOf(
+                //position          color                   texture
+                //x,y,z             r,g,b,a                 u,v
+                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                pos.x + size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                pos.x - size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+        )
+    }
+
     fun render() {
         when {
+            player.isGoingUp -> animation.swap("double-jump-animation")
+            player.isFalling -> animation.swap("double-jump-animation")
+            player.isDoubleJumping -> animation.swap("double-jump-animation")
+            player.isGraveDigging -> animation.swap("dig-animation")
             player.isIdle -> {
                 when {
                     player.item == 0 -> animation.swap("idle-animation")
@@ -266,10 +325,6 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
                     else -> animation.swap("idle-animation:godfist")
                 }
             }
-            player.isGoingUp -> animation.swap("fall-animation")
-            player.isFalling -> animation.swap("fall-animation")
-            player.isDoubleJumping -> animation.swap("double-jump-animation")
-            player.isGraveDigging -> animation.swap("dig-animation")
             else -> {
                 when {
                     player.item == 0 -> animation.swap("run-animation")
@@ -291,6 +346,14 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
         quad.array = getQuadArray()
 
         quad.draw()
+
+        if(player.item > 0 && (animation.animation != "double-jump-animation" || animation.animation !=  "dig-animation")) {
+            itemQuad.bind()
+
+            itemQuad.array = getItemQuadArray()
+
+            itemQuad.draw()
+        }
     }
 }
 
