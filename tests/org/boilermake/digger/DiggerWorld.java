@@ -10,6 +10,8 @@ import polaris.okapi.world.World;
 
 import java.util.*;
 
+import static polaris.okapi.util.MathHelperKt.random;
+
 /**
  * Created by Killian Le Clainche on 10/20/2018.
  */
@@ -141,6 +143,12 @@ public class DiggerWorld extends World {
 		mapList.add(map3);
 		mapList.add(map4);
 		mapList.add(map5);
+		
+		int randomVal = random(0, 4);
+		
+		terrainList.addAll(mapList.get(randomVal).terrainList);
+		graveList.addAll(mapList.get(randomVal).graveList);
+		
 
 		//playerList.add(new Player(PlayerCoord1));
 		//playerList.add(new Player(PlayerCoord2));
