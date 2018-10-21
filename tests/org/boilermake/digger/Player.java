@@ -14,7 +14,6 @@ public class Player extends Block {
 	private long jumpTime;
 	private boolean isDoubleJumping;
 	private boolean isFacingLeft;
-	private boolean hasCollided;
 	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
 	private final Vector2f terminalVelocity = new Vector2f(20, 48);
 	private final int jumpVel = 50;
@@ -33,11 +32,6 @@ public class Player extends Block {
 		this.delay = 60;
 	}
 
-	//isIdle
-	//isMoving
-	//isGoingUp
-	//isFalling
-	//isDoubleJumpingUp
 	public Vector2f getVelocity() {
 		return velocity;
 	}
