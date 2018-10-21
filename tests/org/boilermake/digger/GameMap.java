@@ -69,7 +69,7 @@ public class GameMap {
             //this.terrainList.add(new Terrain(960, 680, 50, 50));
             this.terrainList.add(new Terrain(480, 580, 960, ysize));
             this.terrainList.add(new Terrain(1440, 580, 960, ysize));
-            this.terrainList.add(new Terrain(960, 10, xsize, 50));
+            this.terrainList.add(new Terrain(960, 30, xsize, 50));
 
 
             Random rangen = new Random();
@@ -80,8 +80,8 @@ public class GameMap {
             temp = new Item(1440, 630, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
             this.graveList.add(new Grave(1440, 645, rangen.nextInt(3) + 1, temp));
 
-            temp = new Item(960, 60, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
-            this.graveList.add(new Grave(960, 65, rangen.nextInt(3) + 1, temp));
+            temp = new Item(960, 80, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
+            this.graveList.add(new Grave(960, 85, rangen.nextInt(3) + 1, temp));
         }
 
         if (mapName.equals("Map3"))
