@@ -143,8 +143,16 @@ class DiggerRenderer(private val world: DiggerWorld) {
 
         world["ground"].bind()
 
-        for(i in graveRenders) {
-            i.render()
+        var i = 0
+        while(i < graveRenders.size) {
+            val grave = graveRenders[i]
+            if((grave.block as Grave).isDug) {
+                graveRenders.removeAt(i)
+                i--
+            }
+            else
+                grave.render()
+            i++
         }
 
         texture.bind()
@@ -217,7 +225,7 @@ class Animation(val player: Player, var id: Int, var size: Int, var animation: S
                     id = 0
                 }
             }
-            animation == "idle-animation:sword" -> {
+            animation == "idle-animation:sword" || animation == "idle-animation:godfist" || animation == "idle-godfist" -> {
                 if(ticks >= 32) {
                     ticks = 0
                     id = (id + 1) % size
@@ -298,19 +306,86 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
         val pos = player.position
         val size = Vector2f(player.size)
 
-        val u2 = 1f
-        val u1 = 0f
+        val uSize = 1f / itemAnimation.size
+        var u1 = uSize * itemAnimation.id
+        var u2 = u1 + uSize
 
+        if(player.isFacingLeft == (animation.animation == "idle-animation:godfist")) {
+            val tempU = u1
+            u1 = u2
+            u2 = tempU
+        }
+
+        if(itemAnimation.animation == "idle-claymore")
+            return floatArrayOf(
+                    //position          color                   texture
+                    //x,y,z             r,g,b,a                 u,v
+                    pos.x - 10, pos.y - 10, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + 10, pos.y - 10, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + 10, pos.y + 64, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                    pos.x + 10, pos.y + 64, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - 10, pos.y - 10, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - 10, pos.y + 64, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+            )
+        if(itemAnimation.animation == "run-claymore")
+            return floatArrayOf(
+                    //position          color                   texture
+                    //x,y,z             r,g,b,a                 u,v
+                    pos.x - size.x / 2, pos.y - size.y / 2, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x / 2, pos.y - size.y / 2, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x / 2, pos.y + 64, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                    pos.x + size.x / 2, pos.y + 64, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x / 2, pos.y - size.y / 2, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x / 2, pos.y + 64, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+            )
+        if(itemAnimation.animation == "idle-godfist")
+            return floatArrayOf(
+                    //position          color                   texture
+                    //x,y,z             r,g,b,a                 u,v
+                    pos.x - size.x / 2, pos.y - size.y / 2, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x / 2, pos.y - size.y / 2, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x / 2, pos.y + size.y / 2 - 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                    pos.x + size.x / 2, pos.y + size.y / 2 - 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x / 2, pos.y - size.y / 2, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x / 2, pos.y + size.y / 2 - 16, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+            )
+        if(itemAnimation.animation == "idle-sniper")
+            return floatArrayOf(
+                    //position          color                   texture
+                    //x,y,z             r,g,b,a                 u,v
+                    pos.x - size.x / 2, pos.y - size.y / 5 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x / 2, pos.y - size.y / 5 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x / 2, pos.y + size.y / 5 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                    pos.x + size.x / 2, pos.y + size.y / 5 + 16, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x / 2, pos.y - size.y / 5 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x / 2, pos.y + size.y / 5 + 16, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+            )
+        if(itemAnimation.animation == "run-sniper")
+            return floatArrayOf(
+                    //position          color                   texture
+                    //x,y,z             r,g,b,a                 u,v
+                    pos.x - size.x / 2, pos.y - size.y / 2 + 32, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x + size.x / 2, pos.y - size.y / 2 + 32, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                    pos.x + size.x / 2, pos.y + size.y / 2 + 32, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+
+                    pos.x + size.x / 2, pos.y + size.y / 2 + 32, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                    pos.x - size.x / 2, pos.y - size.y / 2 + 32, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                    pos.x - size.x / 2, pos.y + size.y / 2 + 32, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+            )
         return floatArrayOf(
                 //position          color                   texture
                 //x,y,z             r,g,b,a                 u,v
-                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
-                pos.x + size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
-                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                pos.x - size.x / 2, pos.y - size.y / 2, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                pos.x + size.x / 2, pos.y - size.y / 2, 0f,       1f, 1f, 1f, 1f,     u1, 1f,
+                pos.x + size.x / 2, pos.y + size.y / 2, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
 
-                pos.x + size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
-                pos.x - size.x, pos.y - size.y, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
-                pos.x - size.x, pos.y + size.y, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
+                pos.x + size.x / 2, pos.y + size.y / 2, 0f,       1f, 1f, 1f, 1f,     u1, 0.0f,
+                pos.x - size.x / 2, pos.y - size.y / 2, 0f,       1f, 1f, 1f, 1f,     u2, 1f,
+                pos.x - size.x / 2, pos.y + size.y / 2, 0f,       1f, 1f, 1f, 1f,     u2, 0.0f
         )
     }
 
@@ -330,18 +405,15 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
                     else -> animation.swap("idle-animation:godfist")
                 }
             }
-            player.isGoingUp -> animation.swap("fall-animation")
-            player.isFalling -> animation.swap("fall-animation")
-            player.isDoubleJumping -> animation.swap("double-jump-animation")
-            player.isGraveDigging -> animation.swap("dig-animation")
-
             else -> {
-                when {
-                    player.item == 0 -> animation.swap("run-animation")
-                    player.item == 1 -> animation.swap("run-animation:sword")
-                    player.item == 2 -> animation.swap("run-animation:claymore")
-                    player.item == 3 -> animation.swap("run-animation:sword")
-                    player.item < 7 -> animation.swap("run-animation:gun")
+                when(player.item) {
+                    0 -> animation.swap("run-animation")
+                    1 -> animation.swap("run-animation:sword")
+                    2 -> animation.swap("run-animation:claymore")
+                    3 -> animation.swap("run-animation:sword")
+                    4 -> animation.swap("run-animation:gun")
+                    5 -> animation.swap("run-animation:gun")
+                    6 -> animation.swap("run-animation:gun")
                     else -> animation.swap("run-animation:godfist")
                 }
             }
@@ -357,7 +429,36 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
 
         quad.draw()
 
-        if(player.item > 0 && (animation.animation != "double-jump-animation" || animation.animation !=  "dig-animation")) {
+        if(player.item > 0 && (animation.animation != "double-jump-animation" && animation.animation !=  "dig-animation")) {
+            when {
+                animation.animation.startsWith("idle-animation") -> {
+                    when(player.item) {
+                        1 -> itemAnimation.swap("idle-sword")
+                        2 -> itemAnimation.swap("idle-claymore")
+                        3 -> itemAnimation.swap("idle-halberd")
+                        4 -> itemAnimation.swap("idle-sniper")
+                        5 -> itemAnimation.swap("idle-shotgun")
+                        6 -> itemAnimation.swap("idle-rifle")
+                        else -> itemAnimation.swap("idle-godfist")
+                    }
+                }
+                animation.animation.startsWith("run-animation") -> {
+                    when(player.item) {
+                        1 -> itemAnimation.swap("run-sword")
+                        2 -> itemAnimation.swap("run-claymore")
+                        3 -> itemAnimation.swap("run-halberd")
+                        4 -> itemAnimation.swap("run-sniper")
+                        5 -> itemAnimation.swap("run-shotgun")
+                        6 -> itemAnimation.swap("run-rifle")
+                        else -> itemAnimation.swap("run-godfist")
+                    }
+                }
+            }
+
+            itemAnimation.update()
+
+            world[itemAnimation.animation].bind()
+
             itemQuad.bind()
 
             itemQuad.array = getItemQuadArray()
