@@ -14,6 +14,7 @@ public class Player extends Block {
 	private long jumpTime;
 	private boolean isDoubleJumping;
 	private boolean isFacingLeft;
+	private boolean isDead;
 	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
 	private final Vector2f terminalVelocity = new Vector2f(20, 48);
 	private final int jumpVel = 50;
@@ -28,6 +29,7 @@ public class Player extends Block {
 		this.jumps = 2;
 		this.isJumping = false;
 		this.isDoubleJumping = false;
+		this.isDead = false;
 		this.item = Item.ItemType.NOTHING;
 		this.delay = 60;
 	}
@@ -101,7 +103,6 @@ public class Player extends Block {
 	}
 
 	public void update() {
-		System.out.println(isGrounded());
 		this.velocity.y += acceleration.y;
 		if(this.velocity.x > terminalVelocity.x) this.velocity.x = terminalVelocity.x;
 		if(this.velocity.x < -terminalVelocity.x) this.velocity.x = -terminalVelocity.x;
@@ -174,9 +175,13 @@ public class Player extends Block {
 		}
 	}
 
-	public void moveDown() {
-		this.velocity.y += 2*acceleration.y;
-	}
+	public boolean isDead() {
+	    return this.isDead;
+    }
+
+    public void isDead(boolean isDead) {
+        this.isDead = isDead;
+    }
 
 	public void stopX() {
 		this.velocity.x = 0;

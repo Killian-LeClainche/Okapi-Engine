@@ -37,93 +37,22 @@ public class DiggerWorld extends World {
 		player2 = (Controller)getSettings().get("p2");
 		inputMap.put("rightP1", (Key)getSettings().get("p1:right"));
 		inputMap.put("leftP1", (Key)getSettings().get("p1:left"));
-		inputMap.put("downP1", (Key)getSettings().get("p1:down"));
+		inputMap.put("digP1", (Key)getSettings().get("p1:dig"));
 		inputMap.put("upP1", (Key)getSettings().get("p1:up"));
 		inputMap.put("rightP2", player2.getKeyDPadRight());
 		inputMap.put("leftP2", player2.getKeyDPadLeft());
-		inputMap.put("downP2", player2.getKeyDPadDown());
+		inputMap.put("digP2", player2.getKeyDPadDown());
 		inputMap.put("upP2", player2.getKeyA());
 
-		//terrainList.add(new Terrain());
 		graveList.add(new Grave(0, 0, 10, null));
 
 		playerList.add(new Player(new Vector2f(300, 200)));
 		playerList.add(new Player(new Vector2f(1000, 200)));
 
-
-
-		/*
-
-		Random rangen = new Random();
-		ArrayList<Vector2f> graveCoords = new ArrayList<Vector2f>();
-		int numBlocks = 0;
-
-		while(numBlocks < 16) {
-
-			int xcoord = rangen.nextInt(1600) + 80;
-			int ycoord = rangen.nextInt(980) + 60;
-			int xsize = rangen.nextInt(200) + 70;
-			int ysize = rangen.nextInt(20) + 9;
-
-			Terrain toAdd = new Terrain(xcoord, ycoord, xsize, ysize);
-
-			boolean overlap = false;
-
-			if(terrainList.isEmpty() == false) {
-                for (Terrain t : terrainList) {
-                    if(Helper.equals(t, toAdd) == false) {
-                        if (Helper.isColliding(t, toAdd) == true) {
-                            overlap = true;
-                        }
-                    }
-                }
-            }
-
-			if(overlap == false)
-			{
-				terrainList.add(toAdd);
-				numBlocks++;
-			}
-		}
-
-		int numGraves = 0;
-
-		int xval = rangen.nextInt((int)(terrainList.get(0).getPosition().x + terrainList.get(0).getSize().x)) + 1;
-		int yval = (int)(terrainList.get(0).getPosition().y + 1.0);
-		int diggingTime = rangen.nextInt(3) + 1;
-		int item = rangen.nextInt(2) + 1;
-		int xvelocity = rangen.nextInt(21) + 10;
-		int yvelocity = rangen.nextInt(21) + 10;
-
-		Grave graveToAdd = new Grave(xval, yval, diggingTime, new Item(xval, yval, xvelocity, yvelocity, item));
-		graveList.add(graveToAdd);
-
-		for(int i = 1; i < terrainList.size(); i++)
-		{
-			Terrain t = terrainList.get(i);
-			int decision = rangen.nextInt(2);
-
-			if(decision == 0)
-			{
-				xval = rangen.nextInt((int)(t.getPosition().x + t.getSize().x)) + 1;
-				yval = (int)(t.getPosition().y + 1.0);
-
-				diggingTime = rangen.nextInt(3) + 1;
-				item = rangen.nextInt(2) + 1;
-				xvelocity = rangen.nextInt(21) + 10;
-				yvelocity = rangen.nextInt(21) + 10;
-
-				graveToAdd = new Grave(xval, yval, diggingTime, new Item(xval, yval, xvelocity, yvelocity, item));
-				graveList.add(graveToAdd);
-			}
-
-		}
-
 		Vector2f PlayerCoord1 = new Vector2f(480, 270);
 		Vector2f PlayerCoord2 = new Vector2f(1440, 270);
 		Vector2f PlayerCoord3 = new Vector2f(480, 810);
 		Vector2f PlayerCoord4 = new Vector2f(1440, 810);
-		*/
 
 		GameMap map1 = new GameMap("Map1");
 		GameMap map2 = new GameMap("Map2");
@@ -167,9 +96,6 @@ public class DiggerWorld extends World {
 		if(inputMap.get("upP1").isPressed()) {
 			playerList.get(0).moveUp();
 		}
-		if(inputMap.get("downP1").isPressed()) {
-			playerList.get(0).moveDown();
-		}
 
 		if(!inputMap.get("rightP1").isPressed() && !inputMap.get("leftP1").isPressed()) {
 			playerList.get(0).slow();
@@ -185,9 +111,6 @@ public class DiggerWorld extends World {
 		}
 		if(inputMap.get("upP2").isPressed()) {
 			playerList.get(1).moveUp();
-		}
-		if(inputMap.get("downP2").isPressed()) {
-			playerList.get(1).moveDown();
 		}
 
 		if(!inputMap.get("rightP2").isPressed() && !inputMap.get("leftP2").isPressed()) {
@@ -208,7 +131,9 @@ public class DiggerWorld extends World {
 		checkKeysP2();
 
 		for(Player p : playerList) {
-			p.update();
+			if(!p.isDead()) {
+				p.update();
+			}
 		}
 
 		for(int i = 0; i < playerList.size(); i++) {
@@ -261,10 +186,10 @@ public class DiggerWorld extends World {
 			List<Grave> tempGraveList = new ArrayList<>(graveList);
 			for(Grave grave : graveList) {
 				if(Helper.isColliding(player, grave) && player.isGrounded()) {
-					if(i == 0 && inputMap.get("downP1").isPressed()) {
+					if(i == 0 && inputMap.get("digP1").isPressed()) {
 						grave.dig();
 					}
-					else if(i == 0 && inputMap.get("downP2").isPressed()) {
+					else if(i == 0 && inputMap.get("digP2").isPressed()) {
 						grave.dig();
 					}
 					if(grave.isDug()) {
