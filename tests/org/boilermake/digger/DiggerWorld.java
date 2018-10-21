@@ -3,6 +3,7 @@ package org.boilermake.digger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import polaris.okapi.App;
 import polaris.okapi.options.Controller;
 import polaris.okapi.options.Key;
@@ -66,15 +67,6 @@ public class DiggerWorld extends World {
 		inputMap.put("upP4", player4.getKeyA());
 		inputMap.put("itemP4", player4.getKeyB());
 
-
-		playerList.add(new Player(new Vector2f(300, 200)));
-		playerList.add(new Player(new Vector2f(1000, 600)));
-
-		Vector2f PlayerCoord1 = new Vector2f(480, 270);
-		Vector2f PlayerCoord2 = new Vector2f(1440, 270);
-		Vector2f PlayerCoord3 = new Vector2f(480, 810);
-		Vector2f PlayerCoord4 = new Vector2f(1440, 810);
-
 		GameMap map1 = new GameMap("Map1");
 		GameMap map2 = new GameMap("Map2");
 		GameMap map3 = new GameMap("Map3");
@@ -97,12 +89,16 @@ public class DiggerWorld extends World {
 		
 		terrainList.addAll(mapList.get(randomVal).terrainList);
 		graveList.addAll(mapList.get(randomVal).graveList);
-		
 
-		//playerList.add(new Player(PlayerCoord1));
-		//playerList.add(new Player(PlayerCoord2));
-		//playerList.add(new Player(PlayerCoord3));
-		//playerList.add(new Player(PlayerCoord4));
+		Vector2f PlayerCoord1 = new Vector2f(480, 270);
+		Vector2f PlayerCoord2 = new Vector2f(1440, 270);
+		Vector2f PlayerCoord3 = new Vector2f(480, 810);
+		Vector2f PlayerCoord4 = new Vector2f(1440, 810);
+
+		playerList.add(new Player(PlayerCoord1, new Vector3f(255, 255, 255)));
+		playerList.add(new Player(PlayerCoord2, new Vector3f(42, 34, 24)));
+		//playerList.add(new Player(PlayerCoord3, new Vector3f(44, 117, 51)));
+		//playerList.add(new Player(PlayerCoord4, new Vector3f(0, 0, 160)));
 
 		renderer.init();
 	}

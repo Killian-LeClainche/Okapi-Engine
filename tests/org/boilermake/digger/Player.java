@@ -1,6 +1,7 @@
 package org.boilermake.digger;
 
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 
 /**
@@ -19,6 +20,7 @@ public class Player extends Block {
 	private boolean hasClickedGrave;
 	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
 	private final Vector2f terminalVelocity = new Vector2f(20, 48);
+    private final Vector3f color;
 	private final int jumpVel = 50;
 	private final Vector2f screen = new Vector2f(1920, 1080);
 	private int item;
@@ -26,8 +28,9 @@ public class Player extends Block {
 	private int delay;
 	public long clickGraveTime;
 
-	public Player(Vector2f position) {
+	public Player(Vector2f position, Vector3f color) {
 		this.position = position;
+		this.color = color;
 		this.velocity = new Vector2f(0, 0);
 		this.size = new Vector2f(64, 128);
 		this.jumps = 2;
@@ -40,6 +43,10 @@ public class Player extends Block {
 		this.ammo = -1;
 		this.delay = 60;
 	}
+
+    public Vector3f getColor() {
+        return color;
+    }
 
 	public Vector2f getVelocity() {
 		return velocity;
