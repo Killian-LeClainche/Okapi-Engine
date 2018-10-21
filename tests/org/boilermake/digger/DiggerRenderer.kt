@@ -158,8 +158,16 @@ class DiggerRenderer(private val world: DiggerWorld) {
 
         texture.bind()
 
-        for(i in playerRenders) {
-            i.render()
+        var j = 0
+        while(j < playerRenders.size) {
+            val p = playerRenders[j]
+            if((p.player).isDead) {
+                playerRenders.removeAt(j)
+                j--
+            }
+            else
+                p.render()
+            j++
         }
 
         blockFogShader.bind()
