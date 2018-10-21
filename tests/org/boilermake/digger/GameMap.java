@@ -1,6 +1,8 @@
 package org.boilermake.digger;
 
 import java.util.*;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 public class GameMap {
 
@@ -55,6 +57,11 @@ public class GameMap {
 
             temp = new Item(1780, 870, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
             this.graveList.add(new Grave(1700, 852, rangen.nextInt(3) + 1, temp));
+
+            playerList.add(new Player(new Vector2f(240, 450), new Vector3f(255, 255, 255)));
+            playerList.add(new Player(new Vector2f(1600, 450), new Vector3f(128, 34, 24)));
+            playerList.add(new Player(new Vector2f(240, 1080), new Vector3f(44, 117, 51)));
+            playerList.add(new Player(new Vector2f(1600, 1080), new Vector3f(0, 0, 160)));
         }
 
         if(mapName.equals("Map2"))
@@ -82,6 +89,11 @@ public class GameMap {
 
             temp = new Item(960, 80, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
             this.graveList.add(new Grave(960, 85, rangen.nextInt(3) + 1, temp));
+
+            playerList.add(new Player(new Vector2f(200, 1080), new Vector3f(255, 255, 255)));
+            playerList.add(new Player(new Vector2f(1200, 1080), new Vector3f(128, 34, 24)));
+            playerList.add(new Player(new Vector2f(700, 1080), new Vector3f(44, 117, 51)));
+            playerList.add(new Player(new Vector2f(1700, 1080), new Vector3f(0, 0, 160)));
         }
 
         if (mapName.equals("Map3"))
@@ -115,6 +127,12 @@ public class GameMap {
 
             temp = new Item(390, 870, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
             this.graveList.add(new Grave(390, 914, rangen.nextInt(3) + 1, temp));
+
+            playerList.add(new Player(new Vector2f(480, 450), new Vector3f(255, 255, 255)));
+            playerList.add(new Player(new Vector2f(1440, 270), new Vector3f(128, 34, 24)));
+            playerList.add(new Player(new Vector2f(480, 1080), new Vector3f(44, 117, 51)));
+            playerList.add(new Player(new Vector2f(1440, 1080), new Vector3f(0, 0, 160)));
+
         }
 
         if(mapName.equals("Map4"))
@@ -149,6 +167,12 @@ public class GameMap {
 
             temp = new Item(1600, 820, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
             this.graveList.add(new Grave(1600, 865, rangen.nextInt(3) + 1, temp));
+
+            playerList.add(new Player(new Vector2f(220, 450), new Vector3f(255, 255, 255)));
+            playerList.add(new Player(new Vector2f(1700, 700), new Vector3f(128, 34, 24)));
+            playerList.add(new Player(new Vector2f(200, 1080), new Vector3f(44, 117, 51)));
+            playerList.add(new Player(new Vector2f(1660, 1080), new Vector3f(0, 0, 160)));
+
         }
 
         if(mapName.equals("Map5"))
@@ -194,6 +218,12 @@ public class GameMap {
 
             temp = new Item(1270, 100, rangen.nextInt(40), rangen.nextInt(40), rangen.nextInt(11));
             this.graveList.add(new Grave(1270, 183, rangen.nextInt(3) + 1, temp));
+
+            playerList.add(new Player(new Vector2f(530, 450), new Vector3f(255, 255, 255)));
+            playerList.add(new Player(new Vector2f(1370, 450), new Vector3f(128, 34, 24)));
+            playerList.add(new Player(new Vector2f(1390, 1080), new Vector3f(44, 117, 51)));
+            playerList.add(new Player(new Vector2f(490, 1080), new Vector3f(0, 0, 160)));
+
         }
     }
 }

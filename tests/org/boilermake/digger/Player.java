@@ -48,6 +48,11 @@ public class Player extends Block {
         return color;
     }
 
+    public int getItem()
+	{
+		return item;
+	}
+
 	public Vector2f getVelocity() {
 		return velocity;
 	}

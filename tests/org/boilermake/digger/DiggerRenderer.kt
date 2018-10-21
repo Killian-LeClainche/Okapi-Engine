@@ -224,6 +224,13 @@ class PlayerRender(val world: DiggerWorld, val player: Player) {
             player.isFalling -> world["fall-animation"].bind()
             player.isDoubleJumping -> world["double-jump-animation"].bind()
             player.isGraveDigging -> world["dig-animation"].bind()
+            player.item == 1  && player.isIdle -> world["idle-sword"].bind()
+            player.item == 2 && player.isIdle -> world["idle-claymore"].bind()
+            player.item == 3 && player.isIdle -> world["idle-halberd"].bind()
+            player.item == 1  && !player.isIdle -> world["run-sword"].bind()
+            player.item == 2 && !player.isIdle -> world["run-claymore"].bind()
+            player.item == 3 && !player.isIdle -> world["run-halberd"].bind()
+
             else -> world["run-animation"].bind()
         }
 
