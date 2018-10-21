@@ -63,13 +63,14 @@ public class DiggerWorld extends World {
 		inputMap.put("upP3", player3C.getKeyA());
 		inputMap.put("itemP3", player3C.getKeyB());
 
-		//Player 4
-		player4C = (Controller)getSettings().get("p4");
-		inputMap.put("rightP4", player4C.getKeyDPadRight());
-		inputMap.put("leftP4", player4C.getKeyDPadLeft());
-		inputMap.put("digP4", player4C.getKeyX());
-		inputMap.put("upP4", player4C.getKeyA());
-		inputMap.put("itemP4", player4C.getKeyB());
+		//Player 4 - PS4 getLeftBumper/RightBumper = L1, getRightPad = R3, getUpPad = leftTrigger, getDownPad = X to the left
+        //getKeyRightThumb = Options, getKeyLeftThumb = Share, getKeyBack = L2, getKeyStart = R2,
+        player4C = (Controller)getSettings().get("p4");
+        inputMap.put("rightP4", player4C.getKeyStart());
+		inputMap.put("leftP4", player4C.getKeyBack());
+		inputMap.put("digP4", player4C.getKeyA());
+		inputMap.put("upP4", player4C.getKeyB()); //it only jumps left
+		inputMap.put("itemP4", player4C.getKeyX());
 
 		GameMap map1 = new GameMap("Map1");
 		GameMap map2 = new GameMap("Map2");
@@ -313,7 +314,7 @@ public class DiggerWorld extends World {
 			{
 				for(Player p : playerList)
 				{
-					if(Helper.isColliding(h, p))
+					if(h != null && Helper.isColliding(h, p))
 					{
 						if(h.getOwner().equals(p))
 						{
