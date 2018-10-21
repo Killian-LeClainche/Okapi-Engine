@@ -26,9 +26,11 @@ public class DiggerWorld extends World {
 	public Map<String, Key> inputMap = new TreeMap<>();
 	public List<GameMap> mapList = new ArrayList<>();
 	public List<HitBox> hitboxList = new ArrayList<>();
-	public Controller player2;
-	public Controller player3;
-	public Controller player4;
+	public Controller player2C, player3C, player4C;
+	public Player player1, player2, player3, player4;
+	public Player winner;
+	public boolean isEnded;
+
 
 	public DiggerWorld(@NotNull App application) {
 		super(application);
@@ -36,6 +38,8 @@ public class DiggerWorld extends World {
 	
 	@Override
 	public void init() {
+	    winner = null;
+	    isEnded = false;
 		//Player 1
 		inputMap.put("rightP1", (Key)getSettings().get("p1:right"));
 		inputMap.put("leftP1", (Key)getSettings().get("p1:left"));
@@ -44,28 +48,28 @@ public class DiggerWorld extends World {
 		inputMap.put("itemP1", (Key)getSettings().get("p1:item"));
 
 		//Player 2
-		player2 = (Controller)getSettings().get("p2");
-		inputMap.put("rightP2", player2.getKeyDPadRight());
-		inputMap.put("leftP2", player2.getKeyDPadLeft());
-		inputMap.put("digP2", player2.getKeyX());
-		inputMap.put("upP2", player2.getKeyA());
-		inputMap.put("itemP2", player2.getKeyB());
+		player2C = (Controller)getSettings().get("p2");
+		inputMap.put("rightP2", player2C.getKeyDPadRight());
+		inputMap.put("leftP2", player2C.getKeyDPadLeft());
+		inputMap.put("digP2", player2C.getKeyX());
+		inputMap.put("upP2", player2C.getKeyA());
+		inputMap.put("itemP2", player2C.getKeyB());
 
 		//Player 3
-		player3 = (Controller)getSettings().get("p3");
-		inputMap.put("rightP3", player3.getKeyDPadRight());
-		inputMap.put("leftP3", player3.getKeyDPadLeft());
-		inputMap.put("digP3", player3.getKeyX());
-		inputMap.put("upP3", player3.getKeyA());
-		inputMap.put("itemP3", player3.getKeyB());
+		player3C = (Controller)getSettings().get("p3");
+		inputMap.put("rightP3", player3C.getKeyDPadRight());
+		inputMap.put("leftP3", player3C.getKeyDPadLeft());
+		inputMap.put("digP3", player3C.getKeyX());
+		inputMap.put("upP3", player3C.getKeyA());
+		inputMap.put("itemP3", player3C.getKeyB());
 
 		//Player 4
-		player4 = (Controller)getSettings().get("p4");
-		inputMap.put("rightP4", player4.getKeyDPadRight());
-		inputMap.put("leftP4", player4.getKeyDPadLeft());
-		inputMap.put("digP4", player4.getKeyX());
-		inputMap.put("upP4", player4.getKeyA());
-		inputMap.put("itemP4", player4.getKeyB());
+		player4C = (Controller)getSettings().get("p4");
+		inputMap.put("rightP4", player4C.getKeyDPadRight());
+		inputMap.put("leftP4", player4C.getKeyDPadLeft());
+		inputMap.put("digP4", player4C.getKeyX());
+		inputMap.put("upP4", player4C.getKeyA());
+		inputMap.put("itemP4", player4C.getKeyB());
 
 		GameMap map1 = new GameMap("Map1");
 		GameMap map2 = new GameMap("Map2");
@@ -102,130 +106,125 @@ public class DiggerWorld extends World {
 		playerList.add(new Player(PlayerCoord2, new Vector3f(128, 34, 24)));
 		playerList.add(new Player(PlayerCoord3, new Vector3f(44, 117, 51)));
 		playerList.add(new Player(PlayerCoord4, new Vector3f(0, 0, 160)));
+
+
+		player1 = new Player(PlayerCoord1, new Vector3f(255, 255, 255));
+		player2 = new Player(PlayerCoord2, new Vector3f(128, 34, 24));
+		player3 = new Player(PlayerCoord3, new Vector3f(44, 117, 51));
+		player4 = new Player(PlayerCoord4, new Vector3f(0, 0, 160));
+
+		playerList.add(player1);
+		playerList.add(player2);
+		playerList.add(player3);
+		playerList.add(player4);
 */
 		renderer.init();
 	}
 
 	private void checkKeysP1() {
-		if(playerList.size() > 0) {
+		if(playerList.size() > 0 && !player1.isDead()) {
 			if(inputMap.get("rightP1").isPressed()) {
-				playerList.get(0).setIsGraveDigging(false);
-				playerList.get(0).moveRight();
+				player1.setIsGraveDigging(false);
+				player1.moveRight();
 			}
 			if(inputMap.get("leftP1").isPressed()) {
-				playerList.get(0).setIsGraveDigging(false);
-				playerList.get(0).moveLeft();
+                player1.setIsGraveDigging(false);
+                player1.moveLeft();
 			}
 			if(inputMap.get("upP1").isPressed()) {
-				playerList.get(0).setIsGraveDigging(false);
-				playerList.get(0).moveUp();
+                player1.setIsGraveDigging(false);
+                player1.moveUp();
 			}
 
 			if(inputMap.get("itemP1").isClicked()) {
-				playerList.get(0).setIsGraveDigging(false);
-				HitBox h = playerList.get(0).useItem();
+                player1.setIsGraveDigging(false);
+				HitBox h = player1.useItem();
 				hitboxList.add(h);
 			}
 
-			if(inputMap.get("digP1").isPressed()) {
-				playerList.get(0).setIsGraveDigging(true);
-			}
-
 			if(!inputMap.get("rightP1").isPressed() && !inputMap.get("leftP1").isPressed()) {
-				playerList.get(0).slow();
+                player1.slow();
 			}
 		}
 	}
 
 	private void checkKeysP2() {
-		if(playerList.size() > 1) {
+		if(playerList.size() > 1 && !player2.isDead()) {
 			if (inputMap.get("rightP2").isPressed()) {
-				playerList.get(1).setIsGraveDigging(false);
-				playerList.get(1).moveRight();
+                player2.setIsGraveDigging(false);
+                player2.moveRight();
 			}
 			if (inputMap.get("leftP2").isPressed()) {
-				playerList.get(1).setIsGraveDigging(false);
-				playerList.get(1).moveLeft();
+                player2.setIsGraveDigging(false);
+                player2.moveLeft();
 			}
 			if (inputMap.get("upP2").isPressed()) {
-				playerList.get(1).setIsGraveDigging(false);
-				playerList.get(1).moveUp();
+                player2.setIsGraveDigging(false);
+                player2.moveUp();
 			}
 
 			if(inputMap.get("itemP2").isClicked()) {
-				playerList.get(1).setIsGraveDigging(false);
-				HitBox h = playerList.get(1).useItem();
+                player2.setIsGraveDigging(false);
+				HitBox h = player2.useItem();
 				hitboxList.add(h);
 			}
 
-			if (inputMap.get("digP2").isPressed()) {
-				playerList.get(1).setIsGraveDigging(true);
-			}
-
 			if (!inputMap.get("rightP2").isPressed() && !inputMap.get("leftP2").isPressed()) {
-				playerList.get(1).slow();
+                player2.slow();
 			}
 		}
 	}
 
 	private void checkKeysP3() {
-		if(playerList.size() > 2) {
+		if(playerList.size() > 2 && !player3.isDead()) {
 			if (inputMap.get("rightP3").isPressed()) {
-				playerList.get(2).setIsGraveDigging(false);
-				playerList.get(2).moveRight();
+                player3.setIsGraveDigging(false);
+                player3.moveRight();
 			}
 			if (inputMap.get("leftP3").isPressed()) {
-				playerList.get(2).setIsGraveDigging(false);
-				playerList.get(2).moveLeft();
+                player3.setIsGraveDigging(false);
+                player3.moveLeft();
 			}
 			if (inputMap.get("upP3").isPressed()) {
-				playerList.get(2).setIsGraveDigging(false);
-				playerList.get(2).moveUp();
+                player3.setIsGraveDigging(false);
+                player3.moveUp();
 			}
 
 			if(inputMap.get("itemP3").isClicked()) {
-				playerList.get(2).setIsGraveDigging(false);
-				HitBox h = playerList.get(2).useItem();
+                player3.setIsGraveDigging(false);
+				HitBox h = player3.useItem();
 				hitboxList.add(h);
 			}
 
-			if (inputMap.get("digP3").isPressed()) {
-				playerList.get(2).setIsGraveDigging(true);
-			}
-
 			if (!inputMap.get("rightP3").isPressed() && !inputMap.get("leftP3").isPressed()) {
-				playerList.get(2).slow();
+                player3.slow();
 			}
 		}
 	}
 
 	private void checkKeysP4() {
-		if(playerList.size() > 3) {
+		if(playerList.size() > 3 && !player4.isDead()) {
 			if (inputMap.get("rightP4").isPressed()) {
-				playerList.get(3).setIsGraveDigging(false);
-				playerList.get(3).moveRight();
+				player4.setIsGraveDigging(false);
+                player4.moveRight();
 			}
 			if (inputMap.get("leftP4").isPressed()) {
-				playerList.get(3).setIsGraveDigging(false);
-				playerList.get(3).moveLeft();
+                player4.setIsGraveDigging(false);
+                player4.moveLeft();
 			}
 			if (inputMap.get("upP4").isPressed()) {
-				playerList.get(3).setIsGraveDigging(false);
-				playerList.get(3).moveUp();
+                player4.setIsGraveDigging(false);
+                player4.moveUp();
 			}
 
 			if(inputMap.get("itemP4").isClicked()) {
-				playerList.get(3).setIsGraveDigging(false);
-				HitBox h = playerList.get(3).useItem();
+                player4.setIsGraveDigging(false);
+				HitBox h = player4.useItem();
 				hitboxList.add(h);
 			}
 
-			if (inputMap.get("digP4").isPressed()) {
-				playerList.get(3).setIsGraveDigging(true);
-			}
-
 			if (!inputMap.get("rightP4").isPressed() && !inputMap.get("leftP4").isPressed()) {
-				playerList.get(3).slow();
+                player4.slow();
 			}
 		}
 	}
@@ -234,10 +233,14 @@ public class DiggerWorld extends World {
 	public void update() {
 		super.update();
 
-		player2.update();
+		player2C.update();
+		player3C.update();
+		player4C.update();
 
 		checkKeysP1();
 		checkKeysP2();
+		checkKeysP3();
+		checkKeysP4();
 
 		for (Player p : playerList) {
 			if (!p.isDead()) {
@@ -252,7 +255,6 @@ public class DiggerWorld extends World {
 			Player player = playerList.get(i);
 			for (Player p : playerList) {
 				if (!player.equals(p) && Helper.equals(player, p)) {
-					System.out.println("here");
 					if(player.velocity.x > 0) {
 						player.getPosition().x -= 10;
 						p.getPosition().x += 10;
@@ -262,11 +264,12 @@ public class DiggerWorld extends World {
 					}
 				}
 			}
+
 			for (Terrain t : terrainList) {
 				if (!player.equals(t) && Helper.isColliding(player, t)) {
 					//y-axis collisions             											 				           p2
 					if (player.getPosition().y < t.getPosition().y - t.getSize().y / 2 && player.getVelocity().y > 0) { // p1
-						player.setPosition(player.getPosition().x, t.getPosition().y - t.getSize().y / 2 - player.getSize().y / 2);
+						player.setPosition(player.getPosition().x, t.getPosition().y - player.getSize().y / 2);
 						player.stopY();
 					} else if (player.getPosition().y > t.getPosition().y + t.getSize().y / 2 && player.getVelocity().y < 0) {      // p1
 						player.setPosition(player.getPosition().x, t.getPosition().y + t.getSize().y / 2 + player.getSize().y / 2);// p2
@@ -283,16 +286,28 @@ public class DiggerWorld extends World {
 					}
 				}
 			}
+
 			List<Grave> tempGraveList = new ArrayList<>(graveList);
 			for (Grave grave : graveList) {
 				if (Helper.isColliding(player, grave) && player.isGrounded()) {
 					if (i == 0 && inputMap.get("digP1").isClicked()) {
 						grave.dig();
 						player.startDig();
+						player.setIsGraveDigging(true);
 					} else if (i == 1 && inputMap.get("digP2").isClicked()) {
 						grave.dig();
 						player.startDig();
+						player.setIsGraveDigging(true);
+					} else if (i == 2 && inputMap.get("digP3").isClicked()) {
+						grave.dig();
+						player.startDig();
+						player.setIsGraveDigging(true);
+					} else if (i == 3 && inputMap.get("digP3").isClicked()) {
+						grave.dig();
+						player.startDig();
+						player.setIsGraveDigging(true);
 					}
+
 					if (grave.isDug()) {
 						itemList.add(grave.getReward());
 						tempGraveList.remove(grave);
@@ -322,11 +337,14 @@ public class DiggerWorld extends World {
 						{
 							continue;
 						}
-
 						else
 						{
 							p.setIsDead(true);
 							tempPlayerList.remove(p);
+							if(tempPlayerList.size() == 1) {
+							    winner = tempPlayerList.get(0);
+							    isEnded = true;
+                            }
 						}
 					}
 				}
