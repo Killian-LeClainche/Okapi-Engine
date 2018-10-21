@@ -68,9 +68,9 @@ public class DiggerWorld extends World {
         player4C = (Controller)getSettings().get("p4");
         inputMap.put("rightP4", player4C.getKeyStart());
 		inputMap.put("leftP4", player4C.getKeyBack());
-		inputMap.put("digP4", player4C.getKeyA());
-		inputMap.put("upP4", player4C.getKeyB()); //it only jumps left
-		inputMap.put("itemP4", player4C.getKeyX());
+		inputMap.put("digP4", player4C.getKeyA()); // square
+		inputMap.put("upP4", player4C.getKeyB());
+		inputMap.put("itemP4", player4C.getKeyX()); // circle
 
 		GameMap map1 = new GameMap("Map1");
 		GameMap map2 = new GameMap("Map2");
