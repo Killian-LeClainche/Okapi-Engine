@@ -83,7 +83,7 @@ public class Player extends Block {
 	}
 
 	public boolean isMoving() {
-		return this.isGrounded && this.velocity.x != 0;
+		return this.isGrounded && !(this.velocity.x < this.acceleration.x && this.velocity.x > -this.acceleration.x);
 	}
 
 	public boolean isGoingUp() {
@@ -95,15 +95,7 @@ public class Player extends Block {
 	}
 
 	public boolean isIdle() {
-		return this.velocity.x == 0 && this.velocity.y == 0;
-	}
-
-	public void setCollided(boolean hasCollided) {
-		this.hasCollided = hasCollided;
-	}
-
-	public boolean hasCollided() {
-		return this.hasCollided;
+		return !isMoving() && this.isGrounded;
 	}
 
 	public boolean hasJumps() {
@@ -147,9 +139,9 @@ public class Player extends Block {
 	}
 
 	public void slow() {
-		if(this.velocity.x >= this.acceleration.x/2 + 0.1) {
+		if(this.velocity.x >= this.acceleration.x) {
 			this.velocity.x -= 2*acceleration.x;
-		} else if(this.velocity.x <= -this.acceleration.x/2 - 0.1) {
+		} else if(this.velocity.x <= -this.acceleration.x) {
 			this.velocity.x += 2*acceleration.x;
 		} else {
 			this.velocity.x = 0;

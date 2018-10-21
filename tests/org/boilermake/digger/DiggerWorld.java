@@ -48,11 +48,9 @@ public class DiggerWorld extends World {
 		graveList.add(new Grave(0, 0, 10, null));
 
 		playerList.add(new Player(new Vector2f(300, 200)));
-
 		playerList.add(new Player(new Vector2f(1000, 200)));
 
 
-		//renderer.init();
 
 		/*
 
@@ -215,11 +213,9 @@ public class DiggerWorld extends World {
 
 		for(int i = 0; i < playerList.size(); i++) {
 			Player player = playerList.get(i);
-			//player.setCollided(false);
 			for(Player p : playerList) {
 				if (!player.equals(p) && Helper.isColliding(player, p)) {
 					//x-axis collisions
-					//player.setCollided(true);
 					if (player.getPosition().x < p.getPosition().x && player.getVelocity().x > 0) { // player -> p
 						player.setPosition(p.getPosition().x - p.getSize().x, player.getPosition().y);
 						player.stopX();
@@ -243,22 +239,22 @@ public class DiggerWorld extends World {
 			}
 			for(Terrain t : terrainList) {
 				if(!player.equals(t) && Helper.isColliding(player, t) ) {
-					//x-axis collisions
-					if (player.getPosition().x < t.getPosition().x - t.getSize().x/2 && player.getVelocity().x > 0) { // p1 -> p2
-						player.setPosition(t.getPosition().x - t.getSize().x/2 - player.getSize().x/2, player.getPosition().y);
-						player.stopX();
-					} else if (player.getPosition().x > t.getPosition().x + t.getSize().x/2 && player.getVelocity().x < 0) { // p2 <- p1
-						player.setPosition(t.getPosition().x + t.getSize().x/2 + player.getSize().x/2, player.getPosition().y);
-						player.stopX();
-					}
 					//y-axis collisions             											 				           p2
-					else if (player.getPosition().y < t.getPosition().y - t.getSize().y/2 && player.getVelocity().y > 0) { // p1
+					if (player.getPosition().y < t.getPosition().y - t.getSize().y/2 && player.getVelocity().y > 0) { // p1
 						player.setPosition(player.getPosition().x, t.getPosition().y - t.getSize().y/2 - player.getSize().y/2);
 						player.stopY();
 					} else if (player.getPosition().y > t.getPosition().y + t.getSize().y/2 && player.getVelocity().y < 0) {      // p1
 						player.setPosition(player.getPosition().x, t.getPosition().y + t.getSize().y/2 + player.getSize().y/2);// p2
 						player.stopY();
 						player.resetJumps();
+					}
+					//x-axis collisions
+					else if (player.getPosition().x < t.getPosition().x - t.getSize().x/2 && player.getVelocity().x > 0) { // p1 -> p2
+						player.setPosition(t.getPosition().x - t.getSize().x/2 - player.getSize().x/2, player.getPosition().y);
+						player.stopX();
+					} else if (player.getPosition().x > t.getPosition().x + t.getSize().x/2 && player.getVelocity().x < 0) { // p2 <- p1
+						player.setPosition(t.getPosition().x + t.getSize().x/2 + player.getSize().x/2, player.getPosition().y);
+						player.stopX();
 					}
 				}
 			}
