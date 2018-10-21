@@ -108,7 +108,7 @@ fun random(maxValue: Double): Double {
 }
 
 fun random(minValue: Int, maxValue: Int): Int {
-    return StrictFastMath.round(Math.random() * (maxValue - minValue + 1) + minValue).toInt()
+    return StrictFastMath.round(Math.random() * (maxValue - minValue) + minValue).toInt()
 }
 
 fun random(minValue: Float, maxValue: Float): Float {
