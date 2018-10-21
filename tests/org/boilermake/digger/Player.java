@@ -15,6 +15,7 @@ public class Player extends Block {
 	private boolean isDoubleJumping;
 	private boolean isGrounded;
 	private boolean isFacingLeft;
+	private boolean hasCollided;
 	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
 	private final Vector2f terminalVelocity = new Vector2f(20, 48);
 	private final int jumpVel = 50;
@@ -95,6 +96,14 @@ public class Player extends Block {
 
 	public boolean isIdle() {
 		return this.velocity.x == 0 && this.velocity.y == 0;
+	}
+
+	public void setCollided(boolean hasCollided) {
+		this.hasCollided = hasCollided;
+	}
+
+	public boolean hasCollided() {
+		return this.hasCollided;
 	}
 
 	public boolean hasJumps() {

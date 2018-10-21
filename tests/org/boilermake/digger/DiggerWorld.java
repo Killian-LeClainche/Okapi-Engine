@@ -215,9 +215,11 @@ public class DiggerWorld extends World {
 
 		for(int i = 0; i < playerList.size(); i++) {
 			Player player = playerList.get(i);
+			//player.setCollided(false);
 			for(Player p : playerList) {
 				if (!player.equals(p) && Helper.isColliding(player, p)) {
 					//x-axis collisions
+					//player.setCollided(true);
 					if (player.getPosition().x < p.getPosition().x && player.getVelocity().x > 0) { // player -> p
 						player.setPosition(p.getPosition().x - p.getSize().x, player.getPosition().y);
 						player.stopX();
@@ -227,9 +229,8 @@ public class DiggerWorld extends World {
 						player.stopX();
 						p.stopX();
 					}
-
 					//y-axis collisions             											 p
-					if (player.getPosition().y < p.getPosition().y && player.getVelocity().y > 0) { // player
+					else if (player.getPosition().y < p.getPosition().y && player.getVelocity().y > 0) { // player
 						player.setPosition(player.getPosition().x, p.getPosition().y - p.getSize().y);
 						player.stopY();
 						p.stopY();
@@ -250,12 +251,11 @@ public class DiggerWorld extends World {
 						player.setPosition(t.getPosition().x + t.getSize().x/2 + player.getSize().x/2, player.getPosition().y);
 						player.stopX();
 					}
-
-					//y-axis collisions             											 				p2
-					if (player.getPosition().y < t.getPosition().y - t.getSize().y/2 && player.getVelocity().y > 0) { // p1
+					//y-axis collisions             											 				           p2
+					else if (player.getPosition().y < t.getPosition().y - t.getSize().y/2 && player.getVelocity().y > 0) { // p1
 						player.setPosition(player.getPosition().x, t.getPosition().y - t.getSize().y/2 - player.getSize().y/2);
 						player.stopY();
-					} else if (player.getPosition().y > t.getPosition().y + t.getSize().y/2 && player.getVelocity().y < 0) { // p1
+					} else if (player.getPosition().y > t.getPosition().y + t.getSize().y/2 && player.getVelocity().y < 0) {      // p1
 						player.setPosition(player.getPosition().x, t.getPosition().y + t.getSize().y/2 + player.getSize().y/2);// p2
 						player.stopY();
 						player.resetJumps();
