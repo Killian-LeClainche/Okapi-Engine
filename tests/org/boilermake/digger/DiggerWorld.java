@@ -248,26 +248,14 @@ public class DiggerWorld extends World {
 		for (int i = 0; i < playerList.size(); i++) {
 			Player player = playerList.get(i);
 			for (Player p : playerList) {
-				if (!player.equals(p) && Helper.isColliding(player, p)) {
-					//x-axis collisions
-					if (player.getPosition().x < p.getPosition().x && player.getVelocity().x > 0) { // player -> p
-						player.setPosition(p.getPosition().x - p.getSize().x, player.getPosition().y);
-						player.stopX();
-						p.stopX();
-					} else if (player.getPosition().x > p.getPosition().x && player.getVelocity().x < 0) { // p <- player
-						player.setPosition(p.getPosition().x + p.getSize().x, player.getPosition().y);
-						player.stopX();
-						p.stopX();
-					}
-					//y-axis collisions             											 p
-					else if (player.getPosition().y < p.getPosition().y && player.getVelocity().y > 0) { // player
-						player.setPosition(player.getPosition().x, p.getPosition().y - p.getSize().y);
-						player.stopY();
-						p.stopY();
-					} else if (player.getPosition().y > p.getPosition().y && player.getVelocity().y < 0) { // player
-						player.setPosition(player.getPosition().x, p.getPosition().y + p.getSize().y);// p
-						player.stopY();
-						p.stopY();
+				if (!player.equals(p) && Helper.equals(player, p)) {
+					System.out.println("here");
+					if(player.velocity.x > 0) {
+						player.getPosition().x -= 10;
+						p.getPosition().x += 10;
+					} else {
+						player.getPosition().x += 10;
+						p.getPosition().x -= 10;
 					}
 				}
 			}
