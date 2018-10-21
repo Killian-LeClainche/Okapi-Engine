@@ -18,7 +18,7 @@ public class Player extends Block {
 	public final Vector2f acceleration = new Vector2f(0.7f, -4f);
 	private final Vector2f terminalVelocity = new Vector2f(20, 48);
 	private final int jumpVel = 50;
-	private final Vector2f screen = new Vector2f(1720, 1080);
+	private final Vector2f screen = new Vector2f(1920, 1080);
 	private int item;
 	private int delay;
 

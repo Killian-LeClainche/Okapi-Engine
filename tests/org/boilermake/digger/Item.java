@@ -8,7 +8,7 @@ import org.joml.Vector2f;
 public class Item extends Block {
     private Vector2f velocity;
     private final Vector2f acceleration = new Vector2f(0, -2);
-    private final Vector2f screen = new Vector2f(1720, 1080);
+    private final Vector2f screen = new Vector2f(1920, 1080);
     private int itemType;
     private int itemDelay;
 
