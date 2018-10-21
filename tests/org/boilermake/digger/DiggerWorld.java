@@ -99,8 +99,7 @@ public class DiggerWorld extends World {
 		player2 = playerList.get(1);
 		player3 = playerList.get(2);
 		player4 = playerList.get(3);
-
-
+		
 		renderer.init();
 	}
 
