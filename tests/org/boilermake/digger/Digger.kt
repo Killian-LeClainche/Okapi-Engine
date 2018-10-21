@@ -43,7 +43,7 @@ class WindowCreation : App(true) {
         settings["p1:right"] = Key(GLFW.GLFW_KEY_D)
         settings["p1:up"] = Key(GLFW.GLFW_KEY_W)
         settings["p1:left"] = Key(GLFW.GLFW_KEY_A)
-        settings["p1:down"] = Key(GLFW.GLFW_KEY_S)
+        settings["p1:dig"] = Key(GLFW.GLFW_KEY_S)
         settings["p1:jump"] = Key(GLFW.GLFW_KEY_LEFT_SHIFT)
         settings["p2"] = Controller(0)
 
